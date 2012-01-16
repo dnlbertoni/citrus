@@ -1,4 +1,9 @@
 /**
+* Version 2.2
+*
+*/
+
+/**
 * ultima actualizacion: 15/01/2012
 * se modifico el modulo de ctacte para hacerlo mas integral a la informacion
 **/
