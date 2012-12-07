@@ -15,7 +15,7 @@ class Assets {
 	 * @var		bool
 	 * @access	private
 	 */
-	private static $debug = true;
+	private static $debug = false;
 
 	/**
 	 *	An instance of the CI app
@@ -120,7 +120,6 @@ class Assets {
 		}
 	
 		// Store our settings
-        self::$debug            = self::$ci->config->item('debug');
 		self::$asset_base		= self::$ci->config->item('assets.base_folder');
 		self::$asset_folders	= self::$ci->config->item('assets.asset_folders');
 

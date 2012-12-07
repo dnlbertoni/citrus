@@ -7,7 +7,6 @@
  * @category - Model
  * @author - Udi Mosayev @ umNet
  * @property CI_DB_active_record $db
- * @var boolean $_created si la tabla tiene un campo con ese nombre asigna la fehca de cracion automaticamente
  */
 
 class MY_Model extends CI_Model{
@@ -15,7 +14,6 @@ class MY_Model extends CI_Model{
   // The main table name
   private $_table;
   private $_primaryKey;
-  private $_created = false;
   public function __construct() {
      parent::__construct();        
   }
@@ -30,10 +28,7 @@ class MY_Model extends CI_Model{
 	  foreach($campos as $camp){
 		  if($camp->primary_key == 1){
 			  $this->_primaryKey = $camp->name;
-		  };
-          if($camp->name=="created"){
-			  $this->_created = true;            
-          }
+		  }
 	  }
   }
   public function getCampos($tabla){
@@ -82,6 +77,7 @@ class MY_Model extends CI_Model{
    * @return Int Insert ID
    */
   public function add($data, $field_control=FALSE) {
+    $data['programa_id']=$this->session->userdata('programa_id');
     if(is_array($data)) {
       if($field_control){
         $duplicado = $this->is_duplicate($field_control,$data[$field_control]);
@@ -89,9 +85,6 @@ class MY_Model extends CI_Model{
           $this->update($data,$data[$field_control]);
           return true;
         }else{
-          if($this->_created){
-            $this->db->set('created','NOW()',false);
-          };
           $this->db->insert($this->getTable(), $data);
           return $this->db->insert_id();
         }
@@ -139,11 +132,6 @@ class MY_Model extends CI_Model{
                   log_message('error', 'Got non-numeric id: '.$id);
                   return FALSE;
           } else {
-                  /* write the old&new data to history
-                  foreach($data as $fieldName=>$fieldValue) {
-                          $this->history->write($this->getTable(), $id, $fieldName, $fieldValue);
-                  }
-                  */
                   $this->db->where($this->getPrimaryKey(), $id);
                   $this->db->update($this->getTable(), $data);
           }
@@ -251,7 +239,7 @@ class MY_Model extends CI_Model{
     $this->db->where('id',$id);
     $this->db->update($this->getTable());
     return true;
-}
+  }
 
 }
 

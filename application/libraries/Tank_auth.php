@@ -18,6 +18,7 @@ define('STATUS_NOT_ACTIVATED', '0');
  */
 class Tank_auth{
 	private $error = array();
+
 	function __construct(){
 		$this->ci =& get_instance();
 
@@ -29,6 +30,7 @@ class Tank_auth{
 		// Try to autologin
 		$this->autologin();
 	}
+
 	/**
 	 * Login user on the site. Return TRUE if login is successful
 	 * (user exists and activated, password is correct), otherwise FALSE.
@@ -80,8 +82,8 @@ class Tank_auth{
 
 							$this->ci->users->update_login_info(
 									$user->id,
-									$this->ci->config->item('login_record_ip'),
-									$this->ci->config->item('login_record_time'));
+									$this->ci->config->item('login_record_ip', 'tank_auth'),
+									$this->ci->config->item('login_record_time', 'tank_auth'));
 							return TRUE;
 						}
 					}
@@ -96,12 +98,14 @@ class Tank_auth{
 		}
 		return FALSE;
 	}
+
 	/**
 	 * Logout user from the site
 	 *
 	 * @return	void
 	 */
-	function logout(){
+	function logout()
+	{
 		$this->delete_autologin();
 
 		// See http://codeigniter.com/forums/viewreply/662369/ as the reason for the next line
@@ -109,6 +113,7 @@ class Tank_auth{
 
 		$this->ci->session->sess_destroy();
 	}
+
 	/**
 	 * Check if user logged in. Also test if user is activated or not.
 	 *
@@ -118,6 +123,7 @@ class Tank_auth{
 	function is_logged_in($activated = TRUE){
 		return $this->ci->session->userdata('status') === ($activated ? STATUS_ACTIVATED : STATUS_NOT_ACTIVATED);
 	}
+
 	/**
 	 * Get user_id
 	 *
@@ -126,14 +132,17 @@ class Tank_auth{
 	function get_user_id()	{
 		return $this->ci->session->userdata('user_id');
 	}
+
 	/**
 	 * Get username
 	 *
 	 * @return	string
 	 */
-	function get_username(){
+	function get_username()
+	{
 		return $this->ci->session->userdata('username');
 	}
+
 	/**
 	 * Create new user on the site and return some data about it:
 	 * user_id, username, password, email, new_email_key (if any).
@@ -144,7 +153,8 @@ class Tank_auth{
 	 * @param	bool
 	 * @return	array
 	 */
-	function create_user($username, $email, $password, $email_activation, $programa_id){
+	function create_user($username, $email, $password, $email_activation)
+	{
 		if ((strlen($username) > 0) AND !$this->ci->users->is_username_available($username)) {
 			$this->error = array('username' => 'auth_username_in_use');
 
@@ -164,14 +174,12 @@ class Tank_auth{
 				'email'		=> $email,
 				'last_ip'	=> $this->ci->input->ip_address(),
 			);
-            
+
 			if ($email_activation) {
 				$data['new_email_key'] = md5(rand().microtime());
 			}
 			if (!is_null($res = $this->ci->users->create_user($data, !$email_activation))) {
 				$data['user_id'] = $res['user_id'];
-                $dataModulos = array('user_id'=>$data['user_id'],'modulo_id'=>1,'permiso'=>1,'programa_id'=>$programa_id);
-                $this->ci->users_modulos->add($dataModulos);
 				$data['password'] = $password;
 				unset($data['last_ip']);
 				return $data;
@@ -179,6 +187,7 @@ class Tank_auth{
 		}
 		return NULL;
 	}
+
 	/**
 	 * Check if username available for registering.
 	 * Can be called for instant form validation.
@@ -186,9 +195,11 @@ class Tank_auth{
 	 * @param	string
 	 * @return	bool
 	 */
-	function is_username_available($username){
+	function is_username_available($username)
+	{
 		return ((strlen($username) > 0) AND $this->ci->users->is_username_available($username));
 	}
+
 	/**
 	 * Check if email available for registering.
 	 * Can be called for instant form validation.
@@ -196,9 +207,11 @@ class Tank_auth{
 	 * @param	string
 	 * @return	bool
 	 */
-	function is_email_available($email)	{
+	function is_email_available($email)
+	{
 		return ((strlen($email) > 0) AND $this->ci->users->is_email_available($email));
 	}
+
 	/**
 	 * Change email for activation and return some data about user:
 	 * user_id, username, email, new_email_key.
@@ -207,7 +220,8 @@ class Tank_auth{
 	 * @param	string
 	 * @return	array
 	 */
-	function change_email($email){
+	function change_email($email)
+	{
 		$user_id = $this->ci->session->userdata('user_id');
 
 		if (!is_null($user = $this->ci->users->get_user_by_id($user_id, FALSE))) {
@@ -232,6 +246,7 @@ class Tank_auth{
 		}
 		return NULL;
 	}
+
 	/**
 	 * Activate user using given key
 	 *
@@ -240,7 +255,8 @@ class Tank_auth{
 	 * @param	bool
 	 * @return	bool
 	 */
-	function activate_user($user_id, $activation_key, $activate_by_email = TRUE){
+	function activate_user($user_id, $activation_key, $activate_by_email = TRUE)
+	{
 		$this->ci->users->purge_na($this->ci->config->item('email_activation_expire', 'tank_auth'));
 
 		if ((strlen($user_id) > 0) AND (strlen($activation_key) > 0)) {
@@ -248,6 +264,7 @@ class Tank_auth{
 		}
 		return FALSE;
 	}
+
 	/**
 	 * Set new password key for user and return some data about user:
 	 * user_id, username, email, new_pass_key.
@@ -256,7 +273,8 @@ class Tank_auth{
 	 * @param	string
 	 * @return	array
 	 */
-	function forgot_password($login){
+	function forgot_password($login)
+	{
 		if (strlen($login) > 0) {
 			if (!is_null($user = $this->ci->users->get_user_by_login($login))) {
 
@@ -276,6 +294,7 @@ class Tank_auth{
 		}
 		return NULL;
 	}
+
 	/**
 	 * Check if given password key is valid and user is authenticated.
 	 *
@@ -283,7 +302,8 @@ class Tank_auth{
 	 * @param	string
 	 * @return	bool
 	 */
-	function can_reset_password($user_id, $new_pass_key){
+	function can_reset_password($user_id, $new_pass_key)
+	{
 		if ((strlen($user_id) > 0) AND (strlen($new_pass_key) > 0)) {
 			return $this->ci->users->can_reset_password(
 				$user_id,
@@ -292,6 +312,7 @@ class Tank_auth{
 		}
 		return FALSE;
 	}
+
 	/**
 	 * Replace user password (forgotten) with a new one (set by user)
 	 * and return some data about it: user_id, username, new_password, email.
@@ -300,7 +321,8 @@ class Tank_auth{
 	 * @param	string
 	 * @return	bool
 	 */
-	function reset_password($user_id, $new_pass_key, $new_password)	{
+	function reset_password($user_id, $new_pass_key, $new_password)
+	{
 		if ((strlen($user_id) > 0) AND (strlen($new_pass_key) > 0) AND (strlen($new_password) > 0)) {
 
 			if (!is_null($user = $this->ci->users->get_user_by_id($user_id, TRUE))) {
@@ -332,6 +354,7 @@ class Tank_auth{
 		}
 		return NULL;
 	}
+
 	/**
 	 * Change user password (only when user is logged in)
 	 *
@@ -339,7 +362,8 @@ class Tank_auth{
 	 * @param	string
 	 * @return	bool
 	 */
-	function change_password($old_pass, $new_pass){
+	function change_password($old_pass, $new_pass)
+	{
 		$user_id = $this->ci->session->userdata('user_id');
 
 		if (!is_null($user = $this->ci->users->get_user_by_id($user_id, TRUE))) {
@@ -363,6 +387,7 @@ class Tank_auth{
 		}
 		return FALSE;
 	}
+
 	/**
 	 * Change user email (only when user is logged in) and return some data about user:
 	 * user_id, username, new_email, new_email_key.
@@ -372,7 +397,8 @@ class Tank_auth{
 	 * @param	string
 	 * @return	array
 	 */
-	function set_new_email($new_email, $password){
+	function set_new_email($new_email, $password)
+	{
 		$user_id = $this->ci->session->userdata('user_id');
 
 		if (!is_null($user = $this->ci->users->get_user_by_id($user_id, TRUE))) {
@@ -410,6 +436,7 @@ class Tank_auth{
 		}
 		return NULL;
 	}
+
 	/**
 	 * Activate new email, if email activation key is valid.
 	 *
@@ -417,7 +444,8 @@ class Tank_auth{
 	 * @param	string
 	 * @return	bool
 	 */
-	function activate_new_email($user_id, $new_email_key){
+	function activate_new_email($user_id, $new_email_key)
+	{
 		if ((strlen($user_id) > 0) AND (strlen($new_email_key) > 0)) {
 			return $this->ci->users->activate_new_email(
 					$user_id,
@@ -425,13 +453,15 @@ class Tank_auth{
 		}
 		return FALSE;
 	}
+
 	/**
 	 * Delete user from the site (only when user is logged in)
 	 *
 	 * @param	string
 	 * @return	bool
 	 */
-	function delete_user($password)	{
+	function delete_user($password)
+	{
 		$user_id = $this->ci->session->userdata('user_id');
 
 		if (!is_null($user = $this->ci->users->get_user_by_id($user_id, TRUE))) {
@@ -452,22 +482,26 @@ class Tank_auth{
 		}
 		return FALSE;
 	}
+
 	/**
 	 * Get error message.
 	 * Can be invoked after any failed operation such as login or register.
 	 *
 	 * @return	string
 	 */
-	function get_error_message(){
+	function get_error_message()
+	{
 		return $this->error;
 	}
+
 	/**
 	 * Save data for user's autologin
 	 *
 	 * @param	int
 	 * @return	bool
 	 */
-	private function create_autologin($user_id)	{
+	private function create_autologin($user_id)
+	{
 		$this->ci->load->helper('cookie');
 		$key = substr(md5(uniqid(rand().get_cookie($this->ci->config->item('sess_cookie_name')))), 0, 16);
 
@@ -484,12 +518,14 @@ class Tank_auth{
 		}
 		return FALSE;
 	}
+
 	/**
 	 * Clear user's autologin data
 	 *
 	 * @return	void
 	 */
-	private function delete_autologin()	{
+	private function delete_autologin()
+	{
 		$this->ci->load->helper('cookie');
 		if ($cookie = get_cookie($this->ci->config->item('autologin_cookie_name', 'tank_auth'), TRUE)) {
 
@@ -501,12 +537,14 @@ class Tank_auth{
 			delete_cookie($this->ci->config->item('autologin_cookie_name', 'tank_auth'));
 		}
 	}
+
 	/**
 	 * Login user automatically if he/she provides correct autologin verification
 	 *
 	 * @return	void
 	 */
-	private function autologin(){
+	private function autologin()
+	{
 		if (!$this->is_logged_in() AND !$this->is_logged_in(FALSE)) {			// not logged in (as any user)
 
 			$this->ci->load->helper('cookie');
@@ -544,13 +582,15 @@ class Tank_auth{
 		}
 		return FALSE;
 	}
+
 	/**
 	 * Check if login attempts exceeded max login attempts (specified in config)
 	 *
 	 * @param	string
 	 * @return	bool
 	 */
-	function is_max_login_attempts_exceeded($login)	{
+	function is_max_login_attempts_exceeded($login)
+	{
 		if ($this->ci->config->item('login_count_attempts', 'tank_auth')) {
 			$this->ci->load->model('auth/login_attempts');
 			return $this->ci->login_attempts->get_attempts_num($this->ci->input->ip_address(), $login)
@@ -558,6 +598,7 @@ class Tank_auth{
 		}
 		return FALSE;
 	}
+
 	/**
 	 * Increase number of attempts for given IP-address and login
 	 * (if attempts to login is being counted)
@@ -565,7 +606,8 @@ class Tank_auth{
 	 * @param	string
 	 * @return	void
 	 */
-	private function increase_login_attempt($login){
+	private function increase_login_attempt($login)
+	{
 		if ($this->ci->config->item('login_count_attempts', 'tank_auth')) {
 			if (!$this->is_max_login_attempts_exceeded($login)) {
 				$this->ci->load->model('auth/login_attempts');
@@ -573,6 +615,7 @@ class Tank_auth{
 			}
 		}
 	}
+
 	/**
 	 * Clear all attempt records for given IP-address and login
 	 * (if attempts to login is being counted)
@@ -580,7 +623,8 @@ class Tank_auth{
 	 * @param	string
 	 * @return	void
 	 */
-	private function clear_login_attempts($login){
+	private function clear_login_attempts($login)
+	{
 		if ($this->ci->config->item('login_count_attempts', 'tank_auth')) {
 			$this->ci->load->model('auth/login_attempts');
 			$this->ci->login_attempts->clear_attempts(

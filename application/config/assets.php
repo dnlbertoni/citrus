@@ -30,4 +30,3 @@ $config['assets.asset_folders'] = array(
 */
 $config['assets.js_opener'] = '$(document).ready(function(){'. "\n";
 $config['assets.js_closer'] = '});'. "\n";
-$config['debug']            = false;

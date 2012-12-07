@@ -141,11 +141,5 @@ $config['recaptcha_private_key'] = '';
 $config['db_table_prefix'] = '';
 
 
-/*
- * usa perfiles de usuarios ampliados
- */
-$config['perfiles']=TRUE;
-$config['modulo']='usuarios';
-
 /* End of file tank_auth.php */
 /* Location: ./application/config/tank_auth.php */

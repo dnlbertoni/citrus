@@ -19,7 +19,7 @@ $config['template.site_path']	= FCPATH;
 | one folder path at all times, to serve as the fall-back for when
 | a theme isn't found. Paths are relative to the FCPATH.
 */
-$config['template.theme_paths'] = array('themes/');
+$config['template.theme_paths'] = array('themes');
 
 /*
 |--------------------------------------------------------------------
@@ -70,7 +70,7 @@ $config['template.use_mobile_themes'] = FALSE;
 | when 'template.use_mobile_themes' is set to TRUE.
 |
 */
-$config['template.default_theme'] = 'shara/';
+$config['template.default_theme'] = 'sahara/';
 
 /*
 |--------------------------------------------------------------------
@@ -98,4 +98,4 @@ EOD;
 |
 */
 $config['template.breadcrumb_symbol']	= ' : ';
-$config['site_name']="Citrus";
+$config['site_name']="Base Codeigniter";
