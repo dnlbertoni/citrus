@@ -8,13 +8,11 @@ class  MY_Controller  extends MX_Controller{
         $this->output->enable_profiler(in_array($_SERVER['REMOTE_ADDR'],$ipDebags));
         $this->load->library('fb');
 
-        $this->template->add_css('jquery-ui');
-        $this->template->add_css('sahara');
+        Assets::add_css('jquery-ui');
+        Assets::add_css('sahara');
 
-        //$this->template->add_css('vanadium');
-
-        $this->template->add_js('jquery-1.4.4.min');
-        $this->template->add_js('jquery-ui-1.8.9.min');
+        Assets::add_js('jquery-1.4.4.min');
+        Assets::add_js('jquery-ui-1.8.9.min');
         /*
          * defino los modulos que van en el menu
          */
@@ -43,6 +41,7 @@ class  MY_Controller  extends MX_Controller{
                           'nombre' => 'CtaCte'
                         );
         $data['Modulos'] = $Modulos;
-        $this->template->write_view('menu','_menu',$data);
+        Template::set($data);
+        Template::set_block('menu','_menu');
    }
 } 

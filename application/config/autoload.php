@@ -39,7 +39,7 @@
 |	$autoload['libraries'] = array('database', 'session', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('template', 'firephp', 'fb','form_validation');
+$autoload['libraries'] = array('template','assets', 'firephp', 'fb','form_validation');
 
 
 /*

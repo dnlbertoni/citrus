@@ -1,7 +1,11 @@
 /**
-* Version 2.2
+* Version 3
 *
 */
+
+/**
+* Unificacion para la libreria template
+**/
 
 /**
 * ultima actualizacion: 15/01/2012

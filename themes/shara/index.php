@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-  <?php echo $_scripts ?>
-  <?php echo $_styles ?>
+  <?php echo Assets::css() ?>
+  <?php echo Assets::js() ?>
   <title><?php echo $title;?></title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 </head>
@@ -15,25 +15,17 @@
       <div id="boxAyuda"><div id="admin">Configuracion</div><div id="problema">Problema</div></div>
     </div>
     <div id="menu">
-      <?php if(isset($menu)):?>
-        <?php echo $menu?>
-      <?php else:?>
-        Falta definir el menu;
-      <?php endif;?>
+            <?php echo Template::block('menu','_menu'); ?>
     </div>
     <div id="content">
-      <?php if($tareas):?>
-      <div id="column1">
-        <?php echo $contenido;?>
+      <div <?php echo (isset($tareas))?'id="column1"':'';?>>
+        <?php echo Template::yield();?>
       </div>
-      <?php else:?>
-        <?php echo $contenido;?>
-      <?php endif;?>
       <?php if($tareas):?>
         <div id="column2">
         <h1>Tareas regulares</h1>
          <ul class="sidemenu">
-            <?php echo $tareas ?>
+            <?php echo Template::block('sidebar','_tareas'); ?>
          </ul>
         </div>
       <?php endif;?>

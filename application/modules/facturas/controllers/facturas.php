@@ -5,17 +5,17 @@ class Facturas extends MY_Controller {
     $this->load->model('Facencab_model','',true);
     $this->load->model('Tipcom_model','',true);
 
-    $this->template->write('title','Modulo de Facturas');
+    Template::set('title','Modulo de Facturas');
     $datos['tareas'][] = array( 'facturas/add/10', 'Agregar Fac Cpras');
     $datos['tareas'][] = array( 'facturas/add/13', 'Agregar N/C Cpras');
     $datos['tareas'][] = array( 'facturas/cierresZmanual', 'Agregar Cierre Z Manual');
     $datos['tareas'][] = array( 'facturas/addCierresZ', 'Agregar Cierre Z Controlador');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas    
+    Template::set('tareas',$datos['tareas']);
+    Template::set_block('sidebar','_tareas'); // panel de tareas    
   }
   function index(){
-    $this->template->add_js('facturas/index');
-    $this->template->write_view('contenido', 'facturas/index');
-    $this->template->render();
+    Assets::add_js('facturas/index');
+    Template::render();
   }
   function add($tipcom=0,$cuenta_id=0){
     $data ['tipcom_nombre']    = $this->Tipcom_model->getNombre($tipcom);
