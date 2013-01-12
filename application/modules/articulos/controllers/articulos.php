@@ -1,4 +1,23 @@
 <?php
+/*
+ * Controlador cabecera del modulo articulos
+ * FEATURES:
+ *          - Articulo nuevo
+ *          - Borrar articulo
+ *          - Ver/Editar detalle de ficha de articulo
+ *          - busque de articulos por:
+ *                                    - Descripcion
+ *                                    - Marca
+ *                                    - Rubro
+ *                                    - Global ->
+ *                                    - Avanzada ->
+ *          - muestro precio
+ *          - cambio  precio
+ *          - generar nombre standard
+ *          - cambio mediante proceso de lotes
+ *          - estadisticas y rankings
+ *@TODO: Unificar el Template
+ */
 class Articulos extends MY_Controller{
   function __construct(){
     parent::__construct();
@@ -13,14 +32,14 @@ class Articulos extends MY_Controller{
     //panel de tareas
     $datos['tareas'][] = array('articulos/precios/', 'Cambio Precios');
     $datos['tareas'][] = array('articulos/rubros/', 'Rubros');
-    $datos['tareas'][] = array('articulos/rubros/agregar/ajax', 'Agregar Rubros');    
+    $datos['tareas'][] = array('articulos/rubros/agregar/ajax', 'Agregar Rubros');
     $datos['tareas'][] = array('articulos/subrubros/', 'Subrubros');
-    $datos['tareas'][] = array('articulos/subrubros/agregar/ajax', 'Agregar Subrubros', 'class="ajaxLoad"');    
+    $datos['tareas'][] = array('articulos/subrubros/agregar/ajax', 'Agregar Subrubros', 'class="ajaxLoad"');
     $datos['tareas'][] = array('articulos/marcas/', 'Marcas');
-    $datos['tareas'][] = array('articulos/marcas/agregar/ajax', 'Agregar Marcas', 'class="ajaxLoad"');    
+    $datos['tareas'][] = array('articulos/marcas/agregar/ajax', 'Agregar Marcas', 'class="ajaxLoad"');
     $datos['tareas'][] = array('articulos/submarcas/', 'Submarcas');
-    $datos['tareas'][] = array('articulos/submarcas/agregar/ajax', 'Agregar Submarcas', 'class="ajaxLoad"');    
-    $datos['tareas'][] = array('articulos/estadisticas', 'Estadisticas');    
+    $datos['tareas'][] = array('articulos/submarcas/agregar/ajax', 'Agregar Submarcas', 'class="ajaxLoad"');
+    $datos['tareas'][] = array('articulos/estadisticas', 'Estadisticas');
     $this->template->write_view('tareas','_tareas', $datos); // panel de tareas
 
     $articulos = $this->Articulos_model->getAllMod(50);
@@ -79,10 +98,10 @@ class Articulos extends MY_Controller{
   }
   function ver($id=false){
     if(trim($this->input->post('codigobarra'))!='' || $id!=false){
-	  if(trim($this->input->post('codigobarra'))!=''){	
+	  if(trim($this->input->post('codigobarra'))!=''){
         $articulo = $this->Articulos_model->getByCodigobarra($this->input->post('codigobarra'));
       }else{
-        $articulo = $this->Articulos_model->getById($id);		  
+        $articulo = $this->Articulos_model->getById($id);
       }
       if($articulo){
         $data['Articulo']    = $articulo;
@@ -284,7 +303,7 @@ class Articulos extends MY_Controller{
      }
      $data['total']  = $total;
      $data['activos'] = $activos;
-     $data['suspendidos'] = $total - $activos;  
+     $data['suspendidos'] = $total - $activos;
      $data['normalizacion'] = $this->Articulos_model->datosNormalizacion();
      $this->template->write_view('contenido', 'articulos/estadisticas', $data);
      $this->template->render();

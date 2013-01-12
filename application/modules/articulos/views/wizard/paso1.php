@@ -1,4 +1,4 @@
-<?php echo form_open($accion, 'id="wizardPaso1-form"', $ocultos);?>
+<?php echo form_open($accion, "id='wizardPaso1-form'", $ocultos);?>
 <?php echo form_close();?>
 Codigo Barra:<?php echo $codigobarra ?>
 Empresa<h1>Empresa: <?php echo $empresaNombre?></h1>
