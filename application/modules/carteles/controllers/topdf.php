@@ -22,29 +22,29 @@ class Topdf extends MY_Controller{
         $articulo= $this->Articulos_model->getDatosBasicos($valor);
         if ($campana==1){
           $this->fpdf->AddPage('L','A4');
-          $desplaz=0;    
+          $desplaz=0;
         }else{
-          $desplaz=136;            
+          $desplaz=136;
         };
-    
+
         $x=62;
         $y=90;
         $this->fpdf->Image('rsc/img/logo.png',$x+$desplaz,$y,60);
-    
+
         $x=0;
         $y=0;
         $this->fpdf->Image('rsc/img/campanaHueca.gif',$x+$desplaz,$y,164);
-        
+
         $Y = 162;
-        $X = 40;    
-    
+        $X = 40;
+
         $this->fpdf->SetFont('Times','', 100);
         $this->fpdf->SetXY($X+$desplaz,$Y);
         $this->fpdf->Cell(50,10,sprintf("$%2.2f", $articulo->precio),0,0,'J');
-        
+
         $X=45;
         $Y=125;
-    
+
         $this->fpdf->SetFont('Times','', 28);
         $this->fpdf->SetXY($X+$desplaz,$Y);
         $this->fpdf->Cell(164,10,substr($articulo->descripcion,0,14),0,0,'J');
@@ -56,18 +56,18 @@ class Topdf extends MY_Controller{
       $file = TMP .'navidad.pdf';
       $this->fpdf->Output( $file,'I');
       $cmd = sprintf("lp %s -d %s", $file,$this->Printer);
-      shell_exec($cmd); 
+      shell_exec($cmd);
       $cmd = sprintf("rm -f %s", $file);
-      shell_exec($cmd);     
+      shell_exec($cmd);
     }
     redirect('carteles/', 'location', 301);
-   } 
+   }
   function CartelesPrecios(){
     foreach($_POST as $key=>$valor){
       if($valor=='p'){
-        $codigos[] = $key;        
+        $codigos[] = $key;
       }else{
-        $grabar[]  = $key;        
+        $grabar[]  = $key;
       }
     }
     $this->fpdf->Open();
@@ -90,7 +90,7 @@ class Topdf extends MY_Controller{
       $this->fpdf->SetFont('Times','' ,10);
       $this->fpdf->SetXY($x+1,$y+6);
       $this->fpdf->Image('rsc/img/logo.png',$x+1,$y+18,15);
-      $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,0,20),0,0,'C');         
+      $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,0,20),0,0,'C');
       $this->fpdf->SetXY($x+1,$y+10);
       $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,20,20),0,0,'C');
       $this->fpdf->SetFont('Times','' ,36);
@@ -108,12 +108,12 @@ class Topdf extends MY_Controller{
       if($row>3){
         $row=0;
         $this->fpdf->AddPage('P',array('100','148'));
-      };  
+      };
     };
     $actualizoPrecios =$this->Articulos_model->GraboImpresionPrecios($codigos);
     if(isset($grabar)){
       $actualizoGrabar =$this->Articulos_model->GraboImpresionPrecios($grabar);
-    }else{ 
+    }else{
       $actualizoGrabar=true;
     }
     //echo $actualizo;
@@ -122,18 +122,18 @@ class Topdf extends MY_Controller{
       $file = TMP . "cartel.pdf";
       $this->fpdf->Output($file,'F');
       $cmd = sprintf("lp -o media=Custom.100x148mm %s -d %s",$file,$this->Printer);
-      shell_exec($cmd);          
+      shell_exec($cmd);
       $cmd = sprintf("rm -f  %s",$file);
-      shell_exec($cmd);          
+      shell_exec($cmd);
     };
     redirect('carteles/','location',301);
   }
   function CartelesVinos(){
     foreach($_POST as $key=>$valor){
       if($valor=='p'){
-        $codigos[] = $key;        
+        $codigos[] = $key;
       }else{
-        $grabar[]  = $key;        
+        $grabar[]  = $key;
       }
     }
     $this->fpdf->Open();
@@ -147,7 +147,7 @@ class Topdf extends MY_Controller{
     $dato=0;
     $col=0;
     $row=0;
-    $fecha=new DateTime();    
+    $fecha=new DateTime();
     foreach($codigos as $valor){
       $x=$col * $ancho;
       $y=($row * $alto) + 7;
@@ -156,7 +156,7 @@ class Topdf extends MY_Controller{
       $this->fpdf->SetFont('Times','' ,12);
       $this->fpdf->SetXY($x+1,$y+4);
       $this->fpdf->Image('rsc/img/logo.png',$x+1,$y+17,25);
-      $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,0,30),0,0,'C');         
+      $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,0,30),0,0,'C');
       $this->fpdf->SetXY($x+1,$y+10);
       $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,30,30),0,0,'C');
       $this->fpdf->SetFont('Times','' ,60);
@@ -174,7 +174,7 @@ class Topdf extends MY_Controller{
       if($row>6){
         $row=0;
         $this->fpdf->AddPage();
-      };  
+      };
     };
     $actualizo =$this->Articulos_model->GraboImpresionPrecios($codigos);
     //echo $actualizo;
@@ -183,9 +183,9 @@ class Topdf extends MY_Controller{
       $file = TMP . "cartel.pdf";
       $this->fpdf->Output($file,'F');
       $cmd = sprintf("lp %s -d %s",$file,$this->Printer);
-      shell_exec($cmd);          
+      shell_exec($cmd);
       $cmd = sprintf("rm -f  %s",$file);
-      shell_exec($cmd);          
+      shell_exec($cmd);
     };
     redirect('carteles/', 'location',301);
   }
@@ -193,19 +193,19 @@ class Topdf extends MY_Controller{
     foreach ($_POST as $key=>$valor ){
       if(!preg_match('/^(fecha)|^(Imprimir)/',$key)){
         $codigos[]=$valor;
-      };    
+      };
     };
     /*
     foreach($codigos as $codigo){
       $articulo = $this->Articulos_model->GetDatosBasicos($codigo);
     }
-    $this->template->render();
+    Template::render();
     */
     $this->fpdf->Open();
     $this->fpdf->SetMargins(0,0,0);
     $this->fpdf->SetAutoPageBreak(true);
     $this->fpdf->SetDrawColor(128);
-    $x=0; 
+    $x=0;
     $y=0;
     if($tamano==1 && count($codigos)>0){
       foreach($codigos as $valor){
@@ -251,15 +251,15 @@ class Topdf extends MY_Controller{
         if( $y > $pagina ){
           $this->fpdf->AddPage();
           $y=0;
-        }; 
+        };
         }
     };
     $file = TMP . "cartel.pdf";
     $this->fpdf->Output($file,'F');
     $cmd = sprintf("lp %s -d %s",$file,$this->Printer);
-    shell_exec($cmd);          
+    shell_exec($cmd);
     $cmd = sprintf("rm -f  %s",$file);
-    shell_exec($cmd);          
+    shell_exec($cmd);
     redirect('carteles/', 'location',301);
   }
   function ofertaMultiple($tamano=1){
@@ -364,7 +364,7 @@ class Topdf extends MY_Controller{
       $this->fpdf->Cell(50,0, $articulo->codigobarra ." - ",0,0,'R');
       $this->fpdf->SetFont('Times','' ,$fuente);
       $this->fpdf->SetXY($x+60,$y);
-      $this->fpdf->Cell($ancho,0,substr($articulo->descripcion,0,($ancho/$tamano) * 2),0,0,'L');         
+      $this->fpdf->Cell($ancho,0,substr($articulo->descripcion,0,($ancho/$tamano) * 2),0,0,'L');
       $row++;
       $margen = 20;
       if($row>(((290 - $margen)/$tamano)-1)){
@@ -377,9 +377,9 @@ class Topdf extends MY_Controller{
       $file = TMP . "cartel.pdf";
       $this->fpdf->Output($file,'F');
       $cmd = sprintf("lp %s -d %s",$file,$this->Printer);
-      shell_exec($cmd);          
+      shell_exec($cmd);
       $cmd = sprintf("rm -f  %s",$file);
-      shell_exec($cmd);          
+      shell_exec($cmd);
     }else{
       $file ="listadeprecios_".$rubroNombre.".pdf";
       $this->fpdf->Output($file,'D');
@@ -390,13 +390,13 @@ class Topdf extends MY_Controller{
     foreach ($_POST as $key=>$valor ){
       if(!preg_match('/(tamano)|^(Imprimir)/',$key)){
         $codigos[]=$valor;
-      };    
+      };
     };
     $this->fpdf->Open();
     $this->fpdf->SetMargins(0,0,0);
     $this->fpdf->SetAutoPageBreak(true);
     $this->fpdf->SetDrawColor(128);
-    $x=0; 
+    $x=0;
     $y=0;
     if( count($codigos)>0){
       $this->fpdf->AddPage();
@@ -419,7 +419,7 @@ class Topdf extends MY_Controller{
         $this->fpdf->SetFont('Arial','' ,42);
         $this->fpdf->SetXY($x+80,$y+55);
         $this->fpdf->Cell(80, 0, sprintf("$%02.2f",$articulo->precio), 0, 0, 'C');
-         * 
+         *
          */
         $col=($col==0)?1:0;
         $des=($col==0)?0:3;
@@ -429,7 +429,7 @@ class Topdf extends MY_Controller{
         if( $y > $pagina ){
           $this->fpdf->AddPage();
           $y=0;
-        }; 
+        };
       }
     };
     $print = ($this->input->post('Imprimir')=="Imprimir")?true:false;
@@ -437,12 +437,12 @@ class Topdf extends MY_Controller{
       $file = TMP . "cartel.pdf";
       $this->fpdf->Output($file,'F');
       $cmd = sprintf("lp %s -d %s",$file,$this->Printer);
-      shell_exec($cmd);          
+      shell_exec($cmd);
       $cmd = sprintf("rm -f  %s",$file);
-      shell_exec($cmd);          
+      shell_exec($cmd);
     }else{
       $file = "carteles.pdf";
-      $this->fpdf->Output($file,'D');      
+      $this->fpdf->Output($file,'D');
     }
     redirect('carteles/', 'location',301);
   }

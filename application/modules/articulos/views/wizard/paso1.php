@@ -11,7 +11,7 @@ Marca : <?php echo $nombreMarca?>
   <?php foreach($rubrosEmpresa as $rubro):?>
           <?php if($rubro->rubroNombre!=$aux):?>
                   <?php $aux=$rubro->rubroNombre;?>
-                  <li><a href="#<?php echo $rubro->rubroId?>"><?php echo $rubro->rubroNombre?></a></li>
+                  <li><a href="<?php echo '#',$rubro->rubroId?>"><?php echo $rubro->rubroNombre?></a></li>
           <?php endif;?>
   <?php endforeach;?>
   </ul>
@@ -96,7 +96,7 @@ var dialogOpts = {
 	  var id    = $("#resultadoAjaxPaso1 >.codigo").html();
 	  $(".botSel").html(texto);
 	  $(".botSel").show();
-	  $(".botSel").attr('id',id);		
+	  $(".botSel").attr('id',id);
 	  $('#searchSubrubro').dialog("destroy");
 	}
  };

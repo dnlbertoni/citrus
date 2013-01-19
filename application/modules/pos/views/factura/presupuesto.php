@@ -27,10 +27,10 @@ Articulo <?php echo form_input('codigobarra','','id="codigobarra"');?>
 <?php echo form_close();?>
 </div>
 <div class="clear"></div>
-<div id="loading"><img src="<?php echo base_url() .'/rsc/img/loading.gif'?>" alt="Loading..." /></div>
+<div id="loading"><?php echo Assets::image('loading.gif',array('alt'=>"Loading..."));?></div>
 
 <div id="brief">
-  
+
 </div>
 <div id="cliente"></div>
 <div id="cuentaAjax"></div>
@@ -249,7 +249,7 @@ function ImprimoRemito(){
 	  $("#tipcom_nom").html('Ticket');
 	}else{
 	  $("#tipcom_id").val('2');
-	  $("#tipcom_nom").html('Factura');		
+	  $("#tipcom_nom").html('Factura');
 	}
   }else{
     $("#tipcom_id").val('6');
@@ -295,5 +295,5 @@ function ImprimoTicket(){
                  $("#imprimo").dialog("moveToTop");
                  $("#imprimo").dialog("open");
               });
-}  
+}
 </script>

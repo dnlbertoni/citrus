@@ -36,6 +36,18 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
+define('VERSION','3.0');
 
+switch($_SERVER['REMOTE_ADDR']){
+  case '192.168.1.102':
+    $puesto = 3;
+    break;
+  default:
+    $puesto = 4;
+    break;
+}
+define('PUESTO', $puesto);
+define('PRREMITO','laser03');
+define('PRCARTEL','laser03');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

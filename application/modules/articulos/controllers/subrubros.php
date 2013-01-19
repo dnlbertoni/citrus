@@ -4,11 +4,6 @@ class Subrubros extends MY_Controller{
     parent::__construct();
     $this->load->model("Rubros_model", "", TRUE);
     $this->load->model("Subrubros_model", "", TRUE);
-    /*panel de tareas
-    $datos['tareas'][] = array('articulos/precios/', '');
-    $datos['tareas'][] = array('articulos/marcas/', '');
-    $datos['tareas'][] = array('articulos/rubros/', 'Rubros');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas */
   }
   function index(){
     //panel de tareas
@@ -17,12 +12,13 @@ class Subrubros extends MY_Controller{
     $datos['tareas'][] = array('articulos/subrubros/', 'Subrubros');
     $datos['tareas'][] = array('articulos/marcas/', 'Marcas');
     $datos['tareas'][] = array('articulos/submarcas/', 'Submarcas');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas
-    
+    Template::set($datos);
+    Template::set_block('tareas', 'tareas'); // panel de tareas
+
     $subrubros = $this->Subrubros_model->getAllConRubros();
     $data['subrubros'] = $subrubros;
-    $this->template->write_view('contenido', 'articulos/subrubros/index', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::render();
   }
   function agregar($metodo="html"){
     $subrubro = array( 'DESCRIPCION_SUBRUBRO' => '',
@@ -36,8 +32,9 @@ class Subrubros extends MY_Controller{
     $data['cancelar'] = $metodo;
     if($metodo=="html"){
       $data['accionSub'] = 'articulos/subrubros/agregarDo';
-      $this->template->write_view('contenido', 'articulos/subrubros/ver', $data);
-      $this->template->render();
+      Template::set($data);
+      Template::set_view('articulos/subrubros/ver');
+      Template::render();
     }else{
       $data['accionSub'] = 'articulos/subrubros/agregarDo/ajax';
       $this->load->view('articulos/subrubros/ver', $data);
@@ -64,7 +61,7 @@ class Subrubros extends MY_Controller{
     }else{
       echo "<span class='codigo'>",$id,"</span>";
     }
-    $this->template->render();
+    Template::render();
   }
   function editar($id, $metodo="html"){
 	$data['subrubro']  = $this->Subrubros_model->getById($id);
@@ -73,8 +70,9 @@ class Subrubros extends MY_Controller{
         $data['cancelar'] = $metodo;
         if($metodo=="html"){
           $data['accionSub'] = 'articulos/subrubros/editarDo';
-          $this->template->write_view('contenido', 'articulos/subrubros/ver', $data);
-          $this->template->render();
+          Template::set($data);
+          Template::set_view('articulos/subrubros/ver');
+          Template::render();
         }else{
           $data['accionSub'] = 'articulos/subrubros/editarDo/ajax';
           $this->load->view('articulos/subrubros/ver', $data);

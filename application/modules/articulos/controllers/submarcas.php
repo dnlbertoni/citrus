@@ -9,9 +9,9 @@ class Submarcas extends MY_Controller{
   function index(){
     $submarcas = $this->Submarcas_model->getAllConMarcas();
     $data['submarcas'] = $submarcas;
-    $this->template->add_js('ui-tableFilter');
-    $this->template->write_view('contenido', 'articulos/submarcas/index', $data);
-    $this->template->render();
+    Assets::add_js('ui-tableFilter');
+    Template::set($data);
+    Template::render();
   }
   function agregar($metodo="html"){
     $data['accion'] = 'articulos/submarcas/agregarDo';
@@ -25,8 +25,9 @@ class Submarcas extends MY_Controller{
     $data['marcaSel'] = $this->Marcas_model->ListaSelect();
     $data['cancelar']  = $metodo;
     if($metodo=="html"){
-      $this->template->write_view('contenido', 'articulos/submarcas/ver', $data);
-      $this->template->render();
+      Template::set($data);
+      Template::set_view('articulos/submarcas/ver');
+      Template::render();
     }else{
 	  $data['accion']   .= '/ajax';
       $this->load->view('articulos/submarcas/ver', $data);
@@ -61,8 +62,9 @@ class Submarcas extends MY_Controller{
 	$data['cancelar'] = $metodo;
 	if($metodo=="html"){
     	$data['accion'] = 'articulos/submarcas/editarDo';
-		$this->template->write_view('contenido', 'articulos/submarcas/ver', $data);
-		$this->template->render();
+        Template::set($data);
+        Template::set_view('articulos/submarcas/ver');
+		Template::render();
 	}else{
 		$data['accion'] = 'articulos/submarcas/editarDo/ajax';
         $this->load->view('articulos/submarcas/ver', $data);

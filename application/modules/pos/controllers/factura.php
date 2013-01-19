@@ -37,9 +37,8 @@ class Factura extends MY_Controller{
       $data['nombreCuenta'] = $this->Cuenta_model->getNombre($presupuesto->cuentaid_tmpmov);
       $data['condVtaId']    = $presupuesto->ctacte_tmpmov;
     }
-    //$this->template->add_js('pos/presupuesto');
-    $this->template->write_view('contenido','presupuesto',$data);
-    $this->template->render();
+    Template::set($data);
+    Template::render();
   }
   function addArticulo(){
     $cantidad    = $this->input->post('cantidad');
@@ -141,7 +140,7 @@ class Factura extends MY_Controller{
     $data['nombreCuenta'] = $this->Cuenta_model->getNombre(1);
     $data['condVtaId']    = 0;
     $data['condVta']      = ($this->Cuenta_model->getCtacte(1)==1)?"Cta Cte":"Contado";
-    $this->load->view('pos/presupuestoDetalle', $data);
+    $this->load->view('pos/factura/presupuestoDetalle', $data);
   }
   function cancelo(){
     $id_tmpencab = $this->input->post('id_tmpencab');
@@ -161,7 +160,7 @@ class Factura extends MY_Controller{
     $data['nombreCuenta'] = $this->Cuenta_model->getNombre(1);
     $data['condVtaId']    = 0;
     $data['condVta']      = ($this->Cuenta_model->getCtacte(1)==1)?"Cta Cte":"Contado";
-    $this->load->view('pos/presupuestoDetalle', $data);
+    $this->load->view('pos/factura/presupuestoDetalle', $data);
   }
   function cambioCuenta(){
     $puesto=$this->input->post('puesto');
@@ -169,7 +168,7 @@ class Factura extends MY_Controller{
     $cuenta=$this->input->post('cuenta');
     $cliente = $this->Cuenta_model->getByIdComprobante($cuenta);
     $this->Tmpmovim_model->cambioCuenta($puesto, $id_tmpencab, $cuenta, $cliente->ctacte);
-    $this->template->render();
+    //Template::render();
   }
   function printTicket($puesto,$idencab, $tipcom_id, $vale){
     //$this->output->enable_profiler(true);
@@ -227,7 +226,7 @@ class Factura extends MY_Controller{
         $data['Imprimo']   = 'Comprobante';
         break;
       };
-    $this->load->view('pos/carga', $data);
+    $this->load->view('pos/factura/carga', $data);
   }
   function printCtaCte($cuenta, $puesto, $numero, $importe, $idFacencab){
     $this->output->enable_profiler(true);
@@ -245,7 +244,7 @@ class Factura extends MY_Controller{
     $data['importe']   = $importe;
     $data['accion']    = 'printCtaCteDo';
     $data['Imprimo']   = 'Compr. CtaCte';
-    $this->load->view('pos/carga', $data);
+    $this->load->view('pos/factura/carga', $data);
   }
   function printCtaCteLaser($cuenta, $puesto, $numero, $importe, $idFacencab,$items){
     $this->output->enable_profiler(true);
@@ -263,7 +262,7 @@ class Factura extends MY_Controller{
     $data['importe']   = $importe;
     $data['accion']    = 'printCtaCteDo';
     $data['Imprimo']   = 'Compr. CtaCte';
-    $this->load->view('pos/carga', $data);
+    $this->load->view('pos/factura/carga', $data);
   }
   function printTicketDo(){
     $this->load->library('hasar');
@@ -643,21 +642,21 @@ class Factura extends MY_Controller{
         'estado'    => $estado
     );
     $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
-    $this->load->view('pos/carga');
+    $this->load->view('pos/factura/carga');
   }
   function _imprimeDNFLaser($ptorem,$numrem,$puesto, $idencab,$cliente, $items, $firma=false){
     /**
     * imprime comprobante de remito por PDF
     *
     * lee los articulos que le pasan en $items, lo arma y lo imprime
-    *@param integer $ptorem  numero del puesto para el remito 
+    *@param integer $ptorem  numero del puesto para el remito
     *@param integer $numrem  numero del comprobante para el remito
     *@param integer $puesto  nuemro del puesto para el comprobante si es cuenta corriente
     *@param integer $idencab numero del comprobante por si es cuenta corriente
-    *@param object  $cliente todos  los datos de la cuenta     
+    *@param object  $cliente todos  los datos de la cuenta
     *@param object  $items   todos  los items que  compro el cliente
-    *@param bolean  $firma   define si se imprime con firma o no 
-    *@return boolean $resultado devuelve verdadero si se envio la impresion 
+    *@param bolean  $firma   define si se imprime con firma o no
+    *@return boolean $resultado devuelve verdadero si se envio la impresion
     */
     $this->load->library('fpdf');
     $renglon=0;
@@ -680,7 +679,7 @@ class Factura extends MY_Controller{
         $this->fpdf->Cell(0,5,"Documento No Valido como Factura",0,1,'C');
         $this->fpdf->Cell(70,5,sprintf("( %s ) %s",$cliente->codigo,$cliente->nombre),0,0,'L');
         $this->fpdf->Cell(30,5,$fecha,0,1,'R');
-        
+
         if($firma){
           $this->fpdf->Cell(50,5,sprintf("Comp. CtaCte: %04.0f-%08.0f", $puesto,$idencab),0,0,'L');
         }
@@ -692,7 +691,7 @@ class Factura extends MY_Controller{
         $this->fpdf->SetXY(10,25);
         $this->fpdf->Cell(80,5,"Detalle",0,0,'C');
         $this->fpdf->SetXY(70,25);
-        $this->fpdf->Cell(15,5,"Unit",0,0,'C');        
+        $this->fpdf->Cell(15,5,"Unit",0,0,'C');
         $this->fpdf->SetXY(85,25);
         $this->fpdf->Cell(10,5,"Importe",0,1,'C');
         $this->fpdf->Line(0,30,100,30);
@@ -708,7 +707,7 @@ class Factura extends MY_Controller{
       $this->fpdf->SetXY(10,$linea);
       $this->fpdf->Cell(80,5,substr($item->detalle,0,30),0,0,'L');
       $this->fpdf->SetXY(70,$linea);
-      $this->fpdf->Cell(10,5,$item->precio,0,0,'R');        
+      $this->fpdf->Cell(10,5,$item->precio,0,0,'R');
       $this->fpdf->SetXY(85,$linea);
       $this->fpdf->Cell(10,5,sprintf("%4.2f",$item->precio*$item->cantidad),0,1,'R');
       $total += ($item->cantidad*$item->precio);
@@ -723,12 +722,12 @@ class Factura extends MY_Controller{
           if($firma){
             $this->fpdf->Line(20,$linea+20,80,$linea+20);
             $this->fpdf->SetXY(0,$linea+22);
-            $this->fpdf->Cell(0,5,"Firma del Cliente",0,1,'C'); 
+            $this->fpdf->Cell(0,5,"Firma del Cliente",0,1,'C');
           };
-        }   
+        }
         $renglon=0;
         $hoja++;
-      };  
+      };
     };
     $this->fpdf->SetFont('Arial','b','10');
     $this->fpdf->Line(0,$linea+5,100,$linea+5);
@@ -736,7 +735,7 @@ class Factura extends MY_Controller{
     if($firma){
       $this->fpdf->Line(20,$linea+20,80,$linea+20);
       $this->fpdf->SetXY(0,$linea+22);
-      $this->fpdf->Cell(0,5,"Firma del Cliente",0,1,'C'); 
+      $this->fpdf->Cell(0,5,"Firma del Cliente",0,1,'C');
     };
     $nombre = "/var/www/fiscal/".PUESTO . "/pdf/ticket.pdf";
     $this->fpdf->Output($nombre, 'F');

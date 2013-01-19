@@ -9,20 +9,22 @@ class Marcas extends MY_Controller{
     $datos['tareas'][] = array('articulos/precios/', '');
     $datos['tareas'][] = array('articulos/marcas/', '');
     $datos['tareas'][] = array('articulos/rubros/', 'Rubros');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas */
+    Template::set($datos);
+    Template::set_block('tareas', tareas); // panel de tareas */
   }
   function index(){
     $marcas = $this->Marcas_model->getAll('DETALLE_MARCA');
     $data['marcas'] = $marcas;
-    $this->template->add_js('ui-tableFilter');    
-    $this->template->write_view('contenido', 'articulos/marcas/index', $data);
-    $this->template->render();
+    Assets::add_js('ui-tableFilter');
+    Template::set($data);
+    Template::render();
   }
   function submarcas($marca){
 	$data['submarcas'] = $this->Submarcas_model->getFromMarca($rubro);
 	$data['generales']   = $this->Submarcas_model->getFromMarca(1);
-	$this->template->write_view('contenido', 'articulos/marcas/mezcla', $data);
-	$this->template->render();
+    Template::set($data);
+	Template::set_view('articulos/marcas/mezcla');
+	Template::render();
   }
   function agregar($metodo="html"){
     $data['accion'] = 'articulos/marcas/agregarDo';
@@ -31,10 +33,11 @@ class Marcas extends MY_Controller{
                    );
     $data['marca'] = (object) $marca;
     $data['ocultos'] = array('id'=>'');
-    $data['cancelar']  = $metodo;    
+    $data['cancelar']  = $metodo;
     if($metodo=="html"){
-      $this->template->write_view('contenido', 'articulos/marcas/ver', $data);
-      $this->template->render();
+      Template::set($data);
+      Template::set_view('articulos/marcas/ver');
+      Template::render();
     }else{
       $data['accion'] .= '/ajax';
       $this->load->view('articulos/marcas/ver', $data);
@@ -47,7 +50,7 @@ class Marcas extends MY_Controller{
 	  $id = $this->Marcas_model->add($datos);
 	  $datosSub = array( 'DETALLE_SUBMARCA' => strtoupper($this->input->post('descripcion')),
 				         'ALIAS_SUBMARCA'   => strtoupper($this->input->post('alias')),
-				         'ID_MARCA'         => $id, 
+				         'ID_MARCA'         => $id,
 				         'ESTADO_SUBMARCA'  => $this->input->post('estado')
 					    );
 	  $idSub = $this->Submarcas_model->add($datosSub);
@@ -61,10 +64,11 @@ class Marcas extends MY_Controller{
 	$data['accion'] = 'articulos/marcas/editarDo';
 	$data['marca']  = $this->Marcas_model->getById($id);
 	$data['ocultos'] = array('id'=>$id);
-    $data['cancelar']  = $metodo;    
+    $data['cancelar']  = $metodo;
 	if($metodo=="html"){
-		$this->template->write_view('contenido', 'articulos/marcas/ver', $data);
-		$this->template->render();
+      Template::set($data);
+      Template::set_view('articulos/marcas/ver');
+      Template::render();
 	}else{
 		$data['accion'] .= '/ajax';
 		$this->load->view('articulos/marcas/ver', $data);

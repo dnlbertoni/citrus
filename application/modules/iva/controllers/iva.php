@@ -5,17 +5,18 @@ class Iva extends MY_Controller{
     parent::__construct();
     $this->load->model('Facencab_model','',true);
 	$this->Printer = PRREMITO;
-    $this->template->write('title','Modulo de I.V.A.');
+    Template::set('title','Modulo de I.V.A.');
     $datos['tareas'][] = array( 'iva/cierre', 'Cierro Periodo');
     $datos['tareas'][] = array( 'iva/libro' , 'Libro I.V.A.');
     $datos['tareas'][] = array( 'iva/ingbru', 'Percepciones');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas
+    Template::set($datos);
+    Template::set_block('tareas', 'tareas'); // panel de tareas
   }
   function index(){
     $data ['periven']= $this->Facencab_model->ListadoSumaPeriodos(1);
     $data ['pericom']= $this->Facencab_model->ListadoSumaPeriodos(2);
-    $this->template->write_view('contenido', 'iva/index', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::render();
   }
   function cierre(){
     $data['selectLibro']=$this->input->post('libro');
@@ -35,9 +36,9 @@ class Iva extends MY_Controller{
     }
     $data['Libro'] = ($this->input->post('libro')==1)?'Ventas':'Compras';
     $data['Periodo'] = $this->input->post('periodo');
-    $this->template->add_js('iva/cierre');
-    $this->template->write_view('contenido', 'iva/cierre', $data );
-    $this->template->render();
+    Assets::add_js('iva/cierre');
+    Template::set($data);
+    Template::render();
   }
   function cierreDo(){
     foreach($_POST as $key=>$valor){
@@ -47,8 +48,8 @@ class Iva extends MY_Controller{
         }
       }
     };
-    //$this->template->write('contenido', print_r($data));
-    //$this->template->render();
+    //Template::set('contenido', print_r($data));
+    //Template::render();
     $data['resultado']=$this->Facencab_model->ActualizoPeriva($this->input->post('periodo'), $data['facturas_id']);
     $this->index();
   }
@@ -71,9 +72,9 @@ class Iva extends MY_Controller{
     $data['Libro'] = ($this->input->post('libro')==1)?'Ventas':'Compras';
     $data['libro'] = $this->input->post('libro');
     $data['Periodo'] = $this->input->post('periodo');
-    $this->template->add_js('iva/libro');
-    $this->template->write_view('contenido', 'iva/libro', $data );
-    $this->template->render();
+    Assets::add_js('iva/libro');
+    Template::set($data);
+    Template::render();
   }
   function ingbru(){
     $data['selectPeriodo']=$this->input->post('periodo');
@@ -82,9 +83,9 @@ class Iva extends MY_Controller{
       $data['facturas'] = $this->Facencab_model->ListadoPercepciones($this->input->post('periodo') );
     }
     $data['Periodo'] = $this->input->post('periodo');
-    $this->template->add_js('iva/ingbru');
-    $this->template->write_view('contenido', 'iva/ingbru', $data );
-    $this->template->render();
+    Assets::add_js('iva/ingbru');
+    Template::set($data);
+    Template::render();
   }
   function PeriodotoExcel($libro, $periodo){
     $facturas = $this->Facencab_model->LibroIVA($libro, $periodo);

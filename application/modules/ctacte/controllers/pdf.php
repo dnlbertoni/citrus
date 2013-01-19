@@ -50,7 +50,7 @@ class Pdf extends MY_Controller{
     $cmd = sprintf("rm -f %s", $file);
     shell_exec($cmd);
     redirect('ctacte/', 'location', 301);
-    //$this->template->render();
+    //Template::render();
   }
   function _Encabezado($titulo='', $concatCuenta='', $fecdes='', $fechas='', $nro=0){
     $this->fpdf->Image('rsc/img/logo.png',0,0,80);

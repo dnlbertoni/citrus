@@ -18,7 +18,7 @@ a:hover
 body
 {
 	background-color: #F0E3A4;
-	background-image: url('../img/a4.gif');
+	background-image: url('img/a4.gif');
 	background-repeat: repeat-x;
 	color: #37371E;
 	font-family: georgia, serif;
@@ -27,12 +27,12 @@ body
 
 #outer
 {
-	width: 860px;
+	width: 960px;
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 1.0em;
-	background-color: #FEFEF2;	
-	background-image: url('../img/a3.gif');
+	background-color: #FEFEF2;
+	background-image: url('img/a3.gif');
 	background-repeat: repeat-x;
 	padding: 1.0em;
 	border-top: solid 1px #ffffff;
@@ -48,7 +48,7 @@ body
 #menu
 {
 	background-color: #6C7424;
-	background-image: url('../img/a1.gif');
+	background-image: url('img/a1.gif');
 	background-repeat: repeat-x;
 	color: #ffffff;
 	height: 1.4em;
@@ -82,10 +82,9 @@ body
 	padding: 0.8em;
 }
 
-#menu li a:hover
-{
+#menu li a:hover{
 	background-color: #515815;
-	background-image: url('../img/a2.gif');
+	background-image: url('img/a2.gif');
 	background-repeat: repeat-x;
 }
 
@@ -132,7 +131,7 @@ body
 
 #column1
 {
-	width: 630px;
+	width: 730px;
 	float: right;
 	position: relative;
 }

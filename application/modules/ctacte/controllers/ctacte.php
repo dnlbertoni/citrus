@@ -7,16 +7,17 @@ class Ctacte extends MY_Controller{
     $this->load->model('Ctacte_rec_model'  , '', TRUE);
     $this->load->model('Cuenta_model'  , '', TRUE);
     $this->load->model('Numeradores_model', '',TRUE);
-    $this->template->write('title', 'Modulo Cuentas Corrientes');
+    Template::set('title', 'Modulo Cuentas Corrientes');
     // panel de tareas Regulares
     $datos['tareasSet']=true;
     $datos['tareas'][] = array('cuenta/crear', 'Agregar CtaCte');
     $datos['tareas'][] = array('ctacte/adeudadas', 'Listado Liq a Cobrar');
     $datos['tareas'][] = array('cuenta/topdf/listado/1/1', 'Listado Clientes CTACTE');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas
+    Template::set($datos);
+    Template::set_block('tareas', 'tareas'); // panel de tareas
   }
   function index(){
-    $this->template->add_js('ui-tableFilter');      
+    Assets::add_js('ui-tableFilter');
     $fechoy=getdate();
     $pendientes = $this->Ctacte_movim_model->getTotalesAgrupados('P');
     $liquidadas = $this->Ctacte_liq_model->getAllEstado('P');
@@ -29,17 +30,18 @@ class Ctacte extends MY_Controller{
     $data['cuentas']    = $cuentas;
     $data['ultimas']    = $ultimas;
     $data['pagadas']    = $pagadas;
-    $data['hoy']        = $fechoy['mday']."/".$fechoy['mon']."/".$fechoy['year']; 
-    $this->template->write_view('contenido', 'ctacte/index', $data);
-    $this->template->render();
+    $data['hoy']        = $fechoy['mday']."/".$fechoy['mon']."/".$fechoy['year'];
+    Template::set($data);
+    Template::render();
   }
   function liquidar($cuenta){
     $pendientes = $this->Ctacte_movim_model->getDetalle($cuenta,'P');
     $data['movimientos'] = $pendientes;
     $data['accion']  = 'ctacte/liquidarDo';
     $data['ocultos'] = array('cuenta'=>$cuenta, 'importe'=>0);
-    $this->template->write_view('contenido','ctacte/liqForm',$data);
-    $this->template->render();
+    Template::set($data);
+    Template::set_view('ctacte/liqForm');
+    Template::render();
   }
   function liquidarDo(){
     foreach($_POST as $key=>$valor){
@@ -75,8 +77,8 @@ class Ctacte extends MY_Controller{
     $data['periodo']    = $fechoy['year'].'-'.$fechoy['mon'];
     $data['ocultos']    = array('cuenta'=>$id);
     $data['idCuenta']   = $id;
-    $this->template->write_view('contenido', 'ctacte/historial', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::render();
   }
   function cobrar($idLiq){
     $liq   = $this->Ctacte_liq_model->getById($idLiq);
@@ -85,8 +87,9 @@ class Ctacte extends MY_Controller{
     $data['Liq'] = $liq;
     $data['movimientos'] = $movim;
     $data['ocultos'] = array('idLiq'=>$idLiq);
-    $this->template->write_view('contenido','ctacte/cobrarForm', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::set_view('ctacte/cobrarForm');
+    Template::render();
   }
   function cobrarDo(){
     $liq = $this->Ctacte_liq_model->getById($this->input->post('idLiq'));
@@ -99,11 +102,12 @@ class Ctacte extends MY_Controller{
     $this->Ctacte_liq_model->cobroLiq($liq->id, $idRec);
     $this->Ctacte_movim_model->cobroFac($liq->id, $idRec);
     //$this->index();
-    $this->template->render();
+    Template::render();
   }
   function adeudadas(){
     $data['pendientes']=$this->Ctacte_liq_model->getAllEstado('P');
-    $this->template->write_view('contenido','ctacte/listado', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::set_view('ctacte/listado');
+    Template::render();
   }
 }

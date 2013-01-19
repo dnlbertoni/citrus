@@ -66,8 +66,9 @@ class Wizard extends MY_Controller{
                                     );
     //$this->load->view('articulos/wizard/paso1', $data);
     $data['accion'] = "articulos/wizard/definoDetalle";
-    $this->template->write_view('contenido','articulos/wizard/paso1', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::set_view('articulos/wizard/paso1');
+    Template::render();
   }
   function definoMarca($CB, $empresa){
     $data['marcasEmpresa']   = $this->Empresas_model->getMarcas($marcas);
@@ -82,8 +83,9 @@ class Wizard extends MY_Controller{
                                      'id_submarca'    => ''
                                     );
     $data['accion'] = "articulos/wizard/definoRubro";
-    $this->template->write_view('contenido','articulos/wizard/paso2', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::set_view('articulos/wizard/paso2');
+    Template::render();
   }
   function definoDetalle(){
     $producto = $this->Subrubros_model->getAlias($this->input->post('id_subrubro'));
@@ -97,8 +99,9 @@ class Wizard extends MY_Controller{
     $data['articulo'] = (object) $articulo;
     $data['ocultos']  = $articulo;
     $data['accion']   = "articulos/wizard/definoPrecio";
-    $this->template->write_view('contenido', 'articulos/wizard/paso3',$data);
-    $this->template->render();
+    Template::set($data);
+    Template::set_view('articulos/wizard/paso3');
+    Template::render();
   }
   function definoPrecio(){
     $detalle = $this->input->post('especificacion');
@@ -117,8 +120,9 @@ class Wizard extends MY_Controller{
     $data['articulo'] = (object) $articulo;
     $data['ocultos']  = $articulo;
     $data['accion']   = "articulos/wizard/end";
-    $this->template->write_view('contenido', 'articulos/wizard/paso4',$data);
-    $this->template->render();
+    Template::set($data);
+    Template::set_view('articulos/wizard/paso4');
+    Template::render();
   }
   function end(){
     $articulos = $this->Articulos_model->Inicializar();
@@ -135,7 +139,7 @@ class Wizard extends MY_Controller{
     $articulos->detalle              = $this->input->post('descripcion');
     $articulos->ESTADO_ARTICULO      = 1;
     $this->Articulos_model->agregar($this->input->post('codigobarra'),$articulos,$this->input->post('precio'));
-    redirect('articulos/', 'location', 301);
+    Template::redirect('articulos/');
   }
 }
 

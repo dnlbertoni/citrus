@@ -26,7 +26,7 @@ class Articulos extends MY_Controller{
     $this->load->model('Subrubros_model', '', TRUE);
     $this->load->model('Marcas_model', '', TRUE);
     $this->load->model('Submarcas_model', '', TRUE);
-    $this->template->write('title', 'Modulo Articulos');
+    Template::set('title', 'Modulo Articulos');
   }
   function index(){
     //panel de tareas
@@ -40,7 +40,8 @@ class Articulos extends MY_Controller{
     $datos['tareas'][] = array('articulos/submarcas/', 'Submarcas');
     $datos['tareas'][] = array('articulos/submarcas/agregar/ajax', 'Agregar Submarcas', 'class="ajaxLoad"');
     $datos['tareas'][] = array('articulos/estadisticas', 'Estadisticas');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas
+    Template::set($datos);
+    Template::set_block('tareas','tareas'); // panel de tareas
 
     $articulos = $this->Articulos_model->getAllMod(50);
     $data['progressbarDetalle'] = $this->Articulos_model->nivelNormalizacionDetalle();
@@ -51,9 +52,9 @@ class Articulos extends MY_Controller{
     $data['submarcasSel']  = $this->Submarcas_model->ListaSelect();
     $data['subrubrosDep']  = $this->Subrubros_model->ListaSelectDependiente();
     $data['submarcasDep']  = $this->Submarcas_model->ListaSelectDependiente();
-    $this->template->add_js('ui-tableFilter');
-    $this->template->write_view('contenido', 'articulos/index',$data);
-    $this->template->render();
+    Assets::add_js('ui-tableFilter');
+    Template::set($data);
+    Template::render();
   }
   function buscoDescripcion(){
     $articulos = $this->Articulos_model->buscoNombre($this->input->post('nombreTXT'));
@@ -112,9 +113,9 @@ class Articulos extends MY_Controller{
         $data['nombreSubmarca'] = $this->Submarcas_model->getNombre($articulo->ID_MARCA);
         $data['accion']      = 'articulos/update';
         $data['primaryKey']  = array( $this->Articulos_model->primaryKey, "CODIGOBARRA_ARTICULO");
-        $this->template->add_js('articulos/ver');
-        $this->template->write_view('contenido', 'ver',$data);
-        $this->template->render();
+        Assets::add_js('articulos/ver');
+        Template::set($data);
+        Template::render();;
       }else{
       //  redirect('articulos/wizard/index/0/'.$this->input->post('codigobarra'), 'location',301);
         $this->agregar($this->input->post('codigobarra'));
@@ -153,9 +154,10 @@ class Articulos extends MY_Controller{
     $data['nombreSubmarca'] = $this->Submarcas_model->getNombre($articulos->ID_MARCA);
     $data['accion'] = 'articulos/agregarDo';
     $data['primaryKey'] = array( $this->Articulos_model->primaryKey, "CODIGOBARRA_ARTICULO");
-    $this->template->add_js('articulos/ver');
-    $this->template->write_view('contenido', 'ver',$data);
-    $this->template->render();
+    Assets::add_js('articulos/ver');
+    Template::set($data);
+    Template::set_view('articulos/ver');
+    Template::render();
   }
   function agregarDo(){
     $datos = array();
@@ -236,8 +238,9 @@ class Articulos extends MY_Controller{
     $data['accion'] = $accion;
     $data['urlBuscoAjax'] = sprintf("'%sindex.php/articulos/%s/%s/%s'", base_url(),$url,$funcion,'resultadoAjax');
     $data['titulo'] = $titulo;
-    $this->template->write_view('contenido', $vista, $data);
-    $this->template->render();
+    Template::set($data);
+    Template::set_view($vista);
+    Template::render();
   }
   function cambioMuchosDo($precios=false){
     if($this->input->post('ID_MARCA')){
@@ -281,15 +284,15 @@ class Articulos extends MY_Controller{
     foreach($datos as $id){
       $this->Articulos_model->borrar($id);
     };
-    //$this->template->render();
+    //Template::render();
     $this->index();
   }
   function normalizacion(){
 	$data['todosLosArticulos'] = $this->Articulos_model->totalRegistros();
 	$estadisticas = $this->Articulos_model->datosNormalizacion();
 	$data['estadisticas'] = (object) $estadisticas;
-	$this->template->write_view('contenido', 'articulos/normalizacion', $data);
-	$this->template->render();
+    Template::set($data);
+	Template::render();
   }
   function estadisticas(){
      $estados  = $this->Articulos_model->getRubrosMarcasAgrupadas();
@@ -305,8 +308,8 @@ class Articulos extends MY_Controller{
      $data['activos'] = $activos;
      $data['suspendidos'] = $total - $activos;
      $data['normalizacion'] = $this->Articulos_model->datosNormalizacion();
-     $this->template->write_view('contenido', 'articulos/estadisticas', $data);
-     $this->template->render();
+     Template::set($data);
+     Template::render();
   }
   function rankings($tipo="importe"){
     switch($tipo){
@@ -321,8 +324,9 @@ class Articulos extends MY_Controller{
         break;
     }
     $data['numeros'] = $numeros;
-    $this->template->write_view('contenido', 'articulos/agrupadas', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::set_view('agrupadas');
+    Template::render();
   }
 
 }

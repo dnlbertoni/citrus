@@ -2,29 +2,29 @@
 /*
  * Controlador de los carteles para imprimir precios
  */
- 
+
  class Carteles extends MY_Controller{
    function __construct(){
      parent::__construct();
      $this->load->model('Articulos_model','',true);
    }
    function index(){
-       
+
      $Menu[0]['boton']  = "bot_Navidad";
      $Menu[0]['link']   = "carteles/navidad";
      $Menu[0]['nombre'] = "Carteles Navidad";
-     
+
      $Menu[1]['boton']  = "bot_Cartel3";
      $Menu[1]['link']   = "carteles/ofertas/3";
      $Menu[1]['nombre'] = "Oferta 3 X Hoja";
-     
+
      $Menu[2]['boton']  = "bot_Cartel";
      $Menu[2]['link']   = "carteles/ofertas/1";
      $Menu[2]['nombre'] = "Oferta 1 X Hoja";
 
      $Menu[3]['boton']  = "bot_gondola";
      $Menu[3]['link']   = "carteles/precios/1";
-     $Menu[3]['nombre'] = "Carteles Precios";   
+     $Menu[3]['nombre'] = "Carteles Precios";
 
      $Menu[4]['boton']  = "bot_vinos";
      $Menu[4]['link']   = "carteles/precios/2";
@@ -41,16 +41,15 @@
      $Menu[7]['boton']  = "bot_listaPrecios";
      $Menu[7]['link']   = "carteles/cartelVerduras";
      $Menu[7]['nombre'] = "Carteles de Verduras";
-     
+
      $data['Menu'] = $Menu;
-     $this->template->add_js('carteles/index');
-     $this->template->write_view('contenido','index', $data);
-     $this->template->render();
+     Assets::add_js('carteles/index');
+     Template::set($data);
+     Template::render();
    }
    function navidad(){
-     $this->template->add_js('carteles/navidad');
-     $this->template->write_view('contenido','navidad');
-     $this->template->render();
+     Assets::add_js('carteles/navidad');
+     Template::render();
    }
    function precios($tamano=1){
      if($this->input->post('dias')){
@@ -61,15 +60,14 @@
      if($dias==0){
        $Articulos = $this->Articulos_model->PendientesImpresion();
      }else{
-       $Articulos = $this->Articulos_model->ModificadosHace($dias);       
+       $Articulos = $this->Articulos_model->ModificadosHace($dias);
      };
      $data['tamano'] = $tamano;
      $data['dias']   = $dias;
      $data['accion'] = ($tamano==1)? 'carteles/topdf/cartelesPrecios' : 'carteles/topdf/cartelesVinos';
      $data['articulos'] = $Articulos;
-     //$this->template->add_js('carteles/precios');
-     $this->template->write_view('contenido', 'carteles/precios', $data);
-     $this->template->render();
+     Template::set($data);
+     Template::render();
    }
    function ofertas($tamano=1){
      $fechoy= new DateTime();
@@ -77,9 +75,9 @@
      $data['tamano'] = $tamano;
      $data['accion'] = ($tamano==1)? 'carteles/topdf/oferta/1' : 'carteles/topdf/oferta/3';
      $data['fecha']  = $fechoy->format('d/m/Y');
-     $this->template->add_js('carteles/ofertas');
-     $this->template->write_view('contenido', 'carteles/ofertas', $data);
-     $this->template->render();
+     Assets::add_js('carteles/ofertas');
+     Template::set($data);
+     Template::render();
    }
    function ofertaMultiple($tamano=1){
      $fechoy= new DateTime();
@@ -88,9 +86,10 @@
      $data['accion'] = ($tamano==1)? 'carteles/topdf/ofertaMultiple/1' : 'carteles/topdf/ofertaMultiple/3';
      $data['fecha']  = $fechoy->format('d/m/Y');
      $data['precio'] = true;
-     $this->template->add_js('carteles/ofertas');
-     $this->template->write_view('contenido', 'carteles/ofertas', $data);
-     $this->template->render();
+     Assets::add_js('carteles/ofertas');
+     Template::set($data);
+     Template::set_view('carteles/ofertas');
+     Template::render();
    }
    function buscoDetalles(){
      $this->output->enable_profiler(false);
@@ -102,7 +101,7 @@
        $retornoAjax .= "<td>".$Articulos->precio."</td>";
        $retornoAjax .= "<td>".$Articulos->codigobarra."</td>";
        $retornoAjax .= "<td><input type='hidden' name='". $Articulos->id ."' value='". $Articulos->id ."' /></td>";
-       $retornoAjax .= "</tr>";       
+       $retornoAjax .= "</tr>";
        echo $retornoAjax;
      };
    }
@@ -111,8 +110,9 @@
      $data['rubrosSel'] = $this->Rubros_model->ListaSelect();
      $data['rubro'] = 0;
      $data['accion'] = 'carteles/topdf/listaDePrecios';
-     $this->template->write_view('contenido', 'carteles/listaprecios', $data);
-     $this->template->render();
+     Template::set($data);
+     Template::set_view('carteles/listaprecios');
+     Template::render();
    }
    function listaDePreciosDo(){
      $this->output->enable_profiler(false);
@@ -129,7 +129,7 @@
          $retornoAjax .= "<td>".$Articulo->precio."</td>";
          $retornoAjax .= "<td>".$Articulo->codigobarra."</td>";
          $retornoAjax .= "<td><input type='checkbox' name='". $Articulo->id ."' value='". $Articulo->id ."' /></td>";
-         $retornoAjax .= "</tr>";       
+         $retornoAjax .= "</tr>";
        };
      }
      $retornoAjax .= "<tr><td colsapn='5'>Total de Articulos ".$artis."</td></tr>";
@@ -141,7 +141,8 @@
      $data['rubrosSel'] = $this->Rubros_model->ListaSelect();
      $data['rubro'] = 11;
      $data['accion'] = 'carteles/topdf/cartelVerduras';
-     $this->template->write_view('contenido', 'carteles/listaprecios', $data);
-     $this->template->render();
+     Template::set($data);
+     Template::set_view('carteles/listaprecios');
+     Template::render();
    }
  }

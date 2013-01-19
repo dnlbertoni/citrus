@@ -9,7 +9,8 @@ class Rubros extends MY_Controller{
     $datos['tareas'][] = array('articulos/precios/', '');
     $datos['tareas'][] = array('articulos/marcas/', '');
     $datos['tareas'][] = array('articulos/rubros/', 'Rubros');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas */
+    Template::set($datos);
+    Template::set_block('tareas', 'tareas'); // panel de tareas */
   }
   function index(){
     //panel de tareas
@@ -18,25 +19,27 @@ class Rubros extends MY_Controller{
     $datos['tareas'][] = array('articulos/subrubros/', 'Subrubros');
     $datos['tareas'][] = array('articulos/marcas/', 'Marcas');
     $datos['tareas'][] = array('articulos/submarcas/', 'Submarcas');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas
-    
+    Template::set($datos);
+    Template::set_block('tareas', 'tareas'); // panel de tareas
+
     $rubros = $this->Rubros_model->getAll('DESCRIPCION_RUBRO');
     $data['rubros'] = $rubros;
-    $this->template->write_view('contenido', 'articulos/rubros/index', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::render();
   }
   function subrubros($rubro){
 	$data['subrubros'] = $this->Subrubros_model->getFromRubro($rubro);
 	$data['generales']   = $this->Subrubros_model->getFromRubro(1);
-        $data['titulo']      = $this->Rubros_model->getNombre($rubro);
-        $data['tituloGen']   = $this->Rubros_model->getNombre(1);
-	$this->template->write_view('contenido', 'articulos/rubros/mezcla', $data);
-	$this->template->render();
+    $data['titulo']      = $this->Rubros_model->getNombre($rubro);
+    $data['tituloGen']   = $this->Rubros_model->getNombre(1);
+    Template::set($data);
+    Template::set_view('articulos/rubros/mezcla');
+	Template::render();
   }
   function agregar($metodo="html"){
 	$data['accion'] = 'articulos/rubros/agregarDo';
-	$rubro = array('DESCRIPCION_RUBRO' => '', 
-				   'ALIAS_RUBRO'       => '', 
+	$rubro = array('DESCRIPCION_RUBRO' => '',
+				   'ALIAS_RUBRO'       => '',
                    'UNIDAD_RUBRO'      => 'BUL',
 				   'ESTADO_RUBRO'      => 1
 						   );
@@ -44,8 +47,9 @@ class Rubros extends MY_Controller{
 	$data['unidadSel'] = array('BUL' => 'BULTOS', 'PES' => 'PESO', 'LIQ'=>'LIQUIDOS');
 	$data['ocultos'] = array('id'=>'');
         if($metodo=="html"){
-          $this->template->write_view('contenido', 'articulos/rubros/ver', $data);
-          $this->template->render();
+          Template::set($data);
+          Template::set_view('articulos/rubros/ver');
+          Template::render();
         }else{
           $this->load->view('articulos/rubros/ver', $data);
         }
@@ -64,8 +68,9 @@ class Rubros extends MY_Controller{
 	$data['rubro']  = $this->Rubros_model->getById($id);
 	$data['unidadSel'] = array('BUL' => 'BULTOS', 'PES' => 'PESO', 'LIQ'=>'LIQUIDOS');
 	$data['ocultos'] = array('id'=>$id);
-	$this->template->write_view('contenido', 'articulos/rubros/ver', $data);
-	$this->template->render();
+    Template::set($data);
+    Template::set_view('articulos/rubros/ver');
+	Template::render();
   }
   function editarDo(){
 	  $datos = array( 'DESCRIPCION_RUBRO' => strtoupper($this->input->post('descripcion')),
