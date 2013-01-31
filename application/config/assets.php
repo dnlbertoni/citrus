@@ -4,7 +4,7 @@
 	The base folder (relative to the template.site_root config setting)
 	that all of the assets are stored in. This is used to generate both
 	the url and the relative file path.
-	
+
 	This should NOT include the trailing slash.
 */
 $config['assets.base_folder'] = 'assets';
@@ -12,15 +12,15 @@ $config['assets.base_folder'] = 'assets';
 /*
 	The names of the folders for the various assets.
 	These default to 'js', 'css', and 'images'. These folders
-	are expected to be found directly under the 'assets.base_folder'. 
-	
+	are expected to be found directly under the 'assets.base_folder'.
+
 	While searching through themes, these names are also used to
 	build alternate folders to look into, under the theme folders.
 */
 $config['assets.asset_folders'] = array(
 	'css'	=> 'css',
 	'js'	=> 'js',
-	'image'	=> 'images'
+	'image'	=> 'img'
 );
 
 /*

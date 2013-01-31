@@ -1,7 +1,7 @@
-<?php 
+<?php
 class Articulos_model extends MY_Model{
   var $tabla = array("name"        => "tbl_articulos",
-                     "id"          => "id_articulo", 
+                     "id"          => "id_articulo",
                      "nombre"      => "descripcion_articulo",
                      "precio"      => "preciovta_articulo",
                      "codigobarra" => "codigobarra_articulo"
@@ -26,7 +26,6 @@ class Articulos_model extends MY_Model{
         };
       }
     }
-
     return (object) $datos;
   }
   function buscoNombre($valor){
@@ -130,7 +129,7 @@ class Articulos_model extends MY_Model{
     }else{
       return false;
     }
-  }  
+  }
   function getDatosBasicos($id){
     $id = intval($id);
     $this->db->_reset_select();

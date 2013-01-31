@@ -40,6 +40,7 @@
 
 $route['default_controller'] = "facturas";
 $route['404_override'] = '';
+$route['wizard'] = 'articulos/wizard/index';
 
 
 /* End of file routes.php */

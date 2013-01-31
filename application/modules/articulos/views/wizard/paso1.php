@@ -1,72 +1,87 @@
+<div class="post">
+<h1>Paso 1 - Definicion del Rubro</h1>
+<div id="detalleArticulo" class="ui-widget">
+  Muestro los datos del articulo que ya tengo
+</div>
+
 <?php echo form_open($accion, "id='wizardPaso1-form'", $ocultos);?>
 <?php echo form_close();?>
-Codigo Barra:<?php echo $codigobarra ?>
-Empresa<h1>Empresa: <?php echo $empresaNombre?></h1>
-Marca : <?php echo $nombreMarca?>
-
-<h2>Rubros Sugeridos</h2>
-<div id="tabs">
-  <ul>
-  <?php $aux="";?>
-  <?php foreach($rubrosEmpresa as $rubro):?>
+<div class="ui-widget">
+  <h3 class="ui-widget-header">Rubros Sugeridos</h3>
+  <div class="ui-widget-content">
+    <div id="tabs">
+      <ul>
+      <?php $aux="";?>
+      <?php foreach($rubrosEmpresa as $rubro):?>
+              <?php if($rubro->rubroNombre!=$aux):?>
+                      <?php $aux=$rubro->rubroNombre;?>
+                      <li><?php print("<a href='#$rubro->rubroId'>$rubro->rubroNombre</a>") ?></li>
+              <?php endif;?>
+      <?php endforeach;?>
+      </ul>
+      <?php
+      $aux="";
+      $vez=0;?>
+      <?php foreach($rubrosEmpresa as $rubro):?>
           <?php if($rubro->rubroNombre!=$aux):?>
-                  <?php $aux=$rubro->rubroNombre;?>
-                  <li><a href="<?php echo '#',$rubro->rubroId?>"><?php echo $rubro->rubroNombre?></a></li>
+              <?php if($vez>0):?>
+                      </div>
+              <?php endif;?>
+              <?php $vez++;?>
+              <?php $aux=$rubro->rubroNombre;?>
+              <div id="<?php echo $rubro->rubroId?>">
           <?php endif;?>
-  <?php endforeach;?>
-  </ul>
-  <?php
-   $aux="";
-   $vez=0;?>
-  <?php foreach($rubrosEmpresa as $rubro):?>
-      <?php if($rubro->rubroNombre!=$aux):?>
-          <?php if($vez>0):?>
-                  </div>
-          <?php endif;?>
-          <?php $vez++;?>
-          <?php $aux=$rubro->rubroNombre;?>
-          <div id="<?php echo $rubro->rubroId?>">
-      <?php endif;?>
-      <span class="boton" id="<?php echo $rubro->subrubroId?>"><?php echo $rubro->subrubroNombre?></span>
-  <?php endforeach;?>
+          <span class="boton" id="<?php echo $rubro->subrubroId?>"><?php echo $rubro->subrubroNombre?></span>
+      <?php endforeach;?>
+      </div>
+    </div>
   </div>
 </div>
-<div id="tabs2">
-  <ul>
-  <?php $aux="";?>
-  <?php foreach($rubrosMarca as $rubro):?>
+<div>&nbsp;</div>
+<div class="ui-widget">
+  <h3 class="ui-widget-header">Todos los rubros</h3>
+  <div class="ui-widget-content">
+    <div id="tabs2">
+      <ul>
+      <?php $aux="";?>
+      <?php foreach($rubrosMarca as $rubro):?>
+              <?php if($rubro->rubroNombre!=$aux):?>
+                      <?php $aux=$rubro->rubroNombre;?>
+                      <li><a href="#<?php echo $rubro->rubroId?>"><?php echo $rubro->rubroNombre?></a></li>
+              <?php endif;?>
+      <?php endforeach;?>
+      </ul>
+      <?php
+      $aux="";
+      $vez=0;?>
+      <?php foreach($rubrosMarca as $rubro):?>
           <?php if($rubro->rubroNombre!=$aux):?>
-                  <?php $aux=$rubro->rubroNombre;?>
-                  <li><a href="#<?php echo $rubro->rubroId?>"><?php echo $rubro->rubroNombre?></a></li>
+              <?php if($vez>0):?>
+                      </div>
+              <?php endif;?>
+              <?php $vez++;?>
+              <?php $aux=$rubro->rubroNombre;?>
+              <div id="<?php echo $rubro->rubroId?>">
           <?php endif;?>
-  <?php endforeach;?>
-  </ul>
-  <?php
-   $aux="";
-   $vez=0;?>
-  <?php foreach($rubrosMarca as $rubro):?>
-      <?php if($rubro->rubroNombre!=$aux):?>
-          <?php if($vez>0):?>
-                  </div>
-          <?php endif;?>
-          <?php $vez++;?>
-          <?php $aux=$rubro->rubroNombre;?>
-          <div id="<?php echo $rubro->rubroId?>">
-      <?php endif;?>
-      <span class="boton" id="<?php echo $rubro->subrubroId?>"><?php echo $rubro->subrubroNombre?></span>
-  <?php endforeach;?>
+          <span class="boton" id="<?php echo $rubro->subrubroId?>"><?php echo $rubro->subrubroNombre?></span>
+      <?php endforeach;?>
+      </div>
+    </div>
   </div>
 </div>
 
-<h3>Todos los rubros</h3>
 <div id="botBuscoSubrubro">Buscar Rubro</div>
 <div id="botSel" class="boton botSel"></div>
 <div id="resultadoAjaxPaso1"></div>
 <div id="searchSubrubro"></div>
 
+
+</div>
+
 <script>
 $(document).ready(function(){
   $("#tabs").tabs();
+  $(".ui-widget-content").css('padding','5px');
   $("#tabs2").tabs();
   $(".boton").button();
   $(".botSel").hide();

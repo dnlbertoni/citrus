@@ -120,7 +120,7 @@ class Factura extends MY_Controller{
       $data['condVta']     = ($this->Cuenta_model->getCtacte( $data['Articulos'][0]->cuenta)==1)?"Cta Cte":"Contado";
     };
     $data['codigobarra']  =$codigobarra;
-    $this->load->view('pos/presupuestoDetalle', $data);
+    $this->load->view('pos/factura/presupuestoDetalle', $data);
   }
   function delArticulo(){
     $id_tmpmov = $this->input->post('codmov');

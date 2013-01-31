@@ -14,7 +14,6 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://ce-server:8080/base';
 $config['base_url']	= '';
 
 /*
@@ -46,6 +45,7 @@ $config['index_page'] = 'index.php';
 |
 */
 $config['uri_protocol']	= 'AUTO';
+$config['uri_protocol']	= 'REQUEST_URI';
 
 /*
 |--------------------------------------------------------------------------
@@ -181,7 +181,7 @@ $config['directory_trigger']	= 'd'; // experimental not currently in use
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
+$config['log_threshold'] = 4;
 
 /*
 |--------------------------------------------------------------------------

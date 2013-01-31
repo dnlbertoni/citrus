@@ -1,6 +1,6 @@
 <h2>Imprimiendo <?php echo $Imprimo?></h2>
 <h3>Por Favor espere...</h3>
-<div id="carga"><img src="<?php echo Assets::image('loading.gif');?>" alt="Imprimiendo..." /></div>
+<div id="carga"><?php echo Assets::image(array('loading.gif','Imprimiendo'));?></div>
 <input type="hidden" id="puestoAjax"  value="<?php echo $puesto?>" />
 <input type="hidden" id="idencabAjax" value="<?php echo $idencab?>" />
 <input type="hidden" id="cuentaAjax"  value="<?php echo $cuenta?>" />

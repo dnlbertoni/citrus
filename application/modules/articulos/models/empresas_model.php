@@ -8,7 +8,12 @@ class Empresas_model extends MY_Model{
     $this->db->_reset_select();
     $this->db->from($this->getTable());
     $this->db->where('id', $idEmpresa);
-    return $this->db->get()->result();
+    $q = $this->db->get()->row();
+    if(count($q)>0){
+      return $q;
+    }else{
+      return false;
+    }
   }
   function getEmpresasFromMarca($idMarca){
     $this->db->select('id');

@@ -1,55 +1,66 @@
 <?php
+/*
+ * Controlador cabecera del modulo articulos
+ * FEATURES:
+ *
+ *@TODO: Unificar el Template
+ */
 class Wizard extends MY_Controller{
+  private $CB;
+  private $idEmpresa;
+  private $Articulo;
   function  __construct() {
     parent::__construct();
-    $this->load->model('Articulos_model','',TRUE);
-    $this->load->model('Empresas_model','',TRUE);
-    $this->load->model('Rubros_model','',TRUE);
+    $this->load->model('Articulos_model');
+    $this->load->model('Empresas_model');
+    $this->load->model('Rubros_model');
     $this->load->model('Subrubros_model','',TRUE);
     $this->load->model('Marcas_model','',TRUE);
     $this->load->model('Submarcas_model','',TRUE);
     $this->output->enable_profiler(true);
   }
-  function index($step=0,$CB=false){
+  function index($CB=false){
     //routeo los pasos del wizard
     //$CB="'".$CB."'";
-    switch($step){
-      case 0:
-        if($CB){
-          $this->decrypCodigoBarra($CB);
-        }else{
-          $this->decrypCodigoBarra($this->input->post('codigobarra'));
-        };
-//        $this->decrypCodigoBarra('7506195176733');
-        break;
-      case 99:
-        $this->Cancelar();
-        break;
+    $CB='7516195176733'; // no existe
+    $CB='7506195176733'; //existe
+    $articulo = $this->Articulos_model->getByCodigobarra($CB);
+    if($articulo){
+      $this->Articulo = $articulo;
+    }else{
+      $this->Articulo = $this->Articulos_model->Inicializar();
     }
+    if($CB){
+      $this->CB = $CB;
+      $this->decrypCodigoBarra($this->CB);
+    }else{
+      if($this->input->post('codigobarra')){
+        $this->CB = $this->input->post('codigobarra');
+        $this->decrypCodigoBarra($this->CB);
+      }else{
+        $this->Cancelar();
+      };
+    };
   }
   function Cancelar(){
-    redirect('articulos/agrego', 'lcoation',301);
+    Template::redirect('articulos/');
   }
   function decrypCodigoBarra($codigobarra){
     $CB = trim($codigobarra);
     if(strlen($CB)==13){
-      $empAux = substr($CB, 0, 7);
-      $this->definoMarca($CB,$empresa);
-      /*
+      $idEmpresa   = substr($CB, 0, 7);
+      $empresa  = $this->Empresas_model->getById($idEmpresa);
       if($empresa){
-        $this->definoMarca($CB,$empresa);
+        $this->idEmpresa=$empresa->id;
       }else{
-        $this->index(99);
+        $this->idEmpresa=false;
       }
-       *
-       */
-    }else{
-      $this->index(99);
+      $this->definoRubro();
     }
   }
   function definoRubro(){
-    $idEmpresa               = $this->input->post('empresa');
-    $codigobarra             = $this->input->post('codigobarra');
+    $idEmpresa               = $this->idEmpresa;
+    $codigobarra             = $this->CB;
     $id_submarca             = $this->input->post('id_submarca');
     $submarca                = $this->Submarcas_model->getById('id_submarca');
     $empresa                 = $this->Empresas_model->getById($idEmpresa);
@@ -125,7 +136,6 @@ class Wizard extends MY_Controller{
     Template::render();
   }
   function end(){
-    $articulos = $this->Articulos_model->Inicializar();
     $articulos->CODIGOBARRA_ARTICULO = $this->input->post('codigobarra');
     $articulos->DESCRIPCION_ARTICULO = $this->input->post('descripcion');
     $articulos->ID_SUBRUBRO          = $this->input->post('id_subrubro');
@@ -138,8 +148,7 @@ class Wizard extends MY_Controller{
     $articulos->medida               = $this->input->post('medida');
     $articulos->detalle              = $this->input->post('descripcion');
     $articulos->ESTADO_ARTICULO      = 1;
-    $this->Articulos_model->agregar($this->input->post('codigobarra'),$articulos,$this->input->post('precio'));
+    //$this->Articulos_model->agregar($this->input->post('codigobarra'),$articulos,$this->input->post('precio'));
     Template::redirect('articulos/');
   }
-}
-
+  }
