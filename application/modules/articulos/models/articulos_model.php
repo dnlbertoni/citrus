@@ -154,6 +154,20 @@ class Articulos_model extends MY_Model{
       return FALSE;
     }
   }
+  function getByCodigobarraWizard($Cb){
+    $this->db->from($this->tabla->name);
+    $this->db->join('stk_submarcas', 'tbl_articulos.id_marca=stk_submarcas.id_submarca','inner');
+    $this->db->join('stk_marcas', 'stk_submarcas.id_marca=stk_marcas.id_marca','inner');
+    $this->db->join('tbl_subrubros', 'tbl_articulos.id_subrubro=tbl_subrubros.id_subrubro','inner');
+    $this->db->join('tbl_rubros', 'tbl_subrubros.id_rubro=tbl_rubros.id_rubro','inner');
+    $this->db->where($this->tabla->codigobarra,$Cb);
+    $q = $this->db->get();
+    if($q->num_rows()>0){
+      return $q->row();
+    }else{
+      return FALSE;
+    }
+  }
   function updateMod($id, $datos){
     $this->db->set("FECHAMODIF_ARTICULO", "NOW()", FALSE);
     $this->db->where($this->tabla->id, $id);

@@ -9,6 +9,7 @@ class Wizard extends MY_Controller{
   private $CB;
   private $idEmpresa;
   private $Articulo;
+  private $ArticuloSave;
   function  __construct() {
     parent::__construct();
     $this->load->model('Articulos_model');
@@ -24,12 +25,14 @@ class Wizard extends MY_Controller{
     //$CB="'".$CB."'";
     $CB='7516195176733'; // no existe
     $CB='7506195176733'; //existe
-    $articulo = $this->Articulos_model->getByCodigobarra($CB);
+    $articulo           = $this->Articulos_model->getByCodigobarraWizard($CB);
     if($articulo){
-      $this->Articulo = $articulo;
+      $this->Articulo     = $articulo;
+      $this->ArticuloSave = $this->Articulos_model->getByCodigobarra($CB);
     }else{
-      $this->Articulo = $this->Articulos_model->Inicializar();
-    }
+      $this->Articulo     = $this->Articulos_model->Inicializar();
+      $this->ArticuloSave = $this->Articulos_model->Inicializar();
+  }
     if($CB){
       $this->CB = $CB;
       $this->decrypCodigoBarra($this->CB);
@@ -61,27 +64,18 @@ class Wizard extends MY_Controller{
   function definoRubro(){
     $idEmpresa               = $this->idEmpresa;
     $codigobarra             = $this->CB;
-    $id_submarca             = $this->input->post('id_submarca');
-    $submarca                = $this->Submarcas_model->getById('id_submarca');
+    $data['articulo']         = $this->Articulo;
     $empresa                 = $this->Empresas_model->getById($idEmpresa);
-    $data['rubrosEmpresa']   = $this->Empresas_model->getRubros($empresa->id_marca);
-    $data['rubrosMarca']     = $this->Empresas_model->getRubrosFromSubmarcas($id_submarca);
-    $marca                   = $this->Marcas_model->getById($empresa->id_marca);
-    $data['empresaNombre']   = $marca->DETALLE_MARCA;
-    $data['codigobarra']     = $codigobarra;
-    $data['urlSearchSubrubro'] = sprintf("'%sindex.php/articulos/subrubros/searchAjax/resultadoAjaxPaso1'", base_url());
-    $data['ocultos']         = array('codigobarra' => $codigobarra,
-                                     'empresa'     => $empresa->id,
-                                     'id_submarca' => $id_submarca,
-                                     'id_subrubro' => ''
-                                    );
-    //$this->load->view('articulos/wizard/paso1', $data);
-    $data['accion'] = "articulos/wizard/definoDetalle";
+    $data['sugeridos']   = $this->Empresas_model->getRubros($empresa->id_marca);
+    $data['todos']   = $this->Empresas_model->getRubros();
+    $data['accion'] = "articulos/wizard/definoMarca";
+    $data['urlAddSubrubro']="'".base_url()."index.php/articulos/subrubros/agregar/ajax'";
+    Template::set_block('sugeridos', 'articulos/wizard/paso1');
     Template::set($data);
-    Template::set_view('articulos/wizard/paso1');
+    Template::set_view('articulos/wizard/detalle');
     Template::render();
   }
-  function definoMarca($CB, $empresa){
+  function definoMarca(){
     $data['marcasEmpresa']   = $this->Empresas_model->getMarcas($marcas);
     $data['marcasCodigoB']   = $this->Empresas_model->getMarcasFromCodigobarra($empresas);
     //$marca                   = $this->Marcas_model->getById($empresa->id_marca);
@@ -89,11 +83,11 @@ class Wizard extends MY_Controller{
     $data['empresaNombre']   = '';
     $data['codigobarra']     = $CB;
     $data['urlSearchSubmarcas'] = sprintf("'%sindex.php/articulos/submarcas/searchAjax/resultadoAjaxPaso2'", base_url());
-    $data['ocultos']         = array('codigobarra'    =>$CB,
+    $data['ocultos']         = array('codigobarra'    =>$this->CB,
                                      'empresa'        => $empresa->id,
                                      'id_submarca'    => ''
                                     );
-    $data['accion'] = "articulos/wizard/definoRubro";
+    $data['accion'] = "articulos/wizard/definoDetalle";
     Template::set($data);
     Template::set_view('articulos/wizard/paso2');
     Template::render();
@@ -151,4 +145,4 @@ class Wizard extends MY_Controller{
     //$this->Articulos_model->agregar($this->input->post('codigobarra'),$articulos,$this->input->post('precio'));
     Template::redirect('articulos/');
   }
-  }
+}

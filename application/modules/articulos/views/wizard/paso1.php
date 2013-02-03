@@ -1,124 +1,79 @@
-<div class="post">
-<h1>Paso 1 - Definicion del Rubro</h1>
-<div id="detalleArticulo" class="ui-widget">
-  Muestro los datos del articulo que ya tengo
-</div>
-
-<?php echo form_open($accion, "id='wizardPaso1-form'", $ocultos);?>
-<?php echo form_close();?>
-<div class="ui-widget">
-  <h3 class="ui-widget-header">Rubros Sugeridos</h3>
-  <div class="ui-widget-content">
-    <div id="tabs">
-      <ul>
-      <?php $aux="";?>
-      <?php foreach($rubrosEmpresa as $rubro):?>
-              <?php if($rubro->rubroNombre!=$aux):?>
-                      <?php $aux=$rubro->rubroNombre;?>
-                      <li><?php print("<a href='#$rubro->rubroId'>$rubro->rubroNombre</a>") ?></li>
-              <?php endif;?>
-      <?php endforeach;?>
-      </ul>
-      <?php
-      $aux="";
-      $vez=0;?>
-      <?php foreach($rubrosEmpresa as $rubro):?>
-          <?php if($rubro->rubroNombre!=$aux):?>
-              <?php if($vez>0):?>
-                      </div>
-              <?php endif;?>
-              <?php $vez++;?>
-              <?php $aux=$rubro->rubroNombre;?>
-              <div id="<?php echo $rubro->rubroId?>">
-          <?php endif;?>
-          <span class="boton" id="<?php echo $rubro->subrubroId?>"><?php echo $rubro->subrubroNombre?></span>
-      <?php endforeach;?>
-      </div>
-    </div>
+<div id="sugeridos" class="ui-widget">
+  <div id="rubros">
+    <?php $sugAux=false;?>
+    <?php $vez=0;?>
+    <?php foreach($sugeridos as $su):?>
+      <?php if($sugAux!=$su->rubroId):?>
+        <?php if($vez > 0){
+          echo "</div>";
+        };?>
+        <h3><?php echo $su->rubroNombre;?></h3>
+        <?php $sugAux = $su->rubroId;?>
+        <?php echo "<div>";?>
+      <?php endif;?>
+      <div id="<?php echo $su->subrubroId;?>" class="boton"><?php echo $su->subrubroNombre;?></div>
+      <?php $vez++;?>
+    <?php endforeach;?>
+    <?php echo "</div>";?>
   </div>
+  <div>&nbsp;</div>
+  <div id="nextSug">Mas Opciones...</div>
 </div>
 <div>&nbsp;</div>
-<div class="ui-widget">
-  <h3 class="ui-widget-header">Todos los rubros</h3>
-  <div class="ui-widget-content">
-    <div id="tabs2">
-      <ul>
-      <?php $aux="";?>
-      <?php foreach($rubrosMarca as $rubro):?>
-              <?php if($rubro->rubroNombre!=$aux):?>
-                      <?php $aux=$rubro->rubroNombre;?>
-                      <li><a href="#<?php echo $rubro->rubroId?>"><?php echo $rubro->rubroNombre?></a></li>
-              <?php endif;?>
-      <?php endforeach;?>
-      </ul>
-      <?php
-      $aux="";
-      $vez=0;?>
-      <?php foreach($rubrosMarca as $rubro):?>
-          <?php if($rubro->rubroNombre!=$aux):?>
-              <?php if($vez>0):?>
-                      </div>
-              <?php endif;?>
-              <?php $vez++;?>
-              <?php $aux=$rubro->rubroNombre;?>
-              <div id="<?php echo $rubro->rubroId?>">
-          <?php endif;?>
-          <span class="boton" id="<?php echo $rubro->subrubroId?>"><?php echo $rubro->subrubroNombre?></span>
-      <?php endforeach;?>
-      </div>
-    </div>
+<div id="todos" class="ui-widget">
+  <div id="rubros2">
+    <?php $sugAux=false;?>
+    <?php $vez=0;?>
+    <?php foreach($todos as $su):?>
+      <?php if($sugAux!=$su->rubroId):?>
+        <?php if($vez > 0){
+          echo "</div>";
+        };?>
+        <h3><?php echo $su->rubroNombre;?></h3>
+        <?php $sugAux = $su->rubroId;?>
+        <?php echo "<div>";?>
+      <?php endif;?>
+      <div id="<?php echo $su->subrubroId;?>" class="boton"><?php echo $su->subrubroNombre;?></div>
+      <?php $vez++;?>
+    <?php endforeach;?>
+    <?php echo "</div>";?>
   </div>
-</div>
-
-<div id="botBuscoSubrubro">Buscar Rubro</div>
-<div id="botSel" class="boton botSel"></div>
-<div id="resultadoAjaxPaso1"></div>
-<div id="searchSubrubro"></div>
-
-
+  <div>&nbsp;</div>
+  <div id="nextNew">No existe el rubro...</div>
 </div>
 
 <script>
 $(document).ready(function(){
-  $("#tabs").tabs();
-  $(".ui-widget-content").css('padding','5px');
-  $("#tabs2").tabs();
+  /* estetica y definiciones */
+  $("#rubros").accordion({
+      heightStyle: "content",
+      icons: { "header": "ui-icon-circle-plus", "headerSelected": "ui-icon-circle-minus" }
+    });
+  $("#rubros2").accordion({
+      heightStyle: "content",
+      icons: { "header": "ui-icon-circle-plus", "headerSelected": "ui-icon-circle-minus" }
+    });
+  $("h3").css('padding','10px 10px 10px 30px');
+  $("#nextSug").button();
+  $("#nextNew").button();
   $(".boton").button();
-  $(".botSel").hide();
   $("#botBuscoSubrubro").button();
-  $(".boton").click(function(){
-    var valor = $(this).attr('id');
-    $('[name="id_subrubro"]').val(valor);
-    $("#wizardPaso1-form").submit();
+  $("#todos").hide();
+  $("#ninguno").hide();
+  url=<?php echo $urlAddSubrubro;?>;
+  $("#ninguno").load(url, [], function(){
+    alert("cargo");
   });
-  $("#botBuscoSubrubro").click(function(){
-    buscoSubrubro();
+  /* eventos y consecuencias */
+  $("#nextSug").click(function(){
+    $("#sugeridos").hide();
+    $("#todos").show();
+    $("#ninguno").hide();
+  });
+  $("#nextNew").click(function(){
+    $("#sugeridos").hide();
+    $("#todos").hide();
+    $("#ninguno").show();
   });
 });
-function buscoSubrubro(){
-$('.bolSel').hide();
-var dialogOpts = {
-	modal: true,
-	bgiframe: true,
-	autoOpen: false,
-	height: 300,
-	width: 500,
-	title: "Busco Subrubro",
-	draggable: true,
-	resizeable: true,
-	close: function(data){
-	  var texto = $("#resultadoAjaxPaso1 >.detalle").text();
-	  var id    = $("#resultadoAjaxPaso1 >.codigo").html();
-	  $(".botSel").html(texto);
-	  $(".botSel").show();
-	  $(".botSel").attr('id',id);
-	  $('#searchSubrubro').dialog("destroy");
-	}
- };
-$('#searchSubrubro').dialog(dialogOpts);
-$("#searchSubrubro").load(<?php echo $urlSearchSubrubro;?>, [], function(){
-			 $("#searchSubrubro").dialog("open");
-		  }
-	   );
-}
 </script>
