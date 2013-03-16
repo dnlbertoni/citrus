@@ -47,7 +47,7 @@ $(document).ready(function(){
   //chequeo las teclas de funciones
   $(document).bind('keydown',function(e){
     var code = e.keyCode;
-    key = getSpecialKey(code)
+    key = getSpecialKey(code);
     if(key){
       e.preventDefault();
       switch(key){
@@ -74,20 +74,26 @@ $(document).ready(function(){
         case 'f12':
           ImprimoTicket();
           break;
+        default:
+          ConsultoPrecio();
+          break;
       }
     }else{
       codigobarraTXT = $("#codigobarra").val().trim();
-      if(code == 13 && codigobarraTXT ==''&& $("#codigobarra").hasClass('focus')==true ){
-        ConsultoPrecio();
-        $("#codigobarra").addClass('focus');
-        $("#codigobarra").focus();
-      }else{
+      if( code == 13 ){
+        e.preventDefault();
+        if(codigobarraTXT ==''&& $("#codigobarra").hasClass('focus')==true){
+          $("#codigobarra").removeClass('focus');
+          ConsultoPrecio();
+        }else{
+          AgregoArticulo(e);
+        };
         if($("#cuentaTXT").hasClass('focus')!=true){
             $("#codigobarra").addClass('focus');
             $("#codigobarra").focus();
-        }
-      };
+        };
     };
+   }
   });
   // fin de chequeo de teclas de funciones
   //inicio de envio de datos al comprobante

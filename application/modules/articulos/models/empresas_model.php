@@ -51,7 +51,7 @@ class Empresas_model extends MY_Model{
     $this->db->order_by('genericos', 'DESC');
     return $this->db->get()->result();
   }
-  function getRubros($idEmpresa=false){
+  function getRubros($idEmpresa){
     $this->db->distinct();
     $this->db->select('tbl_articulos.id_subrubro as subrubroId');
     $this->db->select('tbl_subrubros.id_rubro  as rubroId');
@@ -61,11 +61,8 @@ class Empresas_model extends MY_Model{
     $this->db->join('tbl_subrubros', 'tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro', 'inner');
     $this->db->join('tbl_rubros',    'tbl_subrubros.id_rubro    = tbl_rubros.id_rubro', 'inner');
     $this->db->join('stk_submarcas', 'tbl_articulos.id_marca    = stk_submarcas.id_submarca', 'inner');
-    if($idEmpresa){
-      $this->db->where('stk_submarcas.id_marca',$idEmpresa);
-    };
-    $this->db->order_by('rubroNombre');
-    $this->db->order_by('subrubroNombre');
+    $this->db->where('stk_submarcas.id_marca',$idEmpresa);
+    $this->db->order_by('rubroId');
     return $this->db->get()->result();
   }
   function getRubrosFromSubmarcas($idSubmarcas){
@@ -80,7 +77,6 @@ class Empresas_model extends MY_Model{
     $this->db->join('stk_submarcas', 'tbl_articulos.id_marca    = stk_submarcas.id_submarca', 'inner');
     $this->db->where('tbl_articulos.id_marca',$idSubmarcas);
     $this->db->order_by('rubroId');
-    $this->db->order_by('subrubroNombre');
     return $this->db->get()->result();
   }
   function getMarcas($idEmpresa){

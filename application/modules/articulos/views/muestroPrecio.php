@@ -1,5 +1,5 @@
 <?php echo form_open('', 'id="consultaPrecio"')?>
-<?php echo form_input('codigobarraTXT','','id="codigobarraTXT" class=":integer :required"')?>
+<?php echo form_input('codigobarraTXT','','id="CbTXT"')?>
 <input type="hidden" id="paginaPrecio2" value="<?php echo base_url(),'index.php/articulos/precioAjaxDo'?>" />
 <?php echo form_submit('Consultar', 'Consultar');?>
 <?php echo form_close()?>
@@ -7,10 +7,20 @@
 <div id="datos"></div>
 <script>
 $(document).ready(function(){
-  $("#codigobarraTXT").focus();
+  $("#CbTXT").addClass('focus');
+  $("#CbTXT").focus();
+  $("#CbTXT").bind('keydown', function(e){
+    if($(this).hasClass('focus')){
+      code=e.keyCode;
+      if(code==13){
+        $("#CbTXT").removeClass('focus');
+        $("#consultaPrecio").submit();
+      }
+    }
+  });
   $("#consultaPrecio").submit(function(e){
     e.preventDefault();
-    codigobarra  = $("#codigobarraTXT").val().trim();
+    codigobarra  = $("#CbTXT").val().trim();
     pagina       = $("#paginaPrecio2").val()
     if(codigobarra.length > 0){
       $.ajax({

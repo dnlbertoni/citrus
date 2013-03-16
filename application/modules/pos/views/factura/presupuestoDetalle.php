@@ -55,7 +55,7 @@ foreach($Articulos as $articulo){?>
     <td align="right"><?php printf("$%01.2f", $articulo->Precio );?></td>
     <td align="right"><?php printf("$%01.2f", $articulo->Importe )?></td>
     <td>
-     <input type="button" onclick="del_art('<?php echo $articulo->codmov?>')" value=" - "  />
+      <div id="<?php echo $articulo->codmov?>"class="botdel">Quitar Articulo</div>
     </td>
   </tr>
   <?php
@@ -73,6 +73,11 @@ foreach($Articulos as $articulo){?>
   $('.importeTotal').css('font-size', '36px');
   $('td').css('font-size', '20px');
 $(document).ready(function(){
+  $(".botdel").button({icons:{primary:'ui-icon-circle-minus'}, text:false});
+  $(".botdel").click(function(){
+    id=$(this).attr("id");
+    delArt(id);
+  });
   if($("#condVta").html()=="Contado"){
     $("#condVta").removeClass('ui-state-error');
     $("#condVta").addClass('ui-state-default');
@@ -81,7 +86,7 @@ $(document).ready(function(){
     $("#condVta").addClass('ui-state-error');
   }
 });
-function del_art(codmov){
+function delArt(codmov){
   pagina = $("#paginaBorroArticulo").val();
   $.ajax({
         url: pagina,

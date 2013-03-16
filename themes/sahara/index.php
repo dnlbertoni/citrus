@@ -6,7 +6,7 @@
   <?php echo Assets::css('jquery-ui')?>
   <?php echo Assets::js() ?>
   <?php echo Assets::css() ?>
-  <title><?php echo $title;?></title>
+  <title>Autoservicio Santa Lucia</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 </head>
 <body>
@@ -52,7 +52,7 @@ $(document).ready(function(){
   alto   = $("#header").css('height');
   largo  = $("#header").css('width');
   posArr = $("#header > h1").position().top - 80;
-  posIzq = $("#header > h1").position().left - 450;
+  posIzq = $("#header > h1").position().left + 200;
   valor  = 0+ " " + 0;
   valor  = posIzq+ " " + posArr;
   $("#boxAyuda").position({ my: "top",
