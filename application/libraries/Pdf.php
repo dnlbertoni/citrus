@@ -6,7 +6,7 @@
 * Date: 2008-08-03                              *
 * Author:  Olivier PLATHEY                           *
 *******************************************************************************/
-define('FPDF_VERSION','1.6');
+define('FPDF_VERSION_PDF','1.6');
 class Pdf{
 var $page;         //current page number
 var $n;         //current object number
@@ -1692,7 +1692,7 @@ function _enddoc()
         $param=($dialog ? 'true' : 'false');
         $script="print($param);";
         $this->IncludeJS($script);
-    }  
+    }
  }
 
 //End of class

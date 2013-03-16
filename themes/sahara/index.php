@@ -13,9 +13,12 @@
 <div id="outer">
   <div id="outer2">
     <div id="header">
-      <h1>Autoservicio Santa Lucia</h1>
-      <h2>Sistema de Gestion</h2>
-      <div id="boxAyuda"><div id="admin">Configuracion</div><div id="problema">Problema</div></div>
+      <span id="logo">
+        <img src="/assets/img/Isologo_santalucia_2010_color.jpg" height="80" />
+      </span>
+        <h1>Autoservicio Santa Lucia</h1>
+        <h2>Sistema de Gestion</h2>
+        <div id="boxAyuda"><div id="admin">Configuracion</div><div id="problema">Problema</div></div>
     </div>
     <div id="menu">
       <?php if(isset($Modulos)):?>
@@ -35,7 +38,7 @@
       <?php endif;?>
     </div>
     <div id="footer">
-      <p>&copy; 2010 Autoservicio Santa Lucia | Author >> DnL | <?php echo anchor('version/', 'Version '. VERSION);?></p>
+      <p>2010 &copy; 2013 | Autoservicio Santa Lucia | Author >> DnL | <?php echo anchor('version/', 'Version '. VERSION);?></p>
     </div>
   </div>
 </div>

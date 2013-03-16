@@ -7,13 +7,13 @@
 <div id="datos"></div>
 <script>
 $(document).ready(function(){
+  $("#codigobarra").removeClass('focus');
   $("#CbTXT").addClass('focus');
   $("#CbTXT").focus();
   $("#CbTXT").bind('keydown', function(e){
     if($(this).hasClass('focus')){
       code=e.keyCode;
       if(code==13){
-        $("#CbTXT").removeClass('focus');
         $("#consultaPrecio").submit();
       }
     }
@@ -33,6 +33,8 @@ $(document).ready(function(){
               async:true,
               success: function(msg){
                  $("#datos").html(msg);
+                 $("#CbTXT").val('');
+                 $("#CbTXT").focus();
               }
       }).responseText;
     }

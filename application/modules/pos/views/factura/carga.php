@@ -1,6 +1,6 @@
 <h2>Imprimiendo <?php echo $Imprimo?></h2>
 <h3>Por Favor espere...</h3>
-<div id="carga"><?php echo Assets::image(array('loading.gif','Imprimiendo'));?></div>
+<div id="carga"><?php echo Assets::image('loading.gif');?></div>
 <input type="hidden" id="puestoAjax"  value="<?php echo $puesto?>" />
 <input type="hidden" id="idencabAjax" value="<?php echo $idencab?>" />
 <input type="hidden" id="cuentaAjax"  value="<?php echo $cuenta?>" />
@@ -37,9 +37,7 @@ $(document).ready(function(){
             beforeSend: function(){$("#carga").fadeIn();},
             success: function(msg){
                $("#carga").append(msg);
-               <?php if($puesto==3):?>
                $("#imprimo").dialog('close');
-               <?php endif;?>
                $("#loading").fadeOut(100);
             }
     }).responseText;

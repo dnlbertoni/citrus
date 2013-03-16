@@ -121,7 +121,7 @@ class Articulos extends MY_Controller{
         $this->agregar($this->input->post('codigobarra'));
       }
     }else{
-      $this->index();
+      Template::redirect('articulos');
     };
   }
   function update(){
@@ -132,11 +132,11 @@ class Articulos extends MY_Controller{
       };
     };
     $this->Articulos_model->updateMod($this->input->post('ID_ARTICULO'),$datos);
-    $this->index();
+    Template::redirect('articulos/');
   }
   function borrar($id){
     $this->Articulos_model->borrar($id);
-    $this->index();
+    Template::redirect('articulos');
   }
   function agregar($codigobarra){
     $articulos = $this->Articulos_model->Inicializar();
@@ -168,7 +168,7 @@ class Articulos extends MY_Controller{
     };
     $datos['DESCRIPCION_ARTICULO'] = strtoupper($datos['DESCRIPCION_ARTICULO']);
     $this->Articulos_model->agregar($this->input->post('CODIGOBARRA_ARTICULO'),$datos);
-    $this->index();
+    Template::redirect('articulos');
   }
   function precioAjax(){
     $this->output->enable_profiler(FALSE);
@@ -273,7 +273,7 @@ class Articulos extends MY_Controller{
         };
       }
     }
-    $this->index();
+    Template::redirect('articulos');
   }
   function borrarLote(){
     foreach($_POST as $key=>$valor){
@@ -285,7 +285,7 @@ class Articulos extends MY_Controller{
       $this->Articulos_model->borrar($id);
     };
     //Template::render();
-    $this->index();
+    Template::redirect('articulos');
   }
   function normalizacion(){
 	$data['todosLosArticulos'] = $this->Articulos_model->totalRegistros();

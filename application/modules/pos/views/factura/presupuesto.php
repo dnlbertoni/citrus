@@ -84,7 +84,9 @@ $(document).ready(function(){
         e.preventDefault();
         if(codigobarraTXT ==''&& $("#codigobarra").hasClass('focus')==true){
           $("#codigobarra").removeClass('focus');
-          ConsultoPrecio();
+          if(!$("#CbTXT").hasClass('focus')){
+            ConsultoPrecio();
+          }
         }else{
           AgregoArticulo(e);
         };
@@ -105,11 +107,40 @@ $(document).ready(function(){
   $("#F8").button();
   $("#F10").button();
   $("#F12").button();
+  MuestroArticulos();
 });
 
 function AgregoArticulo(e){
     e.preventDefault();
     codigobarra  = $("#codigobarra").val();
+    puesto       = $("#puesto").val();
+    id_temporal  = $("#id_tmpencab").val();
+    cuenta       = $("#cuenta").val();
+    pagina       = $("#pagina").val();
+    $.ajax({
+            url: pagina,
+            contentType: "application/x-www-form-urlencoded",
+            global: false,
+            type: "POST",
+            data: ({codigobarra : codigobarra,
+                    cantidad : 1,
+                    puesto : puesto,
+                    cuenta : cuenta,
+                    id_tmpencab : id_temporal
+                  }),
+            dataType: "html",
+            async:true,
+            beforeSend: function(){$("#loading").fadeIn();},
+            success: function(msg){
+               $("#brief").html(msg);
+               $("#codigobarra").val('');
+               $("#codigobarra").focus();
+               $("#loading").fadeOut(100);
+            }
+    }).responseText;
+  }
+function MuestroArticulos(){
+    codigobarra  = '';
     puesto       = $("#puesto").val();
     id_temporal  = $("#id_tmpencab").val();
     cuenta       = $("#cuenta").val();
@@ -294,6 +325,7 @@ function ImprimoTicket(){
         draggable: true,
         resizeable: true,
         close: function(){
+          CanceloComprobante();
           window.location = $("#paginaIndex").val();}
   };
   $("#imprimo").dialog(dialogOpts);   //end dialog

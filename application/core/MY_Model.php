@@ -15,7 +15,7 @@ class MY_Model extends CI_Model{
   private $_table;
   private $_primaryKey;
   public function __construct() {
-     parent::__construct();        
+     parent::__construct();
   }
 
   /**
@@ -77,7 +77,6 @@ class MY_Model extends CI_Model{
    * @return Int Insert ID
    */
   public function add($data, $field_control=FALSE) {
-    $data['programa_id']=$this->session->userdata('programa_id');
     if(is_array($data)) {
       if($field_control){
         $duplicado = $this->is_duplicate($field_control,$data[$field_control]);

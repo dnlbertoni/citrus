@@ -86,7 +86,6 @@ class Factura extends MY_Controller{
         $accion="add";
       }
     };
-
     $data['existe']    = (count($articulo)<1 && trim($codigobarra)!="")? false : true ;
     if( $tmp_precio > 0 ){
       $precio=$tmp_precio;
@@ -379,7 +378,6 @@ class Factura extends MY_Controller{
     };
   }
   function printRemitoDo(){
-    $this->output->enable_profiler(true);
     $this->load->library('hasar');
     $puesto    = $this->input->post('puesto');
     $idencab   = $this->input->post('idencab');
@@ -445,7 +443,6 @@ class Factura extends MY_Controller{
     };
   }
   function printRemitoDoLaser(){
-    $this->output->enable_profiler(true);
     $puesto    = $this->input->post('puesto');
     $idencab   = $this->input->post('idencab');
     $cuenta    = $this->Tmpmovim_model->getCuenta($idencab, $puesto);
@@ -499,10 +496,11 @@ class Factura extends MY_Controller{
     );
     $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
     $num        = $this->Numeradores_model->updateRemito($ptorem, $numero+1);
-    //$this->load->view('pos/carga');
     if($DNF==1){
       $this->printCtaCteLaser($cuenta, $puesto, $numero, $importe * $negativo, $idFacencab,$items);
-    };
+    }else{
+      echo "termino";
+    }
   }
   function printCtaCteDo(){
     $this->load->model('Ctactemovim_model','',true);

@@ -38,9 +38,7 @@
 | the active record class
 */
 
-$active_group = ($_SERVER['SERVER_NAME']=='server2')?'default':'centro';
-//$active_group = 'default';
-$active_group = 'centro';
+$active_group = (ENVIRONMENT==='activo')?'default':'desarrollo';
 $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
@@ -59,21 +57,21 @@ $db['default']['swap_pre'] = '';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
-$db['centro']['hostname'] = 'localhost';
-$db['centro']['username'] = 'sistemas';
-$db['centro']['password'] = 'kaltidus';
-$db['centro']['database'] = 'facturador_dev';
-$db['centro']['dbdriver'] = 'mysql';
-$db['centro']['dbprefix'] = '';
-$db['centro']['pconnect'] = TRUE;
-$db['centro']['db_debug'] = TRUE;
-$db['centro']['cache_on'] = FALSE;
-$db['centro']['cachedir'] = '';
-$db['centro']['char_set'] = 'utf8';
-$db['centro']['dbcollat'] = 'utf8_general_ci';
-$db['centro']['swap_pre'] = '';
-$db['centro']['autoinit'] = TRUE;
-$db['centro']['stricton'] = FALSE;
+$db['desarrollo']['hostname'] = 'localhost';
+$db['desarrollo']['username'] = 'sistemas';
+$db['desarrollo']['password'] = 'kaltidus';
+$db['desarrollo']['database'] = 'facturador_dev';
+$db['desarrollo']['dbdriver'] = 'mysql';
+$db['desarrollo']['dbprefix'] = '';
+$db['desarrollo']['pconnect'] = TRUE;
+$db['desarrollo']['db_debug'] = TRUE;
+$db['desarrollo']['cache_on'] = FALSE;
+$db['desarrollo']['cachedir'] = '';
+$db['desarrollo']['char_set'] = 'utf8';
+$db['desarrollo']['dbcollat'] = 'utf8_general_ci';
+$db['desarrollo']['swap_pre'] = '';
+$db['desarrollo']['autoinit'] = TRUE;
+$db['desarrollo']['stricton'] = FALSE;
 
 /* End of file database.php */
 /* Location: ./application/config/database.php */
