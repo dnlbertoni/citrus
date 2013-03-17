@@ -59,7 +59,6 @@ $(document).ready(function(){
           $("#codigobarra").focus();
           break;
         case 'f6':
-          $("#codigobarra").removeClass('focus');
           CambioCliente();
           break;
         case 'f8':
@@ -78,11 +77,12 @@ $(document).ready(function(){
           ConsultoPrecio();
           break;
       }
-    }else{
+    };
+   $("#codigobarra").bind('keydown', function(){
       codigobarraTXT = $("#codigobarra").val().trim();
-      if( code == 13 ){
+      if( code === 13 ){
         e.preventDefault();
-        if(codigobarraTXT ==''&& $("#codigobarra").hasClass('focus')==true){
+        if(codigobarraTXT ===''&& $("#codigobarra").hasClass('focus')===true){
           $("#codigobarra").removeClass('focus');
           if(!$("#CbTXT").hasClass('focus')){
             ConsultoPrecio();
@@ -90,12 +90,12 @@ $(document).ready(function(){
         }else{
           AgregoArticulo(e);
         };
-        if($("#cuentaTXT").hasClass('focus')!=true){
+        if($("#cuentaTXT").hasClass('focus')!==true){
             $("#codigobarra").addClass('focus');
             $("#codigobarra").focus();
         };
-    };
-   }
+      };
+   });
   });
   // fin de chequeo de teclas de funciones
   //inicio de envio de datos al comprobante
@@ -222,6 +222,7 @@ function CanceloComprobante(){
     }).responseText;
 }
 function CambioCliente(){
+  $("#codigobarra").removeClass('focus');
   var dialogOpts = {
         modal: true,
         bgiframe: true,
@@ -237,7 +238,7 @@ function CambioCliente(){
           valor  = $("#cuentaAjax > .codigo").html();
           nombre = $("#cuentaAjax > .nombre").html();
           ctacte = $("#cuentaAjax > .ctacte").html();
-          ctacteId = (ctacte=="CtaCte")?1:0;
+          ctacteId = (ctacte === "CtaCte" )?1:0;
           tipcom = $("#cuentaAjax > .tipcom").html();
           $("#idCuenta").html(valor);
           $("#cuentaAjax").html(valor);

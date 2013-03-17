@@ -12,16 +12,19 @@ $(document).ready(function(){
   $("#CbTXT").focus();
   $("#CbTXT").bind('keydown', function(e){
     if($(this).hasClass('focus')){
-      code=e.keyCode;
-      if(code==13){
+      code = e.keyCode;
+      if( code === 13 ){
         $("#consultaPrecio").submit();
+        $("#CbTXT").val('');
+        $("#CbTXT").addClass('focus');
+        $("#CbTXT").focus();
       }
     }
   });
   $("#consultaPrecio").submit(function(e){
     e.preventDefault();
     codigobarra  = $("#CbTXT").val().trim();
-    pagina       = $("#paginaPrecio2").val()
+    pagina       = $("#paginaPrecio2").val();
     if(codigobarra.length > 0){
       $.ajax({
               url: pagina,
@@ -38,6 +41,6 @@ $(document).ready(function(){
               }
       }).responseText;
     }
-  })
+  });
 });
 </script>
