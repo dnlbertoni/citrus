@@ -7,6 +7,7 @@ class Ctacte extends MY_Controller{
     $this->load->model('Ctacte_rec_model'  , '', TRUE);
     $this->load->model('Cuenta_model'  , '', TRUE);
     $this->load->model('Numeradores_model', '',TRUE);
+    $this->load->model('Facmovim_model');
     Template::set('title', 'Modulo Cuentas Corrientes');
     // panel de tareas Regulares
     $datos['tareasSet']=true;
@@ -68,7 +69,7 @@ class Ctacte extends MY_Controller{
     $fechoy = getdate();
     $id=($id)?$id:$this->input->post('cuenta');
     if(!$id){
-        redirect('ctacte/','',301);
+        Template::redirect('ctacte/');
     };
     $data['pendientes'] = $this->Ctacte_movim_model->getDetalle($id,"P");
     $data['periodos']   = $this->Ctacte_liq_model->getPeriodos($id);
@@ -109,5 +110,10 @@ class Ctacte extends MY_Controller{
     Template::set($data);
     Template::set_view('ctacte/listado');
     Template::render();
+  }
+  function detalleComprobante($id){
+    $data['fac'] = $this->Ctacte_movim_model->getEncabezado($id);
+    $data['art'] = $this->Ctacte_movim_model->getComprobante($id);
+    $this->load->view('ctacte/detalleComprobante', $data);
   }
 }

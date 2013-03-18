@@ -6,9 +6,6 @@
     <?php endforeach;?>
  </ul>
 </div>
-
-<div id="ventanaAjax"></div>
-
 <script>
 $(document).ready(function(){
   $('.ajaxLoad').click(function(e){

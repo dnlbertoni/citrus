@@ -14,11 +14,16 @@
   <div id="outer2">
     <div id="header">
       <span id="logo">
-        <img src="/assets/img/Isologo_santalucia_2010_color.jpg" height="80" />
+        <?php echo Assets::image('Isologo_santalucia_2010_color.jpg',array('alt'=>"Loading...", 'height'=>'80'));?>
       </span>
         <h1>Autoservicio Santa Lucia</h1>
         <h2>Sistema de Gestion</h2>
-        <div id="boxAyuda"><div id="admin">Configuracion</div><div id="problema">Problema</div></div>
+        <div id="boxAyuda">
+          <?php echo anchor('ticket', 'Ticket', 'id="carrito"');?>
+          <div id="admin">Configuracion</div>
+          <div id="problema">Problema</div>
+
+        </div>
     </div>
     <div id="menu">
       <?php if(isset($Modulos)):?>
@@ -37,6 +42,7 @@
         <?php echo Template::yield()?>
       <?php endif;?>
     </div>
+    <div id="ventanaAjax"></div>
     <div id="footer">
       <p>2010 &copy; 2013 | Autoservicio Santa Lucia | Author >> DnL | <?php echo anchor('version/', 'Version '. VERSION);?></p>
     </div>
@@ -47,6 +53,7 @@
 
 <script>
 $(document).ready(function(){
+  $("#carrito").button({icons:{primary:'ui-icon-cart'}, text:false});
   $("#admin").button({icons:{primary:'ui-icon-wrench'}, text:false});
   $("#ayuda").button({icons :{primary:'ui-icon-help'}});
   $("#problema").button({icons :{primary:'ui-icon-alert'}, text:false});

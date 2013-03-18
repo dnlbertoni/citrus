@@ -8,18 +8,19 @@
 <div id="datosCliente"></div>
 <script>
 $(document).ready(function(){
+  $("input").removeClass('focus');
   $("#cuentaTXT").addClass('focus');
   $("#consultaCuenta > #cuentaTXT").focus();
   $("#cuentaTXT").bind('keyup',function(e){
     var code = e.keyCode;
-    if( ( code<90 && code>57 )  || code==13 || code==8 ){
+    if( ( code<90 && code>57 )  || code===13 || code===8 ){
       envioForm();
     }
   });
   $("#consultaCuenta").submit(function(e){
     e.preventDefault();
     envioForm();
-  })
+  });
 });
 function envioForm(){
   cuenta  = $("#cuentaTXT").val().trim();

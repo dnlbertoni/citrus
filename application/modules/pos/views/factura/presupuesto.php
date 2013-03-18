@@ -73,40 +73,38 @@ $(document).ready(function(){
         case 'f12':
           ImprimoTicket();
           break;
-        default:
-          ConsultoPrecio();
-          break;
       }
     };
-   $("#codigobarra").bind('keydown', function(){
-      codigobarraTXT = $("#codigobarra").val().trim();
-      if( code === 13 ){
-        e.preventDefault();
-        if(codigobarraTXT ===''&& $("#codigobarra").hasClass('focus')===true){
-          $("#codigobarra").removeClass('focus');
-          if(!$("#CbTXT").hasClass('focus')){
-            ConsultoPrecio();
-          }
-        }else{
-          AgregoArticulo(e);
-        };
-        if($("#cuentaTXT").hasClass('focus')!==true){
-            $("#codigobarra").addClass('focus');
-            $("#codigobarra").focus();
-        };
-      };
-   });
   });
+  $("#codigobarra").bind('keydown',function(e){
+    var code = e.keyCode;
+    if($("#codigobarra").hasClass('focus')){
+      if($("#codigobarra").val().trim().length === 0){
+        if( code === 13 ){
+              ConsultoPrecio(e);
+        };
+      }else{
+        if( code === 13 ){
+          AgregoArticulo(e);
+        }
+      }
+    };
+   });
   // fin de chequeo de teclas de funciones
   //inicio de envio de datos al comprobante
   $("#addCart").submit(function(e){AgregoArticulo(e);} );
   //fin de envio de datos al comprobante
   //activo botones
   $("#F1").button();
+  $("#F1").click(function(){CanceloComprobante();});
   $("#F6").button();
+  $("#F6").click(function(){CambioCliente();});
   $("#F8").button();
+  $("#F8").click(function(){CambioCondicion();});
   $("#F10").button();
+  $("#F10").click(function(){ImprimoRemito();});
   $("#F12").button();
+  $("#F12").click(function(){ImprimoTicket();});
   MuestroArticulos();
 });
 
@@ -133,6 +131,7 @@ function AgregoArticulo(e){
             beforeSend: function(){$("#loading").fadeIn();},
             success: function(msg){
                $("#brief").html(msg);
+               $("#codigobarra").addClass('focus');
                $("#codigobarra").val('');
                $("#codigobarra").focus();
                $("#loading").fadeOut(100);
@@ -161,21 +160,16 @@ function MuestroArticulos(){
             beforeSend: function(){$("#loading").fadeIn();},
             success: function(msg){
                $("#brief").html(msg);
+               $("#codigobarra").addClass('focus');
                $("#codigobarra").val('');
                $("#codigobarra").focus();
                $("#loading").fadeOut(100);
             }
     }).responseText;
   }
-function getSpecialKey(code){
-  if(code > 111 && code < 124){
-    aux = code - 111;
-    return 'f'+aux;
-  }else{
-    return false;
-  }
-}
-function ConsultoPrecio(){
+function ConsultoPrecio(e){
+  e.preventDefault();
+  $("#codigobarra").removeClass('focus');
   var dialogOpts = {
         modal: true,
         bgiframe: true,
@@ -186,8 +180,9 @@ function ConsultoPrecio(){
         draggable: true,
         resizeable: true,
         close: function(){
-          $('#precio').dialog("destroy");
+//          $('#precio').dialog("destroy");
           $("#codigobarra").addClass('focus');
+          $("#codigobarra").val('');
           $("#codigobarra").focus();
         }
      };
@@ -228,7 +223,6 @@ function CambioCliente(){
         bgiframe: true,
         autoOpen: false,
         hide: "explode",
-        open: function(){$("#cuentaTXT").focus();},
         height: 300,
         width: 500,
         title: "Consulta de Clientes",
@@ -254,6 +248,7 @@ function CambioCliente(){
 
           $("#cliente").dialog('destroy');
           $("#codigobarra").addClass('focus');
+          $("#codigobarra").val('');
           $("#codigobarra").focus();
         }
      };
@@ -334,5 +329,13 @@ function ImprimoTicket(){
                  $("#imprimo").dialog("moveToTop");
                  $("#imprimo").dialog("open");
               });
+}
+function getSpecialKey(code){
+  if(code > 111 && code < 124){
+    aux = code - 111;
+    return 'f'+aux;
+  }else{
+    return false;
+  }
 }
 </script>

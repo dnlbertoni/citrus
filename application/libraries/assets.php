@@ -424,7 +424,7 @@ class Assets {
 					$image :
 
 					// Otherwise, build the full url
-					base_url() . 'index.php/'.self::$asset_base . '/' .self::$asset_folders['image'] .'/'. $image
+					base_url() . ''.self::$asset_base . '/' .self::$asset_folders['image'] .'/'. $image
 		);
 
 		unset($extra_attrs['alt']);

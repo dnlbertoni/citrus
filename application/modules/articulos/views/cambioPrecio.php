@@ -6,8 +6,8 @@
 <?php echo form_close();?>
 <script>
 $(document).ready(function(){
-  $("#precioNew").focus();
   $("#precioNew").addClass('focus');
+  $("#precioNew").focus();
   $("#cambioPrecio-form").submit(function (e){
     e.preventDefault();
     pagina = $("#cambioPrecio-form").attr('action');
@@ -18,12 +18,12 @@ $(document).ready(function(){
             contentType: "application/x-www-form-urlencoded",
             global: false,
             type: "POST",
-            data: ({id     : idArt, 
+            data: ({id     : idArt,
                     precio : precio
                   }),
             dataType: "html",
             async:true,
-            success: function(msg){
+            success: function(){
                $("#precio").dialog('close');
             }
     }).responseText;
