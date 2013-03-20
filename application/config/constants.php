@@ -46,6 +46,7 @@ switch($_SERVER['REMOTE_ADDR']){
     $puesto = 4;
     break;
 }
+define('TMP', BASEPATH .'../assets/tmp/');
 define('PUESTO', $puesto);
 define('PRREMITO','laser03');
 define('PRCARTEL','laser03');

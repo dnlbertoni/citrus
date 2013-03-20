@@ -18,7 +18,7 @@
             <td><?php echo $last->importe?></td>
             <td>
               <?php echo anchor('ctacte/detalleComprobante/'.$last->id,'Detalle Comprobante', 'class="botView ajax"');?>
-              <?php echo anchor('ctacte/quitarComprobante/'.$last->id,'Detalle Comprobante', 'class="botdel ajax"');?>
+              <?php echo anchor('ctacte/detalleComprobante/'.$last->id .'/1','Detalle Comprobante', 'class="botdel ajax"');?>
             </td>
             <?php $total += $last->importe?>
         </tr>
@@ -78,8 +78,8 @@ $(document).ready(function(){
 			modal: true,
 			bgiframe: true,
 			autoOpen: false,
-			height: 300,
-			width: 500,
+			height: 500,
+			width: 600,
 			title: titulo,
 			draggable: true,
 			resizeable: true,

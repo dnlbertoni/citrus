@@ -42,6 +42,10 @@
      $Menu[7]['link']   = "carteles/cartelVerduras";
      $Menu[7]['nombre'] = "Carteles de Verduras";
 
+     $Menu[7]['boton']  = "bot_ofertaEscrita";
+     $Menu[7]['link']   = "carteles/ofertaEscrita";
+     $Menu[7]['nombre'] = "Oferta Cualquier Cosa";
+
      $data['Menu'] = $Menu;
      Assets::add_js('carteles/index');
      Template::set($data);
@@ -143,6 +147,14 @@
      $data['accion'] = 'carteles/topdf/cartelVerduras';
      Template::set($data);
      Template::set_view('carteles/listaprecios');
+     Template::render();
+   }
+   function ofertaEscrita(){
+     $fechoy= new DateTime();
+     $fechoy->modify("+1 week");
+     $data['accion'] = 'carteles/topdf/ofertaEscrita/';
+     $data['fecha']  = $fechoy->format('d/m/Y');
+     Template::set($data);
      Template::render();
    }
  }

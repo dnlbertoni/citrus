@@ -446,4 +446,53 @@ class Topdf extends MY_Controller{
     }
     redirect('carteles/', 'location',301);
   }
+  function ofertaEscrita(){
+    foreach ($_POST as $key=>$valor ){
+      if(!preg_match('/^(fecha)|^(Imprimir)|^(copias)/',$key)){
+        $lineas[]=$valor;
+      };
+    };
+    $this->fpdf->Open();
+    $this->fpdf->SetMargins(0,0,0);
+    $this->fpdf->SetAutoPageBreak(true);
+    $this->fpdf->SetDrawColor(128);
+    $x=0;
+    $y=0;
+    $alto = 85;
+    $pagina=270;
+    //defino copias
+    $copy=0;
+    while($copy < $this->input->post('copias')){
+      $this->fpdf->AddPage('L','A4');
+      $articulo = $this->Articulos_model->getDatosBasicos($valor);
+      $this->fpdf->Image('assets/img/logo.png',$x,$y,100);
+      $this->fpdf->SetFont('Times','' ,120);
+      $this->fpdf->SetXY($x+100,$y+25);
+      $this->fpdf->Cell(190,0,"OFERTA",0,0,'C');
+      $y +=75;
+      $fontLineas = 240 /count($lineas);
+      foreach($lineas as $valor){
+        $valor= trim($valor);
+        if($y < 180){
+          $this->fpdf->SetXY($x,$y);
+          $fontLinea  = 1200 / strlen($valor);
+          $font=($fontLineas > $fontLinea)?$fontLinea:$fontLineas;
+          $this->fpdf->SetFont('Arial','' ,$font);
+          $this->fpdf->Cell(290,0,strtoupper(substr($valor,0,20)),0,1,'C');
+          $y +=$font/2;
+        };
+      }
+      $this->fpdf->SetFont('Arial','' ,12);
+      $this->fpdf->SetXY($x,200);
+      $this->fpdf->Cell(290, 0,sprintf("Oferta valida hasta %s", $this->input->post('fecha')) , 0, 0, 'R');
+      $copy++;
+    }
+    $file = TMP . "cartel.pdf";
+    $this->fpdf->Output($file,'F');
+    $cmd = sprintf("lp %s -d %s",$file,$this->Printer);
+    shell_exec($cmd);
+    $cmd = sprintf("rm -f  %s",$file);
+    shell_exec($cmd);
+    redirect('carteles/', 'location',301);
+  }
 }

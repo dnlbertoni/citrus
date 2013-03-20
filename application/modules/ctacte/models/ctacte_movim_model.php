@@ -49,20 +49,27 @@ class Ctacte_movim_model extends MY_Model{
    */
   function getEncabezado($id){
     $idencab=$this->_buscoComprobante($id);
-    $this->db->select('fecha');
-    $this->db->select('CONCAT(tipcom_id, letra) as tipocom', false);
+    $this->db->select('DATE_FORMAT(fecha, "%d/%m/%Y") as fecha');
+    $this->db->select('facencab.cuenta_id');
+    $this->db->select('cuenta.nombre as cuenta_nombre');
+    $this->db->select('CONCAT(tipcom.abreviatura," - ", facencab.letra ) as tipocom', false);
     $this->db->select('CONCAT(puesto,"-",numero) as comprobante', false);
-    $this->db->select('importe');
+    $this->db->select('IF(facencab.estado=1,"Contado", "CtaCte") as condvta');
+    $this->db->select('importe as total');
     $this->db->from('facencab');
+    $this->db->join('cuenta', 'cuenta.id=facencab.cuenta_id', 'inner');
+    $this->db->join('tipcom', 'tipcom.id=facencab.tipcom_id', 'inner');
     $this->db->where('facencab.id', $idencab);
     return $this->db->get()->row();
   }
   function getComprobante($id){
     $idencab=$this->_buscoComprobante($id);
-    $this->db->select('cantidad_movim');
+    $this->db->select('codigobarra_articulo as Codigobarra');
+    $this->db->select('cantidad_movim as Cantidad');
     $this->db->select('facmovim.id_articulo');
-    $this->db->select('descripcion_articulo');
-    $this->db->select('preciovta_movim');
+    $this->db->select('descripcion_articulo as Nombre');
+    $this->db->select('preciovta_movim as Precio');
+    $this->db->select('cantidad_movim * preciovta_movim as Importe');
     $this->db->from('facmovim');
     $this->db->join('tbl_articulos', 'tbl_articulos.id_articulo=facmovim.id_articulo', 'inner');
     $this->db->where('facmovim.idencab', $idencab);

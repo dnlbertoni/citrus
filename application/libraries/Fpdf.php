@@ -1692,7 +1692,7 @@ function _enddoc()
         $param=($dialog ? 'true' : 'false');
         $script="print($param);";
         $this->IncludeJS($script);
-    }  
+    }
  }
 
 //End of class
@@ -1704,4 +1704,3 @@ if(isset($_SERVER['HTTP_USER_AGENT']) && $_SERVER['HTTP_USER_AGENT']=='contype')
   exit;
 }
 
-?>

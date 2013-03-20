@@ -111,7 +111,8 @@ class Ctacte extends MY_Controller{
     Template::set_view('ctacte/listado');
     Template::render();
   }
-  function detalleComprobante($id){
+  function detalleComprobante($id, $accion=0){
+    $data['borrar']=($accion==1)?true:false;
     $data['fac'] = $this->Ctacte_movim_model->getEncabezado($id);
     $data['art'] = $this->Ctacte_movim_model->getComprobante($id);
     $this->load->view('ctacte/detalleComprobante', $data);
