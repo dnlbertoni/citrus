@@ -29,11 +29,11 @@ class Topdf extends MY_Controller{
 
         $x=62;
         $y=90;
-        $this->fpdf->Image('rsc/img/logo.png',$x+$desplaz,$y,60);
+        $this->fpdf->Image('assets/img/logo.png',$x+$desplaz,$y,60);
 
         $x=0;
         $y=0;
-        $this->fpdf->Image('rsc/img/campanaHueca.gif',$x+$desplaz,$y,164);
+        $this->fpdf->Image('assets/img/campanaHueca.gif',$x+$desplaz,$y,164);
 
         $Y = 162;
         $X = 40;
@@ -89,7 +89,7 @@ class Topdf extends MY_Controller{
       $this->fpdf->Rect($x,$y,$ancho,$alto,'');
       $this->fpdf->SetFont('Times','' ,10);
       $this->fpdf->SetXY($x+1,$y+6);
-      $this->fpdf->Image('rsc/img/logo.png',$x+1,$y+18,15);
+      $this->fpdf->Image('assets/img/logo.png',$x+1,$y+18,15);
       $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,0,20),0,0,'C');
       $this->fpdf->SetXY($x+1,$y+10);
       $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,20,20),0,0,'C');
@@ -155,7 +155,7 @@ class Topdf extends MY_Controller{
       $this->fpdf->Rect($x,$y,$ancho,$alto,'');
       $this->fpdf->SetFont('Times','' ,12);
       $this->fpdf->SetXY($x+1,$y+4);
-      $this->fpdf->Image('rsc/img/logo.png',$x+1,$y+17,25);
+      $this->fpdf->Image('assets/img/logo.png',$x+1,$y+17,25);
       $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,0,30),0,0,'C');
       $this->fpdf->SetXY($x+1,$y+10);
       $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,30,30),0,0,'C');
@@ -211,7 +211,7 @@ class Topdf extends MY_Controller{
       foreach($codigos as $valor){
         $this->fpdf->AddPage('L','A4');
         $articulo = $this->Articulos_model->getDatosBasicos($valor);
-        $this->fpdf->Image('rsc/img/logo.png',$x,$y,100);
+        $this->fpdf->Image('assets/img/logo.png',$x,$y,100);
         $this->fpdf->SetFont('Times','' ,120);
         $this->fpdf->SetXY($x+100,$y+25);
         $this->fpdf->Cell(190,0,"OFERTA",0,0,'C');
@@ -233,7 +233,7 @@ class Topdf extends MY_Controller{
       foreach($codigos as $valor){
         $articulo = $this->Articulos_model->getDatosBasicos($valor);
         $this->fpdf->Rect($x,$y+5,160,$alto,'');
-        $this->fpdf->Image('rsc/img/logo.png',$x,$y+45,80);
+        $this->fpdf->Image('assets/img/logo.png',$x,$y+45,80);
         $this->fpdf->SetFont('Times','' ,72);
         $this->fpdf->SetXY($x,$y+15);
         $this->fpdf->Cell(160,0,"OFERTA",0,0,'C');
@@ -276,7 +276,7 @@ class Topdf extends MY_Controller{
     $y=0;
     if($tamano==1 && count($codigos)>0){
       $this->fpdf->AddPage('L','A4');
-      $this->fpdf->Image('rsc/img/logo.png',$x,$y,100);
+      $this->fpdf->Image('assets/img/logo.png',$x,$y,100);
       $this->fpdf->SetFont('Times','' ,120);
       $this->fpdf->SetXY($x+100,$y+25);
       $this->fpdf->Cell(190,0,"OFERTA",0,0,'C');
@@ -307,7 +307,7 @@ class Topdf extends MY_Controller{
         $this->fpdf->AddPage();
         $articulo = $this->Articulos_model->getDatosBasicos($valor);
         $this->fpdf->Rect($x,$y+5,160,90,'');
-        $this->fpdf->Image('rsc/img/logo.png',$x,$y+45,80);
+        $this->fpdf->Image('assets/img/logo.png',$x,$y+45,80);
         $this->fpdf->SetFont('Times','' ,72);
         $this->fpdf->SetXY($x,$y+15);
         $this->fpdf->Cell(160,0,"OFERTA",0,0,'C');
@@ -408,7 +408,7 @@ class Topdf extends MY_Controller{
         $x=$col*100+$des;
         $articulo = $this->Articulos_model->getDatosBasicos($valor);
         $this->fpdf->Rect($x,$y+5,($col*100)+100,$alto,'');
-        $this->fpdf->Image('rsc/img/logo.png',$x+3,$y+45,50);
+        $this->fpdf->Image('assets/img/logo.png',$x+3,$y+45,50);
         $this->fpdf->SetFont('Times','' ,30);
         $this->fpdf->SetXY($x,$y+15);
         $this->fpdf->Cell(100,0,strtoupper(substr($articulo->descripcion,0,14)),0,1,'C');

@@ -25,6 +25,7 @@ class Ctacte_movim_model extends MY_Model{
     $this->db->from($this->getTable());
     $this->db->join('cuenta', 'id_cuenta=cuenta.id', 'inner');
     $this->db->where('ctacte_movim.estado', $estado);
+    $this->db->having('total > 0');
     $this->db->order_by('nombre');
     $this->db->group_by('id_cuenta');
     return $this->db->get()->result();
@@ -75,12 +76,28 @@ class Ctacte_movim_model extends MY_Model{
     $this->db->where('facmovim.idencab', $idencab);
     return $this->db->get()->result();
   }
+    /*
+   * @method quitarDeLaCuenta
+   * @param $id id del comprobante de cuenta corriente
+   *
+   */
   function quitarDeLaCuenta($id){
-    return $this->_buscoComprobante($id);
+    $idencab = $this->_buscoComprobante($id);
+    $this->db->trans_begin();
     // cambio de estado el comprobante en la lista de movimientos de facturas
+    $this->db->set('estado', 1);
+    $this->db->where('id', $idencab);
+    $this->db->update('facencab');
+    //$this->db->free_result();
     //borro de los movimientos de la cuenta corriente
     $this->db->where('id', $id);
     $this->db->where('id_liq IS NULL', '', FALSE);
+    $this->db->delete('ctacte_movim');
+    if ($this->db->trans_status() === FALSE){
+        $this->db->trans_rollback();
+    }else{
+        $this->db->trans_commit();
+    };
   }
   function getFecha($tipo='min', $estado='P', $cuenta=0){
     if($tipo=='min')

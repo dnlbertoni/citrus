@@ -42,8 +42,9 @@ foreach($art as $articulo){?>
   }?>
   <tr><th colspan="4" align="right">Total --&gt; </th><th align="right" colspan="2"><?php printf("$%01.2f", $fac->total);?></th></tr>
 </table>
+<br />
 <?php if($borrar):?>
-<div id="borrar">Sacar de la Cuenta</div>
+  <?php echo anchor('ctacte/quitarDeLaCuenta/'.$idMovim, 'Sacar de la Cuenta', 'id="borrar"')?>
 <?php endif;?>
 <script>
 $(document).ready(function(){
@@ -52,7 +53,17 @@ $(document).ready(function(){
   $(".ui-state-error").css('vertical-align', 'middle');
   $('.importeTotal').css('font-size', '36px');
   $("#borrar").button({icons:{primary:'ui-icon-trash'}});
-  if($("#condVta").html()=="Contado"){
+  $("#borrar").click(function(e){
+    e.preventDefault();
+    url=$(this).attr('href');
+    $.ajax({
+      url:url,
+      success:function(){
+       $("#ventanaAjax").dialog('close');
+      }
+    });
+  });
+  if($("#condVta").html()==="Contado"){
     $("#condVta").removeClass('ui-state-error');
     $("#condVta").addClass('ui-state-default');
   }else{

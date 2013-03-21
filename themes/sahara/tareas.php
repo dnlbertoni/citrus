@@ -1,8 +1,8 @@
 <div id="column2">
-<h1>Tareas regulares</h1>
- <ul class="sidemenu">
+<h3>Tareas regulares</h3>
+ <ul>
     <?php foreach($tareas as $t):?>
-         <li><?php echo anchor($t[0], $t[1],(isset($t[2]))?$t[2]:"")?></li>
+   <li><?php echo anchor($t[0], $t[1],(isset($t[2]))?$t[2]:"")?></li>
     <?php endforeach;?>
  </ul>
 </div>

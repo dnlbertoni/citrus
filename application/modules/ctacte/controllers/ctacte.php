@@ -12,6 +12,7 @@ class Ctacte extends MY_Controller{
     // panel de tareas Regulares
     $datos['tareasSet']=true;
     $datos['tareas'][] = array('cuenta/crear', 'Agregar CtaCte');
+    $datos['tareas'][] = array('ctacte/listados', 'Listado de CTACTE');
     $datos['tareas'][] = array('ctacte/adeudadas', 'Listado Liq a Cobrar');
     $datos['tareas'][] = array('cuenta/topdf/listado/1/1', 'Listado Clientes CTACTE');
     Template::set($datos);
@@ -102,8 +103,7 @@ class Ctacte extends MY_Controller{
     //grabo
     $this->Ctacte_liq_model->cobroLiq($liq->id, $idRec);
     $this->Ctacte_movim_model->cobroFac($liq->id, $idRec);
-    //$this->index();
-    Template::render();
+    Template::redirect('ctacte/');
   }
   function adeudadas(){
     $data['pendientes']=$this->Ctacte_liq_model->getAllEstado('P');
@@ -115,6 +115,10 @@ class Ctacte extends MY_Controller{
     $data['borrar']=($accion==1)?true:false;
     $data['fac'] = $this->Ctacte_movim_model->getEncabezado($id);
     $data['art'] = $this->Ctacte_movim_model->getComprobante($id);
+    $data['idMovim']=$id;
     $this->load->view('ctacte/detalleComprobante', $data);
+  }
+  function quitarDeLaCuenta($id){
+    $this->Ctacte_movim_model->quitarDeLaCuenta($id);
   }
 }

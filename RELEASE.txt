@@ -1,9 +1,16 @@
 /**
-* Version 3
+* Version 3.14
 *
 */
 
 /**
+* ultima actualizacion: /03/2013
+* mejoramiento del modulo de ctacte
+* se puede quitar de la cuenta
+**/
+
+/**
+* ultima actualizacion: 15/03/2013
 * Unificacion para la libreria template
 **/
 

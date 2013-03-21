@@ -157,16 +157,14 @@ body
 	margin-bottom: 1.0em;
 }
 
-#column2
-{
-	width: 145px;
+#column2{
+	width: 165px;
 	float: left;
 	position: relative;
 	margin-left: auto;
 }
 
-#column2 p
-{
+#column2 p{
 	text-align: justify;
 	margin-bottom: 2.0em;
 	color: #4F4F2B;
@@ -180,16 +178,20 @@ body
 	margin-bottom: 1.0em;
 }
 
-#column2 ul
-{
-	list-style: none;
-	line-height: 2.0em;
-	margin-bottom: 2.0em;
+#column2 ul{
+  list-style: none;
+  line-height: 2.0em;
+  margin-bottom: 2.0em;
 }
 
-#column2 li
-{
-	border-bottom: dashed 1px #EFEFD6;
+#column2 li{
+  height: 35px;
+  padding-top: 2px;
+  vertical-align: central;
+  border-bottom: dashed 1px #EFEFD6;
+}
+#column2 li a{
+	text-decoration: none;
 }
 
 table {
