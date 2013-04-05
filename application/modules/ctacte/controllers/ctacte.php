@@ -12,9 +12,8 @@ class Ctacte extends MY_Controller{
     // panel de tareas Regulares
     $datos['tareasSet']=true;
     $datos['tareas'][] = array('cuenta/crear', 'Agregar CtaCte');
-    $datos['tareas'][] = array('ctacte/listados', 'Listado de CTACTE');
-    $datos['tareas'][] = array('ctacte/adeudadas', 'Listado Liq a Cobrar');
-    $datos['tareas'][] = array('cuenta/topdf/listado/1/1', 'Listado Clientes CTACTE');
+    $datos['tareas'][] = array('ctacte/estadisticas', 'Informacion Extra');
+
     Template::set($datos);
     Template::set_block('tareas', 'tareas'); // panel de tareas
   }
