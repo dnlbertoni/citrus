@@ -24,7 +24,7 @@ class Facencab_model extends MY_Model{
       return false;
     }
   }
-  function getTotalesCTACTE($mes,$ano){
+  function getTotalesCTACTE($periodo){
     $this->db->select('DATE_FORMAT(fecha, "%Y%m") as periodo', false);
     $this->db->select('cuenta_id');
     $this->db->select('cuenta.nombre as cliente');
@@ -32,7 +32,7 @@ class Facencab_model extends MY_Model{
     $this->db->select('count(facencab.id) as compras');
     $this->db->from($this->getTable());
     $this->db->join('cuenta', 'cuenta.id=facencab.cuenta_id', 'right');
-    $this->db->where('DATE_FORMAT(fecha, "%Y%m") = '.($ano*100+$mes),'', false);
+    $this->db->where('DATE_FORMAT(fecha, "%Y%m") = '.$periodo,'', false);
     $this->db->where('facencab.estado',9);
     $this->db->group_by('cuenta_id');
     $this->db->order_by('cliente');

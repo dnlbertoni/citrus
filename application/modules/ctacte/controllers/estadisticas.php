@@ -17,7 +17,7 @@ class Estadisticas extends MY_Controller{
     Template::render();
   }
   function resumenPeriodo(){
-    $clientes=$this->Facencab_model->getTotalesCTACTE($this->input->post('mes_id')+1,$this->input->post('ano_id'));
+    $clientes=$this->Facencab_model->getTotalesCTACTE($this->input->post('ano_id')*100+($this->input->post('mes_id')+1));
     Template::set('clientes',$clientes);
     Template::set('periodo', $this->input->post('ano_id')*100+($this->input->post('mes_id')+1));
     Template::set_view('ctacte/estadisticas/resumen');
