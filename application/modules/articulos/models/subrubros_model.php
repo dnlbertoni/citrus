@@ -1,4 +1,4 @@
-<?php 
+<?php
 class Subrubros_model extends MY_Model{
   function __construct(){
           parent::__construct();
@@ -22,10 +22,11 @@ class Subrubros_model extends MY_Model{
     $this->db->select('ID_SUBRUBRO');
     $this->db->select('DESCRIPCION_SUBRUBRO');
     $this->db->select('DESCRIPCION_RUBRO AS rubro');
+    $this->db->select('ALIAS_SUBRUBRO');
     $this->db->from($this->getTable());
     $this->db->join("tbl_rubros", "tbl_subrubros.id_rubro = tbl_rubros.id_rubro", "inner");
     $this->db->order_by('tbl_subrubros.ID_RUBRO');
-    $this->db->order_by('DESCRIPCION_SUBRUBRO');
+    $this->db->order_by('ALIAS_SUBRUBRO');
     return $this->db->get()->result();
   }
   function getAlias($id){
@@ -53,5 +54,5 @@ class Subrubros_model extends MY_Model{
 	}else{
 	  return false;
 	}
-  }  
+  }
 }

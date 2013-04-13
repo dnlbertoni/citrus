@@ -61,7 +61,7 @@ class Rubros extends MY_Controller{
 					  'ESTADO_RUBRO'      => $this->input->post('estado')
 					);
 	  $id = $this->Rubros_model->add($datos);
-	  $this->index();
+      Template::redirect('rubros');
   }
   function editar($id){
 	$data['accion'] = 'articulos/rubros/editarDo';
@@ -80,10 +80,10 @@ class Rubros extends MY_Controller{
 					);
 	  $id = $this->input->post('id');
 	  $this->Rubros_model->update($datos, $id);
-	  $this->index();
+      Template::redirect('rubros');
   }
   function borrar($id){
 	  $this->Rubros_model->borrar($id);
-	  $this->index();
+      Template::redirect('rubros');
   }
 }

@@ -5,6 +5,7 @@
 	<th>Codigo</th>
 	<th>Nombre</th>
 	<th>Rubro</th>
+	<th>nombre para el Producto</th>
 	<th colspan="2">&nbsp;</th>
   </thead>
   <?php foreach($subrubros as $subrubro):?>
@@ -12,6 +13,7 @@
 		<td><?php echo $subrubro->ID_SUBRUBRO?></td>
 		<td><?php echo $subrubro->DESCRIPCION_SUBRUBRO?></td>
 		<td><?php echo $subrubro->rubro?></td>
+		<td><?php echo $subrubro->ALIAS_SUBRUBRO?></td>
 		<td><?php echo anchor('articulos/subrubros/editar/'.$subrubro->ID_SUBRUBRO, 'Editar', "class='boton'");?></td>
 		<td><?php echo anchor('articulos/subrubros/borrar/'.$subrubro->ID_SUBRUBRO, 'Borrar', 'class="boton"')?></td>
     </tr>

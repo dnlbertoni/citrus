@@ -55,7 +55,7 @@ class Marcas extends MY_Controller{
 					    );
 	  $idSub = $this->Submarcas_model->add($datosSub);
 	  if($metodo=="html"){
-	    $this->index();
+      Template::redirect('marcas');
 	  }else{
 		echo "<div class='codigo'>$idSub</div>";
 	  };
@@ -81,11 +81,11 @@ class Marcas extends MY_Controller{
 	  $id = $this->input->post('id');
 	  $this->Marcas_model->update($datos, $id);
 	  if($metodo=="html"){
-		$this->index();
+      Template::redirect('marcas');
 	  };
   }
   function borrar($id){
 	  $this->Marcas_model->borrar($id);
-	  $this->index();
+      Template::redirect('marcas');
   }
 }

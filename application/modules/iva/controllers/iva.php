@@ -51,7 +51,7 @@ class Iva extends MY_Controller{
     //Template::set('contenido', print_r($data));
     //Template::render();
     $data['resultado']=$this->Facencab_model->ActualizoPeriva($this->input->post('periodo'), $data['facturas_id']);
-    $this->index();
+    Template::redirect('iva');
   }
   function libro(){
     $data['selectLibro']=$this->input->post('libro');
@@ -193,7 +193,7 @@ class Iva extends MY_Controller{
     }
     $filename = TMP . "temporal.pdf";
     $this->fpdf->OutPut($filename, $destino);
-    $this->index();
+    Template::redirect('iva');
   }
   function PeriodotoPrint($libro, $periodo){
     $this->PeriodotoPdf($libro,$periodo,'F');
@@ -289,7 +289,7 @@ class Iva extends MY_Controller{
 
     $filename = TMP . "temporal.pdf";
     $this->fpdf->OutPut($filename, $destino);
-    $this->index();
+    Template::redirect('iva');
   }
   function PercepcionestoPrint($periodo){
     $this->PercepcionestoPdf($periodo,'F');

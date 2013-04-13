@@ -98,14 +98,14 @@ class Cuenta extends MY_Controller{
                'ctacte'     => $this->input->post('ctacte'),
                'estado'     => $this->input->post('estado'));
     $this->Cuenta_model->update($datos,$this->input->post('id'));
-    $this->index();
+    Template::redirect('cuenta');
   }
   function ver(){
 
 	}
   function borrar($id){
     $this->Cuenta_model->borrar($id);
-    $this->index();
+      Template::redirect('cuenta');
   }
   function buscoCuit(){
     $valor=$this->input->post('cuit');

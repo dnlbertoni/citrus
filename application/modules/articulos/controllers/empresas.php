@@ -59,7 +59,7 @@ class Empresas extends MY_Controller{
   function asignaEmpresa(){
     $datos = array('id'=>$this->input->post('id'), 'id_marca'=>$this->input->post('id_marca'));
     $this->Empresas_model->add($datos, 'id');
-    $this->index();
+      Template::redirect('empresas');
   }
   function asigna(){
     $campo = ($this->input->post('tipo')=="rubro")?'id_subrubro':'id_marca';
@@ -70,6 +70,6 @@ class Empresas extends MY_Controller{
       }
     };
     //Template::render();
-    $this->index();
+      Template::redirect('empresas');
   }
 }

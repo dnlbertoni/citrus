@@ -57,7 +57,7 @@ class Subrubros extends MY_Controller{
                    );
     $id = $this->Subrubros_model->add($datos);
     if($metodo=="html"){
-          $this->index();
+      Template::redirect('articulos/subrubros');
     }else{
       echo "<span class='codigo'>",$id,"</span>";
     }
@@ -87,12 +87,12 @@ class Subrubros extends MY_Controller{
     $id = $this->input->post('id');
     $this->Subrubros_model->update($datos, $id);
     if($metodo=="html"){
-      $this->index();
+      Template::redirect('articulos/subrubros');
     };
   }
   function borrar($id){
 	  $this->Subrubros_model->borrar($id);
-	  $this->index();
+      Template::redirect('articulos');
   }
   function combosubrubros(){
     $id = $this->input->post("id");
