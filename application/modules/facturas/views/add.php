@@ -9,16 +9,16 @@
     <td>
       <?php
        $datinput = array(
-          'id'=>'cuenta_id', 
-          'name' => 'cuenta_id', 
-          'value' => $cuenta_id, 
+          'id'=>'cuenta_id',
+          'name' => 'cuenta_id',
+          'value' => $cuenta_id,
           'size' => 5
-       );      
-       echo form_input($datinput)?> | 
+       );
+       echo form_input($datinput)?> |
       <?php
        $datinput = array(
-          'id'=>'cuenta_nombre', 
-          'name' => 'cuenta_nombre', 
+          'id'=>'cuenta_nombre',
+          'name' => 'cuenta_nombre',
           'value' => $cuenta_nombre
        );
        echo form_input($datinput)?>
@@ -31,25 +31,25 @@
     <td>
        <?php
        $datinput = array(
-          'id'=>'letra', 
-          'name' => 'letra', 
+          'id'=>'letra',
+          'name' => 'letra',
           'size' => 1
-       );      
-       echo form_input($datinput)?> | 
-      <?php 
+       );
+       echo form_input($datinput)?> |
+      <?php
        $datinput = array(
-          'id'=>'puesto', 
-          'name' => 'puesto', 
+          'id'=>'puesto',
+          'name' => 'puesto',
           'size' => 5
-       );      
-       echo form_input($datinput);?> - 
-      <?php 
+       );
+       echo form_input($datinput);?> -
+      <?php
        $datinput = array(
-          'id'=>'numero', 
-          'name' => 'numero', 
+          'id'=>'numero',
+          'name' => 'numero',
           'size' => 8
-       );      
-       echo form_input($datinput);?> 
+       );
+       echo form_input($datinput);?>
     </td>
   </tr>
   <tr>
@@ -57,12 +57,12 @@
     <td>
       <?php
        $datinput = array(
-          'id'=>'fecha', 
+          'id'=>'fecha',
           'name' => 'fecha'
        );
        echo form_input($datinput);?>
     </td>
-  </tr>  
+  </tr>
 
   <tr>
     <td>Importe</td>
@@ -75,8 +75,8 @@
   <tr>
     <td>Neto</td>
     <td><?php
-       $datinput = array( 'id'    =>  'neto', 
-                          'name'  =>  'neto' 
+       $datinput = array( 'id'    =>  'neto',
+                          'name'  =>  'neto'
        );
        echo form_input($datinput);?></td>
   </tr>
@@ -148,11 +148,8 @@
       onClose: function(){$("#importe").focus();},
       changeMonth: true
     });
-    $("#neto").change(function(){
-      //alert($(this).val());
-    });
     $('#addFac').submit(function(evnt){
-       //evnt.preventDefault();
+       evnt.preventDefault();
        var importe = Decimal($("#importe").val());
        var neto    = Decimal($("#neto").val());
        var ivamin  = Decimal($("#ivamin").val());
@@ -160,13 +157,21 @@
        var ingbru  = Decimal($("#ingbru").val());
        var impint  = Decimal($("#impint").val());
        var percep  = Decmial($("#percep").val());
-       if(importe==neto+ivamin+ivamax+ingbru+impint+percep){
+       if(importe === ( neto + ivamin + ivamax + ingbru + impint + percep ) ){
          next;
        }else{
          return false;
          alert(neto+ivamin+ivamax+ingbru+impint+percep);
        }
     });
+    $('#neto').bind('blur', function(){
+    total = parseFloat($('#importe').val());
+    neto  = parseFloat($('#net').val());
+    iva21 = neto * 21 / 100;
+    if(total === neto + iva21){
+      $('#ivamax').val(iva21);
+    };
+  });
   });
 function buscaCuenta(){
   var dialogOpts = {

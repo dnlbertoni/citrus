@@ -42,52 +42,38 @@ class Facturas extends MY_Controller {
     Template::render();
   }
   function addDo(){
-  // activar las propiedades de validacion
-    $this->_set_fields();
-    $this->_set_rules();
-    // validar
-    if ($this->validation->run() == FALSE){
-        $data['message'] = '';
-    }else{
-        // save data
-        $coef = ($this->input->post('tipcom_id')==3 || $this->input->post('tipcom_id')==13 )? -1 : 1;
-        // calculo el  periva
-        $auxper = explode("-",$this->input->post('fecha'));
-        $periva = $auxper[0] . $auxper[1];
-        $tipcom = $this->Tipcom_model->getById($this->input->post('tipcom_id'));
-        if( $tipcom->libroiva == 2 ){
-          $periva=0;
-        }
-        // compilo del objeto de carga
-        $datos = array('tipcom_id' => $this->input->post('tipcom_id'),
-                       'puesto'    => $this->input->post('puesto'),
-                       'numero'    => $this->input->post('numero'),
-                       'letra'     => $this->input->post('letra'),
-                       'fecha'     => $this->input->post('fecha'),
-                       'cuenta_id' => $this->input->post('cuenta_id'),
-                       'importe'   => $this->input->post('importe')* $coef,
-                       'neto'      => $this->input->post('neto')   * $coef,
-                       'ivamin'    => $this->input->post('ivamin') * $coef,
-                       'ivamax'    => $this->input->post('ivamax') * $coef,
-                       'ingbru'    => $this->input->post('ingbru') * $coef,
-                       'impint'    => $this->input->post('impint') * $coef,
-                       'percep'    => $this->input->post('percep') * $coef,
-                       'periva'    => $periva,
-                       'estado'    => 1 );
-        $id = $this->Facencab_model->save($datos);
-        $this->load->library('fb');
-        $this->fb->error($periva, "error");
-        // set form input name="id"
-        //$this->validation->id = $id;
-
-        // set user message
-        //$data['message'] = '<div class="success">Nueva Cuenta Creada Con exito</div>';
-    };
-    if($this->input->post('tipcom_id')==4){
+    // save data
+    $coef = ($this->input->post('tipcom_id')==3 || $this->input->post('tipcom_id')==13 )? -1 : 1;
+    // calculo el  periva
+    $auxper = explode("-",$this->input->post('fecha'));
+    $periva = $auxper[0] . $auxper[1];
+    $tipcom = $this->Tipcom_model->getById($this->input->post('tipcom_id'));
+    if( $tipcom->libroiva == 2 ){
+      $periva=0;
+    }
+    // compilo del objeto de carga
+    $datos = array('tipcom_id' => $this->input->post('tipcom_id'),
+                   'puesto'    => $this->input->post('puesto'),
+                   'numero'    => $this->input->post('numero'),
+                   'letra'     => $this->input->post('letra'),
+                   'fecha'     => $this->input->post('fecha'),
+                   'cuenta_id' => $this->input->post('cuenta_id'),
+                   'importe'   => $this->input->post('importe')* $coef,
+                   'neto'      => $this->input->post('neto')   * $coef,
+                   'ivamin'    => $this->input->post('ivamin') * $coef,
+                   'ivamax'    => $this->input->post('ivamax') * $coef,
+                   'ingbru'    => $this->input->post('ingbru') * $coef,
+                   'impint'    => $this->input->post('impint') * $coef,
+                   'percep'    => $this->input->post('percep') * $coef,
+                   'periva'    => $periva,
+                   'estado'    => 1 );
+    $id = $this->Facencab_model->save($datos);
+     if($this->input->post('tipcom_id')==4){
       $this->cierresZmanual();
     }else{
-      $this->add($this->input->post('tipcom_id'),0);
+      Template::redirect('facturas/add/'.$this->input->post('tipcom_id').'/' . 0);
     }
+
   }
   // campos de validacion
   function _set_fields(){

@@ -49,7 +49,7 @@ class Submarcas extends MY_Controller{
                                   );
     $id = $this->Submarcas_model->add($datos);
     if($metodo=="html"){
-      Template::redirect('submarcas');
+      Template::redirect('articulos/submarcas');
     }else{
       echo "<span class='codigo'>",$id,"</span>";
     }
@@ -79,12 +79,12 @@ class Submarcas extends MY_Controller{
 	  $id = $this->input->post('id');
 	  $this->Submarcas_model->update($datos, $id);
 	  if($metodo=="html"){
-      Template::redirect('submarcas');
+      Template::redirect('articulos/submarcas');
 	  };
   }
   function borrar($id){
 	  $this->Submarcas_model->borrar($id);
-      Template::redirect('submarcas');
+      Template::redirect('articulos/submarcas');
   }
   function combosubmarcas(){
     $id = $this->input->post("id");

@@ -12,7 +12,7 @@ class Articulos_model extends MY_Model{
     $this->tabla = (object) $this->tabla;
     $this->setTable($this->tabla->name);
   }
-  function Inicializar(){
+  function Inicializar($full=false){
     $campos = $this->db->field_data($this->tabla->name);
     $datos=array();
     foreach($campos as $campo){
@@ -25,6 +25,14 @@ class Articulos_model extends MY_Model{
           };
         };
       }
+    }
+    if($full){
+      $datos['ID_RUBRO'] = 0;
+      $datos['DESCRIPCION_RUBRO'] = '';
+      $datos['DESCRIPCION_SUBRUBRO'] = '';
+      $datos['ID_SUBMARCA'] = 0;
+      $datos['DETALLE_MARCA'] = '';
+      $datos['DETALLE_SUBMARCA'] = '';
     }
     return (object) $datos;
   }
@@ -191,7 +199,9 @@ class Articulos_model extends MY_Model{
   function getByIdFull($id){
 	$this->db->from($this->getTable());
 	$this->db->join('tbl_subrubros', 'tbl_subrubros.id_subrubro = tbl_articulos.id_subrubro', 'left');
+	$this->db->join('tbl_rubros', 'tbl_rubros.id_rubro = tbl_subrubros.id_rubro', 'inner');
 	$this->db->join('stk_submarcas', 'stk_submarcas.id_submarca = tbl_articulos.id_marca', 'left');
+	$this->db->join('stk_marcas', 'stk_marcas.id_marca = stk_submarcas.id_marca', 'inner');
 	$this->db->where($this->getPrimaryKey(), $id);
 	return $this->db->get()->row();
   }

@@ -193,7 +193,7 @@ class Iva extends MY_Controller{
     }
     $filename = TMP . "temporal.pdf";
     $this->fpdf->OutPut($filename, $destino);
-    Template::redirect('iva');
+    //Template::redirect('iva');
   }
   function PeriodotoPrint($libro, $periodo){
     $this->PeriodotoPdf($libro,$periodo,'F');
@@ -289,7 +289,7 @@ class Iva extends MY_Controller{
 
     $filename = TMP . "temporal.pdf";
     $this->fpdf->OutPut($filename, $destino);
-    Template::redirect('iva');
+    //Template::redirect('iva');
   }
   function PercepcionestoPrint($periodo){
     $this->PercepcionestoPdf($periodo,'F');

@@ -80,6 +80,14 @@ class Empresas_model extends MY_Model{
     return $this->db->get()->result();
   }
   function getMarcas($idEmpresa){
+    //obtengo empresas relacionadas
+    $this->db->distinct();
+    $this->db->select('id_marca');
+    $this->db->from($this->getTable());
+    $this->db->where('id', $idEmpresa);
+    $marcas = $this->db->get()->result();
+    $this->db->_reset_select();
+
     $this->db->distinct();
     $this->db->select('tbl_articulos.id_marca as submarcaId');
     $this->db->select('stk_submarcas.id_marca  as marcaId');
@@ -88,16 +96,18 @@ class Empresas_model extends MY_Model{
     $this->db->from('tbl_articulos');
     $this->db->join('stk_submarcas', 'tbl_articulos.id_marca    = stk_submarcas.id_submarca', 'inner');
     $this->db->join('stk_marcas',    'stk_marcas.id_marca       = stk_submarcas.id_marca', 'inner');
-    $this->db->where('stk_submarcas.id_marca',$idEmpresa);
+    foreach ($marcas as $m) {
+      $this->db->or_where('stk_submarcas.id_marca',$m->id_marca);
+    }
     $this->db->order_by('marcaId');
     return $this->db->get()->result();
   }
   function getMarcasFromCodigobarra($idEmpresa){
     $this->db->distinct();
     $this->db->select('tbl_articulos.id_marca as submarcaId');
+    $this->db->select('detalle_submarca as submarcaNombre');
     $this->db->select('stk_submarcas.id_marca  as marcaId');
     $this->db->select('detalle_marca as marcaNombre');
-    $this->db->select('detalle_submarca as submarcaNombre');
     $this->db->from('tbl_articulos');
     $this->db->join('stk_submarcas', 'tbl_articulos.id_marca    = stk_submarcas.id_submarca', 'inner');
     $this->db->join('stk_marcas',    'stk_marcas.id_marca       = stk_submarcas.id_marca', 'inner');
