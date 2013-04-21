@@ -3,7 +3,6 @@
  * Controlador cabecera del modulo articulos
  * FEATURES:
  *
- *@TODO: Unificar el Template
  */
 class Wizard extends MY_Controller{
   private $CB;

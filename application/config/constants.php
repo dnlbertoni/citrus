@@ -36,7 +36,7 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
-define('VERSION','3.0');
+define('VERSION','3.5');
 
 switch($_SERVER['REMOTE_ADDR']){
   case '192.168.1.102':
