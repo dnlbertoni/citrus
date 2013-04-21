@@ -18,10 +18,21 @@ class Submarcas_model extends MY_Model{
     $this->db->order_by('nombre');
     return $this->db->get()->result();
   }
-  function getAllConMarcas(){
+  function getResto($sugeridos){
     $this->db->select('ID_SUBMARCA');
     $this->db->select('DETALLE_SUBMARCA');
     $this->db->select('DETALLE_MARCA AS marca');
+    $this->db->from($this->getTable());
+    $this->db->join("stk_marcas", "stk_submarcas.id_marca = stk_marcas.id_marca", "inner");
+    $this->db->order_by('stk_submarcas.ID_MARCA');
+    $this->db->order_by('DETALLE_SUBMARCA');
+    return $this->db->get()->result();
+  }
+  function getAllConMarcas(){
+    $this->db->select('stk_marcas.ID_MARCA as marcaId');
+    $this->db->select('ID_SUBMARCA as submarcaId');
+    $this->db->select('DETALLE_SUBMARCA as submarcaNombre');
+    $this->db->select('DETALLE_MARCA AS marcaNombre');
     $this->db->from($this->getTable());
     $this->db->join("stk_marcas", "stk_submarcas.id_marca = stk_marcas.id_marca", "inner");
     $this->db->order_by('stk_submarcas.ID_MARCA');

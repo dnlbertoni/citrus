@@ -113,6 +113,7 @@ class Wizard extends MY_Controller{
     $data['accion'] = "articulos/wizard/definoRubro";
     $data['tit']    = "Definicion de la Marca del Producto";
     $data['sugeridos']=$CodigoB;
+    $data['todos']=$this->Submarcas_model->getAllConMarcas();
     Template::set($data);
     Template::set('articulo', $this->Articulo);
     Template::set('idMaster', 'marcaId');
@@ -120,6 +121,7 @@ class Wizard extends MY_Controller{
     Template::set('nombreMaster', 'marcaNombre');
     Template::set('nombreMov', 'submarcaNombre');
     Template::set_block('sugeridos', 'articulos/wizard/sugeridos');
+    Template::set_block('todos', 'articulos/wizard/todos');
     //Template::set_view('articulos/wizard/paso2');
     Template::set_view('articulos/wizard/detalle');
     Template::render();

@@ -62,7 +62,6 @@
     </table>
   </div>
   <div id="seleccion">
-
   </div>
   <?php echo Template::block('sugeridos');?>
   <?php echo Template::block('todos');?>
