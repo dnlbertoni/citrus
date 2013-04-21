@@ -103,7 +103,10 @@ class Empresas_model extends MY_Model{
     return $this->db->get()->result();
   }
   function getMarcasFromCodigobarra($idEmpresa){
-    $this->db->distinct();
+    //$this->db->distinct();
+    $this->db->select('COUNT(tbl_articulos.id_marca) as cantidad', false);
+    $this->db->select('COUNT(tbl_articulos.id_marca) / COUNT(tbl_articulos.id_articulo)*100 as aciertoSubmarca', false);
+    $this->db->select('COUNT(tbl_articulos.id_marca) / COUNT(tbl_articulos.id_articulo)*100 as aciertoMarca', false);
     $this->db->select('tbl_articulos.id_marca as submarcaId');
     $this->db->select('detalle_submarca as submarcaNombre');
     $this->db->select('stk_submarcas.id_marca  as marcaId');
@@ -112,7 +115,9 @@ class Empresas_model extends MY_Model{
     $this->db->join('stk_submarcas', 'tbl_articulos.id_marca    = stk_submarcas.id_submarca', 'inner');
     $this->db->join('stk_marcas',    'stk_marcas.id_marca       = stk_submarcas.id_marca', 'inner');
     $this->db->where('tbl_articulos.empresa',$idEmpresa);
-    $this->db->order_by('marcaId');
+    $this->db->group_by('tbl_articulos.id_marca');
+    $this->db->order_by('submarcaId', 'DESC');
+    $this->db->order_by('cantidad', 'DESC');
     return $this->db->get()->result();
   }
 }

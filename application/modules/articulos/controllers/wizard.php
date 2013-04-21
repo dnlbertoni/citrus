@@ -88,11 +88,23 @@ class Wizard extends MY_Controller{
     Template::render();
   }
   function definoMarca(){
-    $data['marcasEmpresa']   = $this->Empresas_model->getMarcas($this->idEmpresa);
-    $data['marcasCodigoB']   = $this->Empresas_model->getMarcasFromCodigobarra($this->idEmpresa);
-    //$marca                   = $this->Marcas_model->getById($empresa->id_marca);
-    //$data['empresaNombre']   = $marca->DETALLE_MARCA;
-    $data['empresaNombre']   = '';
+    $CodigoB = $this->Empresas_model->getMarcasFromCodigobarra($this->idEmpresa);
+    $totalSubmarca=0;
+    $aux=false;
+    foreach ($CodigoB as $c) {
+      if($aux!=$c->marcaId){
+        $totalMarca[$c->marcaId]=0;
+        $aux=$c->marcaId;
+        $totalMarca[$c->marcaId] += $c->cantidad;
+      }else{
+        $totalMarca[$c->marcaId] += $c->cantidad;
+      }
+      $totalSubmarca += $c->cantidad;
+    }
+    foreach ($CodigoB as $c) {
+      $c->aciertoSubmarca = $c->cantidad/$totalSubmarca*100;
+      $c->aciertoMarca    = $totalMarca[$c->marcaId]/$totalSubmarca*100;
+    }
     $data['codigobarra']     = $this->CB;
     $data['urlSearchSubmarcas'] = sprintf("'%sindex.php/articulos/submarcas/searchAjax/resultadoAjaxPaso2'", base_url());
     $data['ocultos']         = array('codigobarra'    => $this->CB,
@@ -101,8 +113,14 @@ class Wizard extends MY_Controller{
                                     );
     $data['accion'] = "articulos/wizard/definoRubro";
     $data['tit']    = "Definicion de la Marca del Producto";
+    $data['sugeridos']=$CodigoB;
     Template::set($data);
     Template::set('articulo', $this->Articulo);
+    Template::set('idMaster', 'marcaId');
+    Template::set('idMov', 'submarcaId');
+    Template::set('nombreMaster', 'marcaNombre');
+    Template::set('nombreMov', 'submarcaNombre');
+    Template::set_block('sugeridos', 'articulos/wizard/sugeridos');
     //Template::set_view('articulos/wizard/paso2');
     Template::set_view('articulos/wizard/detalle');
     Template::render();

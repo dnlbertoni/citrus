@@ -7,13 +7,15 @@ class Cuenta_model extends MY_Model{
     $this->setTable('cuenta');
   }
   function getByIdComprobante($id){
-    $this->db->select('cuenta.id         AS codigo');
-    $this->db->select('cuenta.nombre     AS nombre');
-    $this->db->select('cuenta.cuit       AS cuit');
-    $this->db->select('cuenta.condiva_id AS condiva');
-    $this->db->select('cuenta.tipdoc     AS tipdoc');
-    $this->db->select('cuenta.ctacte     AS ctacte');
-    $this->db->select('condiva.letra615  AS letra615');
+    $this->db->select('cuenta.id                 AS codigo');
+    $this->db->select('cuenta.nombre             AS nombre');
+    $this->db->select('cuenta.datos_fac          AS datos_fac');
+    $this->db->select('cuenta.nombre_facturacion AS nombre_facturacion');
+    $this->db->select('cuenta.cuit               AS cuit');
+    $this->db->select('cuenta.condiva_id         AS condiva');
+    $this->db->select('cuenta.tipdoc             AS tipdoc');
+    $this->db->select('cuenta.ctacte             AS ctacte');
+    $this->db->select('condiva.letra615          AS letra615');
     $this->db->from($this->tabla);
     $this->db->join($this->tablaCondiva,'condiva_id = condiva.id', 'inner');
     $this->db->where('cuenta.id',$id);

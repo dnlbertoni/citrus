@@ -24,22 +24,24 @@ class Cuenta extends MY_Controller{
     $data['action'] = site_url('cuenta/crearDo');
     $data['link_back'] = 'cuenta/index/';
     // load view
-    $cuenta_data = array( 'condiva_id' => 1,
-                          'nombre'     => '',
-                          'cuit'       => 0,
-                          'tipdoc'     => 1,
-                          'direccion'  => '',
-                          'telefono'   => '',
-                          'email'      => '',
-                          'tipo'       => 1,
-                          'estado'     => 1,
-                          'ctacte'     => 0,
-                          'letra'      => 'B');
+    $cuenta_data = array( 'condiva_id'         => 1,
+                          'nombre'             => '',
+                          'datos_fac'          => 0,
+                          'nombre_facturacion' => '',
+                          'cuit'               => 0,
+                          'tipdoc'             => 1,
+                          'direccion'          => '',
+                          'telefono'           => '',
+                          'email'              => '',
+                          'tipo'               => 1,
+                          'estado'             => 1,
+                          'ctacte'             => 0,
+                          'letra'              => 'B');
     $data['cuenta'] = (object) $cuenta_data;
     $this->load->model('Condiva_model','',true);
     $data['accion'] = 'cuenta/crearDo';
     $data['condiva']= $this->Condiva_model->toDropDown();
-    Assets::add_js('cuenta/editar');
+    //Assets::add_js('cuenta/editar');
     Template::set($data);
     Template::set_view('cuenta/editar');
     Template::render();
@@ -50,6 +52,8 @@ class Cuenta extends MY_Controller{
 	$data['link_back'] = anchor('cuenta/index/','Volver a la Lista de Cuentas');
     $datos = array('condiva_id' => $this->input->post('condiva_id'),
 				   'nombre'     => strtoupper($this->input->post('nombre')),
+				   'datos_fac'          => strtoupper($this->input->post('datos_fac')),
+				   'nombre_facturacion' => strtoupper($this->input->post('nombre_facturacion')),
 				   'cuit'       => $this->input->post('cuit'),
 				   'tipdoc'     => $this->input->post('tipdoc'),
 				   'direccion'  => strtoupper($this->input->post('direccion')),
@@ -80,7 +84,7 @@ class Cuenta extends MY_Controller{
     $data['link_back'] = 'cuenta/index/';
     $data['accion'] = 'cuenta/editarDo';
     $data['ocultos'] = array('id'=>$id);
-    Assets::add_js('cuenta/editar');
+    //Assets::add_js('cuenta/editar');
     Template::set($data);
     Template::set_view('cuenta/editar');
     Template::render();
@@ -88,6 +92,8 @@ class Cuenta extends MY_Controller{
   function editarDo(){
     $datos = array('condiva_id' => $this->input->post('condiva_id'),
                'nombre'     => strtoupper($this->input->post('nombre')),
+			   'datos_fac'          => strtoupper($this->input->post('datos_fac')),
+			   'nombre_facturacion' => strtoupper($this->input->post('nombre_facturacion')),
                'cuit'       => $this->input->post('cuit'),
                'tipdoc'     => $this->input->post('tipdoc'),
                'direccion'  => strtoupper($this->input->post('direccion')),

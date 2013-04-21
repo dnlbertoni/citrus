@@ -61,7 +61,9 @@
       </tr>
     </table>
   </div>
-  <div>&nbsp;</div>
+  <div id="seleccion">
+
+  </div>
   <?php echo Template::block('sugeridos');?>
   <?php echo Template::block('todos');?>
   <?php echo Template::block('ninguno');?>

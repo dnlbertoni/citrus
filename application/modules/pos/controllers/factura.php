@@ -545,7 +545,8 @@ class Factura extends MY_Controller{
     $nom_archiv = $comprobante . $idencab;
     $this->df->nombres($nom_archiv);
     $tipdoc = ($cliente->tipdoc==2)?"C":2;
-    $this->df->DatosCliente($cliente->nombre, $cliente->cuit, $cliente->letra615, $tipdoc);
+    $cliNom=($cliente->datos_fac==1)?$cliente->nombre_facturacion:$cliente->nombre;
+    $this->df->DatosCliente($cliNom, $cliente->cuit, $cliente->letra615, $tipdoc);
     $tiplet=($cliente->condiva==1)?"A":"B";
     $this->df->AbrirFactura($tiplet);
     $this->df->ItemFactura($items);
