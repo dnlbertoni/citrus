@@ -328,7 +328,12 @@ class Articulos extends MY_Controller{
     Template::set_view('agrupadas');
     Template::render();
   }
-
+  function subirLista(){
+    $config['upload_path'] = TMP;
+    $config['allowed_types'] = 'csv';
+    $config['max_size']	= '2048';
+    Template::render();
+  }
 }
 
 
