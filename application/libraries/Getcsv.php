@@ -14,41 +14,31 @@ class Getcsv {
 	private $file_path = "";
     private $handle = "";
 
-	public function set_file_path($file_path)
-    {
+	public function set_file_path($file_path){
         $this->file_path = $file_path;
         return $this;
     }
 
-    private function get_handle()
-    {
+    private function get_handle(){
         $this->handle = fopen($this->file_path, "r");
         return $this;
     }
 
-    private function close_csv()
-    {
+    private function close_csv(){
         fclose($this->handle);
         return $this;
     }
 
     //this is the most current function to use
-    public function get_array()
-    {
+    public function get_array(){
         $this->get_handle();
-
         $row = 0;
-        while (($data = fgetcsv($this->handle, 0, ",")) !== FALSE) 
-        {
-            if($row == 0)
-            {
-                foreach ($data as $key => $value)
-                {
-                    $title[$key] = trim($value); //this extracts the titles from the first row and builds array
-                }
+        while (($data = fgetcsv($this->handle, 0, ",")) !== FALSE){
+          if($row == 0){
+            foreach ($data as $key => $value){
+              $title[$key] = trim($value); //this extracts the titles from the first row and builds array
             }
-            else
-            {
+            }else{
                 $new_row = $row - 1; //this is needed so that the returned array starts at 0 instead of 1
                 foreach($title as $key => $value) //this assumes there are as many columns as their are title columns
                 {
@@ -66,8 +56,7 @@ class Getcsv {
 // --------------------------------Main Functions Above----------------------------------------------------- //
 
     //This function is being left in incase I ever need it
-    function get_csv_array()
-    {
+    function get_csv_array(){
         $row = 0;
         if (($handle = fopen($this->file_path, "r")) !== FALSE) 
         {
@@ -82,11 +71,9 @@ class Getcsv {
     }
 
     //Probably not going to use this much but would be helpful if there are not as many title columns as total columns and I wanted to pull out just specific titles
-    function get_csv_assoc_array($questions)
-    {
+    function get_csv_assoc_array($questions){
         $row = 0;
-        if (($handle = fopen($this->file_path, "r")) !== FALSE) 
-        {
+        if (($handle = fopen($this->file_path, "r")) !== FALSE){
             while (($data = fgetcsv($handle, "", ",")) !== FALSE) 
             {
                 if($row == 0)

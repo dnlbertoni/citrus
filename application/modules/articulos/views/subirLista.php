@@ -1,5 +1,5 @@
 <?php echo $error;?>
-<?php echo form_open_multipart('upload/do_upload');?>
+<?php echo form_open_multipart('articulos/subirListaDo');?>
 <input type="file" name="userfile" size="20" />
 <br />
 <br />

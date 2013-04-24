@@ -329,9 +329,26 @@ class Articulos extends MY_Controller{
     Template::render();
   }
   function subirLista(){
+      $error = array('error' => '');
+      Template::set($error);
+    Template::render();
+  }
+  function subirListaDo(){
     $config['upload_path'] = TMP;
-    $config['allowed_types'] = 'csv';
-    $config['max_size']	= '2048';
+	$config['allowed_types'] = 'csv|txt';
+	$config['max_size']	= '2048';
+	$this->load->library('upload', $config);
+	if ( ! $this->upload->do_upload()){
+      $error = array('error' => $this->upload->display_errors());
+      Template::set($error);
+      Template::set_view('formulario_carga');
+	}else{
+      $archivo =  $this->upload->data();
+      $this->load->library('Getcsv');
+      $data['csvData'] =  $this->getcsv->set_file_path($archivo['full_path'])->get_array();      
+      Template::set($data);
+      Template::set_view('articulos/archivoOK');
+	}
     Template::render();
   }
 }
