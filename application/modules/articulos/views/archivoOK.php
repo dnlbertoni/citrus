@@ -1,4 +1,11 @@
+
+<table>
 <?php foreach($csvData as $c):?>
-<?php print_r($c);?>
-<br/>
+<tr>
+  <td><?php echo $c['BARRAS'];?></td>
+  <td><?php echo $c['PRODUCTO'];?></td>
+  <td><?php echo $c['RUBRO'];?></td>
+  <td><?php echo $c['COSTO'];?></td>
+</tr>
 <?php endforeach;?>
+</table>

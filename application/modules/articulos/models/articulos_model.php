@@ -327,4 +327,25 @@ class Articulos_model extends MY_Model{
     }
     return $this->db->get()->result();
   }
+  function getByCodigobarraCsv($Cb){
+    $this->db->select('codigobarra_articulo as codigobarra');
+    $this->db->select('descripcion_articulo as descripcion');
+    $this->db->select('preciocosto_articulo as costo');
+    $this->db->select('preciovta_articulo as precio');
+    $this->db->select('tbl_articulos.id_subrubro as id_subruro');
+    $this->db->select('descripcion_subrubro as nombre_subrubro');
+    $this->db->select('tbl_articulos.id_marca as id_submarca');
+    $this->db->select('detalle_submarca as nombre_submarca');
+    $this->db->select('fechamodif_articulo as fecha');
+    $this->db->from($this->tabla->name);
+    $this->db->join('tbl_subrubros', 'tbl_subrubros.id_subrubro=tbl_articulos.id_subrubro', 'inner');
+    $this->db->join('stk_submarcas', 'stk_submarcas.id_submarca=tbl_articulos.id_marca', 'inner');
+    $this->db->where($this->tabla->codigobarra,$Cb);
+    $q = $this->db->get();
+    if($q->num_rows()>0){
+      return $q->row();
+    }else{
+      return FALSE;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * TheBizzTech
  *
@@ -13,10 +13,17 @@ class Getcsv {
 
 	private $file_path = "";
     private $handle = "";
+    private $separador = ";";
 
-	public function set_file_path($file_path){
-        $this->file_path = $file_path;
+	public function set_separador($valor){
+        $this->separador = $valor;
         return $this;
+    }
+
+    public function set_file_path($file_path, $valor=","){
+      $this->set_separador($valor);
+      $this->file_path = $file_path;
+      return $this;
     }
 
     private function get_handle(){
@@ -33,7 +40,7 @@ class Getcsv {
     public function get_array(){
         $this->get_handle();
         $row = 0;
-        while (($data = fgetcsv($this->handle, 0, ",")) !== FALSE){
+        while (($data = fgetcsv($this->handle, 0, $this->separador)) !== FALSE){
           if($row == 0){
             foreach ($data as $key => $value){
               $title[$key] = trim($value); //this extracts the titles from the first row and builds array
@@ -58,9 +65,9 @@ class Getcsv {
     //This function is being left in incase I ever need it
     function get_csv_array(){
         $row = 0;
-        if (($handle = fopen($this->file_path, "r")) !== FALSE) 
+        if (($handle = fopen($this->file_path, "r")) !== FALSE)
         {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) 
+            while (($data = fgetcsv($handle, 1000,  $this->separador)) !== FALSE)
             {
                 $final_array[$row] = $data;
                 $row++;
@@ -74,7 +81,7 @@ class Getcsv {
     function get_csv_assoc_array($questions){
         $row = 0;
         if (($handle = fopen($this->file_path, "r")) !== FALSE){
-            while (($data = fgetcsv($handle, "", ",")) !== FALSE) 
+            while (($data = fgetcsv($handle, "",  $this->separador)) !== FALSE)
             {
                 if($row == 0)
                 {
@@ -104,7 +111,7 @@ class Getcsv {
         }
         return $final_array;
     }
-    
+
 } //End of class
 
 //Here is the end of the getcsv.php class

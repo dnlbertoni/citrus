@@ -328,12 +328,12 @@ class Articulos extends MY_Controller{
     Template::set_view('agrupadas');
     Template::render();
   }
-  function subirLista(){
+  function subirListaAS(){
       $error = array('error' => '');
       Template::set($error);
     Template::render();
   }
-  function subirListaDo(){
+  function subirListaASDo(){
     $config['upload_path'] = TMP;
 	$config['allowed_types'] = 'csv|txt';
 	$config['max_size']	= '2048';
@@ -341,15 +341,53 @@ class Articulos extends MY_Controller{
 	if ( ! $this->upload->do_upload()){
       $error = array('error' => $this->upload->display_errors());
       Template::set($error);
-      Template::set_view('formulario_carga');
+      Template::set_view('articulos/subirListaAS');
 	}else{
       $archivo =  $this->upload->data();
       $this->load->library('Getcsv');
-      $data['csvData'] =  $this->getcsv->set_file_path($archivo['full_path'])->get_array();      
+      $productosAS=$this->getcsv->set_file_path($archivo['full_path'], ";")->get_array();
+      $x=0;
+      $coef = 70;
+      $data['coef']=$coef;
+      $coef = ($coef /100)+1;
+      foreach($productosAS as $prod){
+        if($this->getDatosArticuloCSV($prod['BARRAS'])){
+          $productos[$x]['BARRAS']=$prod['BARRAS'];
+          $productos[$x]['PRODUCTO']=$prod['PRODUCTO'];
+          $productos[$x]['RUBRO']=$prod['RUBRO'];
+          $productos[$x]['COSTO']=  round((float)$prod['COSTO'], 2);
+          $productos[$x]['PRECIO']=  round($productos[$x]['COSTO']*$coef, 2);
+          $productos[$x]['detalle_db']=$this->getDatosArticuloCSV($prod['BARRAS']);
+        }else{
+          $nuevos[$x]['BARRAS']=$prod['BARRAS'];
+          $nuevos[$x]['PRODUCTO']=$prod['PRODUCTO'];
+          $productos[$x]['RUBRO']=$prod['RUBRO'];
+          $nuevos[$x]['COSTO']=  round((float)$prod['COSTO'], 2);
+          $nuevos[$x]['PRECIO']=  round($nuevos[$x]['COSTO']*$coef, 2);
+        }
+        $x++;
+      }
+      $data['productos'] = $productos;
+      $data['nuevos']    = $nuevos;
       Template::set($data);
-      Template::set_view('articulos/archivoOK');
+      Template::set_view('articulos/archivoAS');
 	}
     Template::render();
+  }
+  function getDatosArticuloCSV($CB){
+    //$this->output->enable_profiler(false);
+    $arti = $this->Articulos_model->getByCodigobarraCsv($CB);
+    if($arti){
+      //echo sprintf("<span class='est_1'>%s</span>", $arti->DESCRIPCION_ARTICULO);
+      $datos['descripcion']=$arti->descripcion;
+      $datos['costo']=$arti->costo;
+      $datos['precio']=$arti->precio;
+      $datos['fechamodif']=$arti->fecha;
+      return $datos;
+    }else{
+      //echo sprintf("<span class='est_0'>%s</span>", "No Existe");
+      return false;
+    }
   }
 }
 
