@@ -348,4 +348,10 @@ class Articulos_model extends MY_Model{
       return FALSE;
     }
   }
+  function updateAticulo($CB, $campo, $valor){
+    $this->db->set($campo, $valor);
+    $this->db->where('codigobarra_articulo',$CB);
+    $this->db->update($this->getTable());
+    return true;
+  }
 }

@@ -19,7 +19,7 @@
           <th>Costo</th><td><?php echo $c['COSTO'];?></td><td><?php echo $c['detalle_db']['costo'];?></td>
         </tr>
         <tr>
-          <th>Rubro</th><td><?php echo $c['RUBRO'];?></td><td></td>
+          <th>Rubro</th><td><?php echo $c['RUBRO'];?></td><td><?php echo form_dropdown('subrubro',$selSubrubros,1)?></td>
         </tr>
         <tr>
           <th>Precio</th>

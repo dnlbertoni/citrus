@@ -336,7 +336,7 @@ class Articulos extends MY_Controller{
   function subirListaASDo(){
     $config['upload_path'] = TMP;
 	$config['allowed_types'] = 'csv|txt';
-	$config['max_size']	= '2048';
+	$config['max_size']	= '20480';
 	$this->load->library('upload', $config);
 	if ( ! $this->upload->do_upload()){
       $error = array('error' => $this->upload->display_errors());
@@ -369,6 +369,7 @@ class Articulos extends MY_Controller{
       }
       $data['productos'] = $productos;
       $data['nuevos']    = $nuevos;
+      $data['selSubrubros']=$this->Subrubros_model->toDropDown('id_subrubro','descripcion_subrubro');
       Template::set($data);
       Template::set_view('articulos/archivoAS');
 	}
@@ -378,18 +379,21 @@ class Articulos extends MY_Controller{
     //$this->output->enable_profiler(false);
     $arti = $this->Articulos_model->getByCodigobarraCsv($CB);
     if($arti){
-      //echo sprintf("<span class='est_1'>%s</span>", $arti->DESCRIPCION_ARTICULO);
       $datos['descripcion']=$arti->descripcion;
       $datos['costo']=$arti->costo;
       $datos['precio']=$arti->precio;
       $datos['fechamodif']=$arti->fecha;
       return $datos;
     }else{
-      //echo sprintf("<span class='est_0'>%s</span>", "No Existe");
       return false;
     }
   }
-}
+  function setRubro(){
+    $estado=$this->Articulos_model->updateArticulo($this->input->post('codigobarra'),'id_subrubro', $this->input->post('id_subrubro'));
+  }
+  function setMarca(){
+    $estado=$this->Articulos_model->updateArticulo($this->input->post('codigobarra'),'id_submarca', $this->input->post('id_submarca'));
+  }}
 
 
 /*
