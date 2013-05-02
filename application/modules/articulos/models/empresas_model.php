@@ -65,20 +65,6 @@ class Empresas_model extends MY_Model{
     $this->db->order_by('rubroId');
     return $this->db->get()->result();
   }
-  function getRubrosFromSubmarcas($idSubmarcas){
-    $this->db->distinct();
-    $this->db->select('tbl_articulos.id_subrubro as subrubroId');
-    $this->db->select('tbl_subrubros.id_rubro  as rubroId');
-    $this->db->select('descripcion_rubro as rubroNombre');
-    $this->db->select('descripcion_subrubro as subrubroNombre');
-    $this->db->from('tbl_articulos');
-    $this->db->join('tbl_subrubros', 'tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro', 'inner');
-    $this->db->join('tbl_rubros',    'tbl_subrubros.id_rubro    = tbl_rubros.id_rubro', 'inner');
-    $this->db->join('stk_submarcas', 'tbl_articulos.id_marca    = stk_submarcas.id_submarca', 'inner');
-    $this->db->where('tbl_articulos.id_marca',$idSubmarcas);
-    $this->db->order_by('rubroId');
-    return $this->db->get()->result();
-  }
   function getMarcas($idEmpresa){
     //obtengo empresas relacionadas
     $this->db->distinct();
@@ -116,8 +102,61 @@ class Empresas_model extends MY_Model{
     $this->db->join('stk_marcas',    'stk_marcas.id_marca       = stk_submarcas.id_marca', 'inner');
     $this->db->where('tbl_articulos.empresa',$idEmpresa);
     $this->db->group_by('tbl_articulos.id_marca');
-    $this->db->order_by('submarcaId', 'DESC');
+    $this->db->order_by('marcaNombre', 'ASC');
     $this->db->order_by('cantidad', 'DESC');
     return $this->db->get()->result();
+  }
+  function getRubrosFromSubmarcas($idSubmarcas){
+    $this->db->select('COUNT(tbl_articulos.id_subrubro) as cantidad', false);
+    $this->db->select('COUNT(tbl_articulos.id_subrurbo) / COUNT(tbl_articulos.id_articulo)*100 as aciertoSubrubro', false);
+    $this->db->select('COUNT(tbl_articulos.id_subrubro) / COUNT(tbl_articulos.id_articulo)*100 as aciertoRubro', false);
+    $this->db->select('tbl_articulos.id_subrubro as subrubroId');
+    $this->db->select('descripcion_subrubro as subrubroNombre');
+    $this->db->select('tbl_subrubros.id_rubro  as rubroId');
+    $this->db->select('descripcion_rubro as rubroNombre');
+    $this->db->from('tbl_articulos');
+    $this->db->join('tbl_subrurbos', 'tbl_articulos.id_subrubro    = tbl_subrubros.id_subrubro', 'inner');
+    $this->db->join('tbl_rubros',    'tbl_rubros.id_rubro          = tbl_subrubros.id_rubro', 'inner');
+    $this->db->where('tbl_articulos.empresa',$idEmpresa);
+    $this->db->group_by('tbl_articulos.id_subrubro');
+    $this->db->order_by('rubroNombre', 'ASC');
+    $this->db->order_by('cantidad', 'DESC');
+    return $this->db->get()->result();
+  }
+  function getAllConMarcasExcluidas($idEmpresa){
+    $query = "SELECT  stk_marcas.ID_MARCA as marcaId,
+                      ID_SUBMARCA as submarcaId,
+                      DETALLE_SUBMARCA as submarcaNombre,
+                      DETALLE_MARCA AS marcaNombre
+              FROM (stk_submarcas)
+              INNER JOIN stk_marcas ON stk_submarcas.id_marca = stk_marcas.id_marca
+              WHERE id_submarca NOT IN(
+                                  SELECT tbl_articulos.id_marca as submarcaId
+                                  FROM (tbl_articulos)
+                                  INNER JOIN stk_submarcas ON tbl_articulos.id_marca    = stk_submarcas.id_submarca
+                                  INNER JOIN stk_marcas ON stk_marcas.id_marca       = stk_submarcas.id_marca
+                                  WHERE `tbl_articulos`.`empresa` = '$idEmpresa'
+                                )
+              ORDER BY stk_marcas.DETALLE_MARCA, DETALLE_SUBMARCA ";
+    $datos = $this->db->query($query);
+    return $datos->result();
+  }
+  function getAllConRubrosExcluidos($idEmpresa){
+    $query = "SELECT  tbl_rubros.ID_RUBRO as rubroId,
+                      ID_SUBRUBRO as subrubroId,
+                      DESCRIPCION_SUBRUBRO as subrubroNombre,
+                      DESCRIPCION_RUBRO AS rubroNombre
+              FROM (tbl_subrubros)
+              INNER JOIN tbl_rubros ON tbl_subrubros.id_rubro = tbl_rubros.id_rubro
+              WHERE id_subrubro NOT IN(
+                                  SELECT tbl_articulos.id_subrubro as subrubroId
+                                  FROM (tbl_articulos)
+                                  INNER JOIN tbl_subrubros ON tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro
+                                  INNER JOIN tbl_rubros    ON tbl_rubros.id_rubro       = tbl_subrubros.id_rubro
+                                  WHERE `tbl_articulos`.`empresa` = '$idEmpresa'
+                                )
+              ORDER BY tbl_rubros.DESCRIPCION_RUBRO, DESCRIPCION_SUBRUBRO ";
+    $datos = $this->db->query($query);
+    return $datos->result();
   }
 }

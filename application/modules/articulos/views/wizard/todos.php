@@ -1,18 +1,28 @@
-  <h2 class="ui-widget-header">Todos</h2>
-  <div id="sug">
+<style>
+  .boxCont{
+    width:25%;
+    float:left;
+    text-align: center;
+  }
+</style>
+<h2 >Todos</h2>
+  <div id="resto" >
       <?php
       $aux=false;
       $primero=true;
+      $y=0;
       ?>
       <?php foreach($todos as $s):?>
-        <?php if($aux!=$s->{$idMaster}):?>
+          <?php if($aux!=$s->{$idMaster}):?>
             <?php if(!$primero):?>
-                <?php echo "</p></div>\n"?>
+              <?php echo "</div></div>";?>
             <?php endif;?>
-            <h3><?php echo $s->{$nombreMaster}?></h3>
-            <?php echo "<div><p>\n";?>
+              <div <?php echo "id='master_".$s->{$idMaster}."'"."class='boxCont'"?>  >
+              <h3><?php echo substr($s->{$nombreMaster},0,20)?></h3>
+              <div <?php echo "id='mov_".$s->{$idMaster}."'"."class='boxMov'"?>>
             <?php
             $aux=$s->{$idMaster};
+            $y=($y<3)?$y += 1:0;
             $primero=false;
             ?>
             <div id="sm_<?php echo $s->{$idMov}?>"class="boton"><?php echo $s->{$nombreMov}?></div>
@@ -20,21 +30,21 @@
             <div id="sm_<?php echo $s->{$idMov}?>"class="boton"><?php echo $s->{$nombreMov}?></div>
         <?php endif;?>
       <?php endforeach;?>
-     <?php // ya salimos hay que acomodar el div
-      echo "</p></div>";
-     ?>
-    </div>
+      <?php echo "</div></div>";?>
   </div>
+
+</div>
 
 <script>
 $(document).ready(function(){
-  $("#sug").accordion({
-    collapsible:true,
-    icons:{header: "ui-icon-circle-plus", activeHeader: "ui-icon-circle-minus"},
-    heightStyle: "fill"
+  $(".boxCont").addClass('ui-widget');
+  $(".boxMov").addClass('ui-widget-content');
+  $(".boxMov").hide();
+  $(".boxCont > h3").addClass('ui-widget-header');
+  $(".boxCont").click(function(){
+    $(this).children().show();
   });
   $(".boton").button();
-  $("#sug > h3").css('padding', '5px 5px 5px 25px');
   $(".boton").click(function(){
     $("#seleccion").text($(this).attr('id'));
   });

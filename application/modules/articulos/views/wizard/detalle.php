@@ -4,7 +4,7 @@
     <table width="100%">
       <tr>
         <th>Codigo Barra</th>
-        <td class="reqTXT"><?php echo $articulo->CODIGOBARRA_ARTICULO?></td>
+        <td class="reqTXT" id="CB"><?php echo $articulo->CODIGOBARRA_ARTICULO?></td>
         <td></td>
         <th>Descripcion</th>
         <td class="reqTXT"><?php echo $articulo->DESCRIPCION_ARTICULO?></td>
@@ -61,13 +61,28 @@
       </tr>
     </table>
   </div>
-  <div id="seleccion">
+  <p>&nbsp;</p>
+  <div id="asignar" class="ui-widget">
+    <h2 class="ui-widget-header"><span class="ui-icon ui-icon-circle-plus" style="display: inline-block;"></span>Asignar...</h2>
+    <div id="resultado" class="ui-widget-content">
+      <?php echo form_open($accion, 'id="wizard"')?>
+      <?php echo $textoAsignar?>
+      <?php echo anchor($nextPage,'Continuar', 'id="botonNext"');?>
+    </div>
   </div>
+  <p>&nbsp;</p>
   <?php echo Template::block('sugeridos');?>
+  <p>&nbsp;</p>
   <?php echo Template::block('todos');?>
+  <p>&nbsp;</p>
   <?php echo Template::block('ninguno');?>
 <script>
 $(document).ready(function(){
+  $(".ui-widget-header").click(function(){
+    $(this).next().toggle();
+  });
+  $(".ui-widget-header").next().hide();
+  $("#resultado").show();
   $("#radio-iva").buttonset();
   $(".reqTXT").each(function(){
     valor=$(this).text().trim();
@@ -84,6 +99,16 @@ $(document).ready(function(){
     }else{
       $(this).parent().addClass('est_0');
     };
+  });
+  $("#botonBack").button();
+  $("#botonNext").button({icons:{primary:'ui-icon-check'}});
+  $("#botonNext").click(function(e){
+    e.preventDefault();
+    url=$(this).attr('href');
+    cb=$("#CB").text();
+    tipo=$("#asignar>#resultado>#tipo").text();
+    data=$("#asignar>#resultado>#codigo").text();
+    $.load(url,{CB:cb, asignarTipo:tipo, asignarData:data});
   });
 });
 </script>

@@ -54,14 +54,14 @@ class Wizard extends MY_Controller{
       $empresa  = $this->Empresas_model->getById($idEmpresa);
       if($empresa){
         $this->idEmpresa=$empresa->id;
-        $this->definoMarca();
+        $this->definoMarca(0);
       }else{
         $this->idEmpresa=false;
-        $this->definoRubro();
+        $this->definoRubro(0);
       }
     }
   }
-  function definoRubro(){
+  function definoRubro1($orden){
     $idEmpresa               = $this->idEmpresa;
     $codigobarra             = $this->CB;
     $id_submarca             = $this->input->post('id_submarca');
@@ -86,7 +86,43 @@ class Wizard extends MY_Controller{
     Template::set_view('articulos/wizard/detalle');
     Template::render();
   }
-  function definoMarca(){
+  function definoRubro($orden){
+    $CodigoB = $this->Empresas_model->getRubrosFromCodigobarra($this->idEmpresa);
+    $totalSubrubro=0;
+    $aux=false;
+    foreach ($CodigoB as $c) {
+      if($aux!=$c->rubroId){
+        $totalRubro[$c->rubroId]=0;
+        $aux=$c->rubroId;
+        $totalRubro[$c->rubroId] += $c->cantidad;
+      }else{
+        $totalRubro[$c->rubroId] += $c->cantidad;
+      }
+      $totalSubrubro += $c->cantidad;
+    }
+    foreach ($CodigoB as $c) {
+      $c->aciertoSubrubro = sprintf("--> %2.2f ",$c->cantidad/$totalSubrubro*100);
+      $c->aciertoRubro    = sprintf("--> %2.2f ",$totalRubro[$c->rubroId]/$totalSubrubro*100);
+    }
+    $data['codigobarra']     = $this->CB;
+    $data['tit']    = "Definicion del Rubro del Producto";
+    $data['sugeridos']=$CodigoB;
+    $data['todos']=$this->Empresas_model->getAllConRubrosExcluidos($this->idEmpresa);
+    Template::set($data);
+    Template::set('articulo', $this->Articulo);
+    Template::set('idMaster', 'rubroId');
+    Template::set('idMov', 'subrubroId');
+    Template::set('nombreMaster', 'rubroNombre');
+    Template::set('nombreMov', 'subrubroNombre');
+    Template::set('textoAsignar', '<span id="tipo">SUBRURBO</span> : ( <span id="codigo">44</span> ) <span id="nombre">VARIOS</span>');
+    $page=($orden==0)?'wizard/definoMarcaDo/definoMarca/1':'wizard/definoMarcaDo/definoDetalle';
+    Template::set('nextPage', $page);
+    Template::set_block('sugeridos', 'articulos/wizard/sugeridos');
+    Template::set_block('todos', 'articulos/wizard/todosEASY');
+    Template::set_view('articulos/wizard/detalle');
+    Template::render();
+  }
+  function definoMarca($orden){
     $CodigoB = $this->Empresas_model->getMarcasFromCodigobarra($this->idEmpresa);
     $totalSubmarca=0;
     $aux=false;
@@ -101,8 +137,8 @@ class Wizard extends MY_Controller{
       $totalSubmarca += $c->cantidad;
     }
     foreach ($CodigoB as $c) {
-      $c->aciertoSubmarca = $c->cantidad/$totalSubmarca*100;
-      $c->aciertoMarca    = $totalMarca[$c->marcaId]/$totalSubmarca*100;
+      $c->aciertoSubmarca = sprintf("--> %2.2f ",$c->cantidad/$totalSubmarca*100);
+      $c->aciertoMarca    = sprintf("--> %2.2f ",$totalMarca[$c->marcaId]/$totalSubmarca*100);
     }
     $data['codigobarra']     = $this->CB;
     $data['urlSearchSubmarcas'] = sprintf("'%sindex.php/articulos/submarcas/searchAjax/resultadoAjaxPaso2'", base_url());
@@ -113,18 +149,29 @@ class Wizard extends MY_Controller{
     $data['accion'] = "articulos/wizard/definoRubro";
     $data['tit']    = "Definicion de la Marca del Producto";
     $data['sugeridos']=$CodigoB;
-    $data['todos']=$this->Submarcas_model->getAllConMarcas();
+    $data['todos']=$this->Empresas_model->getAllConMarcasExcluidas($this->idEmpresa);
     Template::set($data);
     Template::set('articulo', $this->Articulo);
     Template::set('idMaster', 'marcaId');
     Template::set('idMov', 'submarcaId');
     Template::set('nombreMaster', 'marcaNombre');
     Template::set('nombreMov', 'submarcaNombre');
+    Template::set('textoAsignar', '<span id="tipo">SUBMARCA</span> : ( <span id="codigo">0</span> ) <span id="nombre">GENERICA</span>');
+    $page='articulos/wizard/definoMarcaDo/'.$orden;
+    Template::set('nextPage', $page);
     Template::set_block('sugeridos', 'articulos/wizard/sugeridos');
-    Template::set_block('todos', 'articulos/wizard/todos');
-    //Template::set_view('articulos/wizard/paso2');
+    Template::set_block('todos', 'articulos/wizard/todosEASY');
     Template::set_view('articulos/wizard/detalle');
     Template::render();
+  }
+  function definoMarcaDo($orden){
+    $this->CB=$this->input->post('CB');
+    $this->idEmpresa = substr($this->CB, 0, 7);
+    if($orden==1){
+      $this->definoDetalle();
+    }else{
+      $this->definoRubro(1);
+    }
   }
   function definoDetalle(){
     $producto = $this->Subrubros_model->getAlias($this->input->post('id_subrubro'));
