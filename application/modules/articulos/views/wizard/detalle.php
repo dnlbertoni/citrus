@@ -65,9 +65,12 @@
   <div id="asignar" class="ui-widget">
     <h2 class="ui-widget-header"><span class="ui-icon ui-icon-circle-plus" style="display: inline-block;"></span>Asignar...</h2>
     <div id="resultado" class="ui-widget-content">
-      <?php echo form_open($accion, 'id="wizard"')?>
+      <?php echo form_open($accion, 'id="wizard"', $ocultos)?>
       <?php echo $textoAsignar?>
-      <?php echo anchor($nextPage,'Continuar', 'id="botonNext"');?>
+      <div id="botonBack">Atras</div>
+      <div id="botonNext">Continuar</div>
+      <div id="botonSkip">Salta Paso</div>
+      <?php echo form_close();?>
     </div>
   </div>
   <p>&nbsp;</p>
@@ -100,15 +103,13 @@ $(document).ready(function(){
       $(this).parent().addClass('est_0');
     };
   });
-  $("#botonBack").button();
-  $("#botonNext").button({icons:{primary:'ui-icon-check'}});
-  $("#botonNext").click(function(e){
-    e.preventDefault();
-    url=$(this).attr('href');
-    cb=$("#CB").text();
-    tipo=$("#asignar>#resultado>#tipo").text();
-    data=$("#asignar>#resultado>#codigo").text();
-    $.load(url,{CB:cb, asignarTipo:tipo, asignarData:data});
+  $("#botonBack").button({icons:{primary:'ui-icon-seek-prev'}});
+  $("#botonSkip").button({icons:{primary:'ui-icon-seek-next'}});
+  $("#botonNext").button({icons:{primary:'ui-icon-play'}});
+  $("#botonNext").click(function(){
+    valor=$("#asignar>#resultado>#wizard>#codigo").text();
+    $('input[name="valor"]').val(valor);
+    $("#wizard").submit();
   });
 });
 </script>
