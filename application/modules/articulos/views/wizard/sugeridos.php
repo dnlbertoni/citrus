@@ -12,7 +12,7 @@
             <?php if(!$primero):?>
                 <?php echo "</p></div>\n"?>
             <?php endif;?>
-            <h3><?php echo $s->{$nombreMaster}?>&nbsp;<?php echo $s->aciertoMarca?>%</h3>
+            <h3><?php echo $s->{$nombreMaster}?>&nbsp;<?php echo $s->acierto?>%</h3>
             <?php echo "<div><p>\n";?>
             <?php
             $aux=$s->{$idMaster};

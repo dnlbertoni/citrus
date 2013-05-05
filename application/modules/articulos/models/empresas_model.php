@@ -106,16 +106,16 @@ class Empresas_model extends MY_Model{
     $this->db->order_by('cantidad', 'DESC');
     return $this->db->get()->result();
   }
-  function getRubrosFromSubmarcas($idSubmarcas){
+  function getRubrosFromCodigobarra($idEmpresa){
     $this->db->select('COUNT(tbl_articulos.id_subrubro) as cantidad', false);
-    $this->db->select('COUNT(tbl_articulos.id_subrurbo) / COUNT(tbl_articulos.id_articulo)*100 as aciertoSubrubro', false);
+    $this->db->select('COUNT(tbl_articulos.id_subrubro) / COUNT(tbl_articulos.id_articulo)*100 as aciertoSubrubro', false);
     $this->db->select('COUNT(tbl_articulos.id_subrubro) / COUNT(tbl_articulos.id_articulo)*100 as aciertoRubro', false);
     $this->db->select('tbl_articulos.id_subrubro as subrubroId');
     $this->db->select('descripcion_subrubro as subrubroNombre');
     $this->db->select('tbl_subrubros.id_rubro  as rubroId');
     $this->db->select('descripcion_rubro as rubroNombre');
     $this->db->from('tbl_articulos');
-    $this->db->join('tbl_subrurbos', 'tbl_articulos.id_subrubro    = tbl_subrubros.id_subrubro', 'inner');
+    $this->db->join('tbl_subrubros', 'tbl_articulos.id_subrubro    = tbl_subrubros.id_subrubro', 'inner');
     $this->db->join('tbl_rubros',    'tbl_rubros.id_rubro          = tbl_subrubros.id_rubro', 'inner');
     $this->db->where('tbl_articulos.empresa',$idEmpresa);
     $this->db->group_by('tbl_articulos.id_subrubro');

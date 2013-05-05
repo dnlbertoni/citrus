@@ -19,6 +19,7 @@
  *@TODO: Unificar el Template
  */
 class Articulos extends MY_Controller{
+  private $wizard =true;
   function __construct(){
     parent::__construct();
     $this->load->model('Articulos_model');
@@ -52,6 +53,7 @@ class Articulos extends MY_Controller{
     $data['submarcasSel']  = $this->Submarcas_model->ListaSelect();
     $data['subrubrosDep']  = $this->Subrubros_model->ListaSelectDependiente();
     $data['submarcasDep']  = $this->Submarcas_model->ListaSelectDependiente();
+    $data['accionCodigobarra']= ($this->wizard)?'articulos/wizard/index':'articulos/ver';
     Assets::add_js('ui-tableFilter');
     Template::set($data);
     Template::render();
@@ -124,7 +126,7 @@ class Articulos extends MY_Controller{
       Template::redirect('articulos');
     };
   }
-  function update(){
+  function update($masivo){
     $datos = array();
     foreach($_POST as $key=>$valor){
       if(!preg_match('/^(Grabar)|^(ID_ARTICULO)|^(FECHAMODIF_ARTICULO)/',$key)){
@@ -132,7 +134,11 @@ class Articulos extends MY_Controller{
       };
     };
     $this->Articulos_model->updateMod($this->input->post('ID_ARTICULO'),$datos);
-    Template::redirect('articulos/');
+    if($masivo){
+      Template::redirect('articulos/wizard/masivo');
+    }else{
+      Template::redirect('articulos/');
+    }
   }
   function borrar($id){
     $this->Articulos_model->borrar($id);

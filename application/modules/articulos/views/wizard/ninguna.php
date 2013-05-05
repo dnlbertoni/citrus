@@ -1,5 +1,5 @@
 <div class="ui-widget">
-<h2 class="ui-widget-header"><span class="ui-icon ui-icon-circle-plus" style="display: inline-block;"></span>Resto</h2>
+<h2 class="ui-widget-header"><span class="ui-icon ui-icon-circle-plus" style="display: inline-block;"></span>No existe</h2>
 <div class="ui-widget-content">
 <p>&nbsp;</p>
   <table id="resto" >

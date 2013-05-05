@@ -76,6 +76,7 @@ class Articulos_model extends MY_Model{
     $this->db->select($this->tabla->id . "     AS id");
     $this->db->select($this->tabla->nombre . " AS nombre");
     $this->db->select($this->tabla->precio . " AS precio");
+    $this->db->select($this->tabla->codigobarra . " AS codigobarra");
     $this->db->select("descripcion_subrubro    AS subrubro");
     $this->db->select("detalle_submarca           AS marca");
     $this->db->select("estado_articulo         AS estado");
@@ -83,6 +84,7 @@ class Articulos_model extends MY_Model{
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
     $this->db->from($this->tabla->name);
     $this->db->where('tbl_articulos.id_marca', $valor);
+    $this->db->order_by('estado', 'DESC');
     $q = $this->db->get();
     if($q->num_rows() > 0){
       return $q->result();
@@ -348,7 +350,7 @@ class Articulos_model extends MY_Model{
       return FALSE;
     }
   }
-  function updateAticulo($CB, $campo, $valor){
+  function updateArticulo($CB, $campo, $valor){
     $this->db->set($campo, $valor);
     $this->db->where('codigobarra_articulo',$CB);
     $this->db->update($this->getTable());

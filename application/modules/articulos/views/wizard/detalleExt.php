@@ -12,7 +12,7 @@
       <tr>
         <th>Subrubro</th>
         <td>
-          (<span class="reqNUM"><?php echo $articulo->ID_SUBRUBRO ?></span>)
+          (<span class="reqNUM" id="ID_SUBRUBRO"><?php echo $articulo->ID_SUBRUBRO ?></span>)
           <?php echo $articulo->DESCRIPCION_SUBRUBRO?>
         </td>
         <td></td>
@@ -25,7 +25,7 @@
       <tr>
         <th>Submarca</th>
         <td>
-          (<span class="reqNUM"><?php echo $articulo->ID_SUBMARCA ?></span>)
+          (<span class="reqNUM" id="ID_MARCA"><?php echo $articulo->ID_SUBMARCA ?></span>)
           <?php echo $articulo->DETALLE_SUBMARCA?>
         </td>
         <td></td>
@@ -66,27 +66,30 @@
     <h2 class="ui-widget-header"><span class="ui-icon ui-icon-circle-plus" style="display: inline-block;"></span>Asignar...</h2>
     <div id="resultado" class="ui-widget-content">
       <?php echo form_open($accion, 'id="wizard"', $ocultos)?>
-      <?php echo $textoAsignar?>
+      Detalles y especificaiones:
+      <?php echo form_input('especificacion', '', 'id="especificacion" size="20"');?>
+      <div>
+        <?php foreach ($palabrasClaves as $clave):?>
+          <div class="wordkey"><?php echo $clave?></div>
+        <?php endforeach;?>
+      </div>
+      <br/>
+      Peso / Unidades <?php echo form_input('medida','','id="medida" size="8"');?>
+      <?php echo form_dropdown('medidas', $medidas, 1,'id="medidas"');?>
+      <br />
+      Nombre Generado:
+      <?php echo form_input('detalle', '', 'id="detalle" size="50" disabled="disabled"');?>
+      <br />
       <div id="botonBack">Atras</div>
       <div id="botonNext">Continuar</div>
       <div id="botonSkip">Salta Paso</div>
       <?php echo form_close();?>
+      <input type="hidden" id="paginaAjaxGenero" value="<?php echo base_url(). 'index.php/articulos/generoNombre'?>" />
     </div>
   </div>
-  <p>&nbsp;</p>
-  <?php echo Template::block('sugeridos');?>
-  <p>&nbsp;</p>
-  <?php echo Template::block('todos');?>
-  <p>&nbsp;</p>
-  <?php echo Template::block('ninguno');?>
 <script>
 $(document).ready(function(){
   $("#wizard input:text").first().focus();
-  $(".ui-widget-header").click(function(){
-    $(this).next().toggle();
-  });
-  $(".ui-widget-header").next().hide();
-  $("#resultado").show();
   $("#radio-iva").buttonset();
   $(".reqTXT").each(function(){
     valor=$(this).text().trim();
@@ -108,11 +111,55 @@ $(document).ready(function(){
   $("#botonSkip").button({icons:{primary:'ui-icon-seek-next'}});
   $("#botonNext").button({icons:{primary:'ui-icon-play'}});
   $("#botonNext").click(function(){
-    if($("#asignar>#resultado>#wizard>#codigo").length > 0){
-      valor=$("#asignar>#resultado>#wizard>#codigo").text();
-      $('input[name="valor"]').val(valor);
-    };
+    $("#detalle").removeAttr('disabled');
     $("#wizard").submit();
   });
+  $(".wordkey").button();
+  $(".wordkey").click(function(){
+    valor=$(this).text();
+    $("#especificacion").val(valor);
+    generoNombre();
+  });
+  $("#especificacion").change(function(){
+    generoNombre();
+  });
+  $("#especificacion").keypress(function(){
+    generoNombre();
+  });
+  $("#medida").change(function(){
+    generoNombre();
+  });
+  $("#medidas").change(function(){
+    generoNombre();
+  });
 });
+function generoNombre(){
+  pagina   = $("#paginaAjaxGenero").val();
+  subrubro = $("#ID_SUBRUBRO").text();
+  submarca = $("#ID_MARCA").text();
+  especif  = $("#especificacion").val();
+  valor    = $("#medida").val();
+  unidad   = $("#medidas").val();
+  if(unidad=='OTRO'){
+    medida = valor;
+  }else{
+    medida   = valor + unidad;
+  }
+  $.ajax({
+          url: pagina,
+          contentType: "application/x-www-form-urlencoded",
+          global: false,
+          type: "POST",
+          data: ({subrubro : subrubro,
+                  submarca : submarca,
+                  especif  : especif,
+                  medida   : medida,
+                }),
+          dataType: "html",
+          async:true,
+          success: function(msg){
+             $("#detalle").val(msg);
+           }
+  }).responseText;
+}
 </script>

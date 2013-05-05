@@ -10,7 +10,7 @@ $urlBuscoAjaxMarca   = sprintf("'%sindex.php/articulos/submarcas/searchAjax/%s'"
 ?>
 <div id="PorCodigoBarra" class="box">
   <h2>Por Codigo Barra</h2>
-<?php echo form_open('articulos/ver', 'id="buscoDetalle" class="search"');?>
+<?php echo form_open($accionCodigobarra, 'id="buscoDetalle" class="search"');?>
 <?php echo form_input('codigobarra', '','id="codigobarra"');?> <br />(Codigobarra)
 <?php echo form_close();?>
 </div>
@@ -98,8 +98,8 @@ $(document).ready(function(){
       envioAvanzada();
     });
     $("#botGlobal").click(function(){
-	  rubro = $("#rubroGlob option:selected").val();	
-	  marca = $("#marcaGlob option:selected").val();	
+	  rubro = $("#rubroGlob option:selected").val();
+	  marca = $("#marcaGlob option:selected").val();
       $.post( <?= $urlConsultaGlobal?>, { rubro: rubro, marca:marca },
 			   function(data){ $("#datos").html(data); });
     });
@@ -221,7 +221,7 @@ var dialogOpts = {
 	  //$("#rubroAvanzado").val() = resultado;
 	}
  };
-$('#searchSubrubros').dialog(dialogOpts);	
+$('#searchSubrubros').dialog(dialogOpts);
 $("#searchSubrubros").load(<?php echo $urlBuscoAjaxRubro;?>, [], function(){
 			 $("#searchSubrubros").dialog("open");
 		  }
