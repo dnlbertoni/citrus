@@ -185,7 +185,7 @@ class MY_Model extends CI_Model{
           $this->db->from($this->getTable());
           $this->db->order_by($campoNombre);
           $query = $this->db->get();
-          $datos = array(0=>"Seleccione...");
+          $datos = array('S'=>"Seleccione...");
           foreach($query->result() as $item){
                   $datos[$item->{$campoId}] = $item->{$campoNombre};
           }

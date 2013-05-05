@@ -13,11 +13,11 @@
   <tbody>
   <?php foreach($submarcas as $submarca):?>
     <tr>
-		<td><?php echo $submarca->ID_SUBMARCA?></td>
-		<td><?php echo $submarca->DETALLE_SUBMARCA?></td>
-		<td><?php echo $submarca->marca?></td>
-		<td><?php echo anchor('articulos/submarcas/editar/'.$submarca->ID_SUBMARCA, 'Editar', "class='boton'");?></td>
-		<td><?php echo anchor('articulos/submarcas/borrar/'.$submarca->ID_SUBMARCA, 'Borrar', 'class="boton"')?></td>
+		<td><?php echo $submarca->submarcaId?></td>
+		<td><?php echo $submarca->submarcaNombre?></td>
+		<td><?php echo $submarca->marcaNombre?></td>
+		<td><?php echo anchor('articulos/submarcas/editar/'.$submarca->submarcaId, 'Editar', "class='boton'");?></td>
+		<td><?php echo anchor('articulos/submarcas/borrar/'.$submarca->submarcaId, 'Borrar', 'class="boton"')?></td>
     </tr>
   <?php endforeach;?>
   </tbody>

@@ -73,11 +73,8 @@
       <?php echo form_close();?>
     </div>
   </div>
-  <p>&nbsp;</p>
   <?php echo Template::block('sugeridos');?>
-  <p>&nbsp;</p>
   <?php echo Template::block('todos');?>
-  <p>&nbsp;</p>
   <?php echo Template::block('ninguno');?>
 <script>
 $(document).ready(function(){
