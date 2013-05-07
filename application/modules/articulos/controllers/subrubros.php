@@ -59,7 +59,7 @@ class Subrubros extends MY_Controller{
     if($metodo=="html"){
       Template::redirect('articulos/subrubros');
     }else{
-      echo "<span class='codigo'>",$id,"</span>";
+      echo "<span class='codigo'>",$id,"</span><span class='nombre' style='display:hide;'>".strtoupper($this->input->post('descripcion'))."</span>";
     }
     Template::render();
   }

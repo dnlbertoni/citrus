@@ -39,8 +39,8 @@ $urlBuscoAjaxMarca   = sprintf("'%sindex.php/articulos/submarcas/searchAjax/%s'"
 </div>
 <div class="clear"></div>
 <div id="Empresas" class="box">
-	<h2>Empresas</h2>
-	<?php echo anchor('articulos/empresas', 'Ingresar', 'class="boton"');?>
+	<h2>Asistente Articulos</h2>
+	<?php echo anchor('articulos/wizard/masivo', 'Ingresar', 'class="boton"');?>
 </div>
 <div id="Global" class="box">
 	<h2>Global</h2>

@@ -19,7 +19,7 @@
  *@TODO: Unificar el Template
  */
 class Articulos extends MY_Controller{
-  private $wizard =true;
+  private $wizard = false;
   function __construct(){
     parent::__construct();
     $this->load->model('Articulos_model');
@@ -140,9 +140,13 @@ class Articulos extends MY_Controller{
       Template::redirect('articulos/');
     }
   }
-  function borrar($id){
+  function borrar($id, $wizard=false){
     $this->Articulos_model->borrar($id);
-    Template::redirect('articulos');
+    if($wizard){
+      Template::redirect('articulos/wizard/masivo');
+    }else{
+      Template::redirect('articulos');
+    }
   }
   function agregar($codigobarra){
     $articulos = $this->Articulos_model->Inicializar();

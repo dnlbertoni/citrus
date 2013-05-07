@@ -32,6 +32,7 @@ class Submarcas_model extends MY_Model{
     $this->db->select('stk_marcas.ID_MARCA as marcaId');
     $this->db->select('ID_SUBMARCA as submarcaId');
     $this->db->select('DETALLE_SUBMARCA as submarcaNombre');
+    $this->db->select("ALIAS_SUBMARCA  AS alias");
     $this->db->select('DETALLE_MARCA AS marcaNombre');
     $this->db->from($this->getTable());
     $this->db->join("stk_marcas", "stk_submarcas.id_marca = stk_marcas.id_marca", "inner");

@@ -74,6 +74,10 @@
         <?php endforeach;?>
       </div>
       <br/>
+        <?php foreach ($palabrasClavesRubro as $clave):?>
+          <div class="wordkey"><?php echo $clave?></div>
+        <?php endforeach;?>
+      <br/>
       Peso / Unidades <?php echo form_input('medida','','id="medida" size="8"');?>
       <?php echo form_dropdown('medidas', $medidas, 1,'id="medidas"');?>
       <br />
@@ -89,6 +93,7 @@
   </div>
 <script>
 $(document).ready(function(){
+  generoNombre();
   $("#wizard input:text").first().focus();
   $("#radio-iva").buttonset();
   $(".reqTXT").each(function(){

@@ -37,7 +37,7 @@ $(document).ready(function(){
   $("#sug").accordion({
     collapsible:true,
     icons:{header: "ui-icon-circle-plus", activeHeader: "ui-icon-circle-minus"},
-    heightStyle: "fill"
+    heightStyle: "auto"
   });
   $("h3").css('padding', '5px 5px 5px 25px');
   $(".boton").button();

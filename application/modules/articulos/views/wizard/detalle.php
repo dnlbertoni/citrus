@@ -67,9 +67,7 @@
     <div id="resultado" class="ui-widget-content">
       <?php echo form_open($accion, 'id="wizard"', $ocultos)?>
       <?php echo $textoAsignar?>
-      <div id="botonBack">Atras</div>
       <div id="botonNext">Continuar</div>
-      <div id="botonSkip">Salta Paso</div>
       <?php echo form_close();?>
     </div>
   </div>

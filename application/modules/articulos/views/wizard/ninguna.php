@@ -9,14 +9,14 @@
       <?php echo form_dropdown($maestro, $maestroSel, 'S','id="maestro"');?>
       <label>Si no existe:</label>
       <?php echo form_input($maestroAux, '','id="auxiliar"')?>
-      <?php echo '<input type="hidden"  name="'.$otro.'" id="otro" value="NO" />'?> 
+      <?php echo '<input type="hidden"  name="'.$otro.'" id="otro" value="NO" />'?>
       <?php echo form_hidden('estado',1);?>
     </div>
     <div>
       <h2>Marca que figura en el Envase</h2>
-      Nombre:<?php echo form_input($descripcion,'','id="'.$descripcion.'"');?>
+      Nombre:<?php echo form_input($descripcion,'','id="descripcion"');?>
       <br/>
-      Nombre para el articulo Abreviado:  <?php echo form_input($alias,'','id="'.$alias.'"');?>
+      Nombre para el articulo Abreviado:  <?php echo form_input($alias,'','id="alias"');?>
     </div>
     <div id='BOTGuardar'>Agregar</div>
   </div>
@@ -25,6 +25,9 @@
 </div>
 <script>
 $(document).ready(function(){
+  $("#descripcion").keyup(function(e){
+    $("#alias").val($(this).val());
+  });
   $("#add-mov").submit(function(e){
     e.preventDefault();
   });
@@ -47,6 +50,8 @@ $(document).ready(function(){
                  $("#resultadoNuevo").append(data);
                  valor=$("#resultadoNuevo>.codigo").text();
                  $("#asignar>#resultado>#wizard>#codigo").text(valor);
+                 valor=$("#resultadoNuevo>.nombre").text();
+                 $("#asignar>#resultado>#wizard>#nombre").text(valor);
               }
     });
   });

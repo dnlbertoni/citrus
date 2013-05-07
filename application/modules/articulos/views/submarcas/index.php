@@ -7,17 +7,21 @@
   <thead>
 	<th>Codigo</th>
 	<th>Nombre</th>
+	<th>Alias</th>
 	<th>Marca</th>
-	<th colspan="2">&nbsp;</th>
+	<th>&nbsp;</th>
   </thead>
   <tbody>
   <?php foreach($submarcas as $submarca):?>
     <tr>
 		<td><?php echo $submarca->submarcaId?></td>
 		<td><?php echo $submarca->submarcaNombre?></td>
+		<td class="alias"><?php echo $submarca->alias?></td>
 		<td><?php echo $submarca->marcaNombre?></td>
-		<td><?php echo anchor('articulos/submarcas/editar/'.$submarca->submarcaId, 'Editar', "class='boton'");?></td>
-		<td><?php echo anchor('articulos/submarcas/borrar/'.$submarca->submarcaId, 'Borrar', 'class="boton"')?></td>
+		<td>
+          <?php echo anchor('articulos/submarcas/editar/'.$submarca->submarcaId, 'Editar', "class='boton'");?>
+          <?php echo anchor('articulos/submarcas/borrar/'.$submarca->submarcaId, 'Borrar', 'class="boton"')?>
+        </td>
     </tr>
   <?php endforeach;?>
   </tbody>
@@ -37,6 +41,12 @@
     $(".boton").css('margin-right', '5px');
     $(".boton").css('margin-left', '5px');
     $("#botSearch").click(function(){buscoSubmarca();});
+    $(".alias").each(function(){
+      var valor=$.trim($(this).text());
+      if(valor==''){
+        $(this).addClass('est_0');
+      }
+    });
   });
 function buscoSubmarca(){
 var dialogOpts = {
@@ -52,7 +62,7 @@ var dialogOpts = {
 	  $('#searchSubmarca').dialog("destroy");
 	}
  };
-$('#searchSubmarca').dialog(dialogOpts);	
+$('#searchSubmarca').dialog(dialogOpts);
 $("#searchSubmarca").load(<?php echo $urlBuscoAjax;?>, [], function(){
 			 $("#searchSubmarca").dialog("open");
 		  }

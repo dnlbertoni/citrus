@@ -51,7 +51,7 @@ class Submarcas extends MY_Controller{
     if($metodo=="html"){
       Template::redirect('articulos/submarcas');
     }else{
-      echo "<span class='codigo'>",$id,"</span>";
+      echo "<span class='codigo'>",$id,"</span><span class='nombre' style='display:hide;'>".strtoupper($this->input->post('descripcion'))."</span>";
     }
   }
   function editar($id, $metodo="html"){

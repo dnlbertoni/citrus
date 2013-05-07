@@ -26,6 +26,11 @@ class Articulos_model extends MY_Model{
         };
       }
     }
+    $datos['ID_SUBRUBRO']=44;
+    $datos['ID_MARCA']=0;
+    $datos['TASAIVA_ARTICULO']=21;
+    $datos['ESTADO_ARTICULO']=1;
+    $datos['wizard']=0;
     if($full){
       $datos['ID_RUBRO'] = 0;
       $datos['DESCRIPCION_RUBRO'] = '';
@@ -355,5 +360,54 @@ class Articulos_model extends MY_Model{
     $this->db->where('codigobarra_articulo',$CB);
     $this->db->update($this->getTable());
     return true;
+  }
+  function filtroWizard(){
+    $this->db->select($this->tabla->id . "     AS id");
+    $this->db->select($this->tabla->nombre . " AS nombre");
+    $this->db->select($this->tabla->precio . " AS precio");
+    $this->db->select($this->tabla->codigobarra . " AS codigobarra");
+    $this->db->select("descripcion_subrubro    AS subrubro");
+    $this->db->select("detalle_submarca           AS marca");
+    $this->db->select("estado_articulo         AS estado");
+    $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "left");
+    $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
+    $this->db->from($this->tabla->name);
+    $this->db->where('tbl_articulos.wizard <>', 1, FALSE);
+    $this->db->or_where('tbl_articulos.wizard IS NULL','', FALSE);
+    //$this->db->limit(250);
+    $this->db->order_by('estado', 'DESC');
+    $this->db->order_by('tbl_articulos.id_marca', 'DESC');
+    $q = $this->db->get();
+    if($q->num_rows() > 0){
+      return $q->result();
+    }else{
+      return false;
+    }
+  }
+  function getKeyWords($id_subrubro=false){
+    $this->db->distinct();
+    $this->db->select('especificacion');
+    $this->db->from($this->getTable());
+    if($id_subrubro){
+      $this->db->where('id_subrubro', $id_subrubro);
+    };
+    $this->db->where('especificacion IS NOT NULL', '', FALSE);
+    $this->db->where('TRIM(especificacion) <>""', '', FALSE);
+    $q = $this->db->get()->result();
+    if(count($q)>0){
+      foreach($q as $palabra){
+        $aux =  explode(' ', $palabra->especificacion);
+        foreach($aux as $a){
+          $exclusiones=array('de', 'sabor', 'la', 'a', 'y', 'el', 'del');
+          if(!in_array(strtolower($a), $exclusiones)){
+            $palabras[]=  strtoupper($a);
+          }
+        }
+      }
+      asort($palabras);
+    }else{
+      $palabras=array();
+    }
+    return $palabras;
   }
 }

@@ -9,7 +9,7 @@ class Wizard extends MY_Controller{
   private $idEmpresa;
   private $Articulo;
   private $ruta;
-  private $masivo =false; //variable usada para determinar si vuelvo o no a la pagina de arreglo masivo
+  private $Masivo =false; //variable usada para determinar si vuelvo o no a la pagina de arreglo masivo
   function  __construct() {
     parent::__construct();
     $this->load->model('Articulos_model');
@@ -26,7 +26,7 @@ class Wizard extends MY_Controller{
     if(!$CB){
       $CB=$this->input->post('codigobarra');
     }else{
-      $this->masivo=true;
+      $this->Masivo=true;
     }
     //$CB='7790150260609'; // no existe -> mate cocido la virginia en saquitos
     //$CB='7506195176733'; //existe ->DETERGENT MAGISTRAL MARINA X600ML
@@ -51,16 +51,18 @@ class Wizard extends MY_Controller{
     $CB = trim($codigobarra);
     if(strlen($CB)==13){
       $idEmpresa   = substr($CB, 0, 7);
-      $empresa  = $this->Empresas_model->getById($idEmpresa);
-      if($empresa){
-        $this->idEmpresa=$empresa->id;
-        $this->ruta=1; //camino primero por marca
-        $this->definoMarca();
-      }else{
-        $this->idEmpresa=false;
-        $this->ruta=0; //camino primero por rubro
-        $this->definoRubro();
-      }
+    }else{
+      $idEmpresa   = substr($CB, 0, 5);
+    }
+    $empresa  = $this->Empresas_model->getById($idEmpresa);
+    if($empresa){
+      $this->idEmpresa=$empresa->id;
+      $this->ruta=1; //camino primero por marca
+      $this->definoMarca();
+    }else{
+      $this->idEmpresa=false;
+      $this->ruta=0; //camino primero por rubro
+      $this->definoRubro();
     }
   }
   function definoRubro(){
@@ -90,7 +92,7 @@ class Wizard extends MY_Controller{
                                      'tipo'     => 'id_subrubro',
                                      'valor'    => $this->Articulo->ID_SUBRUBRO,
                                      'ruta'     => $this->ruta,
-                                     'masivo'   => $this->masivo
+                                     'masivo'   => $this->Masivo
                                     );
     $data['tit']    = "Definicion del Rubro del Producto";
     $data['sugeridos']=$CodigoB;
@@ -104,14 +106,14 @@ class Wizard extends MY_Controller{
     $rubros = $this->Rubros_model->ListaSelect();
     array_push($rubros, array('O'=>'Otro Rubro NUEVO'));
     $data['maestroSel'] = $rubros;
-    Template::set('accionMov', 'articulos/subrubros/agregarDo/ajax');  
-    Template::set('maestro', 'rubros');  
-    Template::set('maestroAux', 'rubro');  
-    Template::set('descripcion', 'descripcion');  
-    Template::set('alias', 'alias');  
-    Template::set('otro', 'otro'); 
+    Template::set('accionMov', 'articulos/subrubros/agregarDo/ajax');
+    Template::set('maestro', 'rubros');
+    Template::set('maestroAux', 'rubro');
+    Template::set('descripcion', 'descripcion');
+    Template::set('alias', 'alias');
+    Template::set('otro', 'otro');
     Template::set($data);
-    Template::set_block('ninguno', 'articulos/wizard/ninguna');    
+    Template::set_block('ninguno', 'articulos/wizard/ninguna');
     Template::set_block('sugeridos', 'articulos/wizard/sugeridos');
     Template::set_block('todos', 'articulos/wizard/todosEASY');
     Template::set_view('articulos/wizard/detalle');
@@ -122,7 +124,7 @@ class Wizard extends MY_Controller{
     $this->idEmpresa = substr($this->CB, 0, 7);
     $this->Articulos_model->updateArticulo($this->input->post('CB'),$this->input->post('tipo'),$this->input->post('valor'));
     $this->ruta=$this->input->post('ruta');
-    $this->masivo=$this->input->post('masivo');
+    $this->Masivo=$this->input->post('masivo');
     if($this->input->post('ruta')==1){
       $this->definoDetalle();
     }else{
@@ -156,7 +158,7 @@ class Wizard extends MY_Controller{
                                      'tipo'     => 'id_marca',
                                      'valor'    => $this->Articulo->ID_SUBMARCA,
                                      'ruta'     => $this->ruta,
-                                     'masivo'   => $this->masivo
+                                     'masivo'   => $this->Masivo
                                     );
     $data['accion'] = "articulos/wizard/definoMarcaDo";
     $data['tit']    = "Definicion de la Marca del Producto";
@@ -166,16 +168,16 @@ class Wizard extends MY_Controller{
     Template::set('idMaster', 'marcaId');
     Template::set('idMov', 'submarcaId');
     Template::set('nombreMaster', 'marcaNombre');
-    Template::set('nombreMov', 'submarcaNombre');    
+    Template::set('nombreMov', 'submarcaNombre');
     $marcas = $this->Marcas_model->toDropDown('id_marca', 'detalle_marca');
     array_push($marcas, array('O'=>'Otra Marca NUEVA'));
     $data['maestroSel'] = $marcas;
-    Template::set('accionMov', 'articulos/submarcas/agregarDo/ajax');  
-    Template::set('maestro', 'marcas');  
-    Template::set('maestroAux', 'marca');  
-    Template::set('descripcion', 'descripcion');  
-    Template::set('alias', 'alias');  
-    Template::set('otro', 'otra'); 
+    Template::set('accionMov', 'articulos/submarcas/agregarDo/ajax');
+    Template::set('maestro', 'marcas');
+    Template::set('maestroAux', 'marca');
+    Template::set('descripcion', 'descripcion');
+    Template::set('alias', 'alias');
+    Template::set('otro', 'otra');
     Template::set($data);
     Template::set('textoAsignar', '<span id="tipo">SUBMARCA</span> : ( <span id="codigo">'.$this->Articulo->ID_SUBMARCA.'</span> ) <span id="nombre">'.$this->Articulo->DETALLE_SUBMARCA.'</span>');
     Template::set_block('sugeridos', 'articulos/wizard/sugeridos');
@@ -188,7 +190,7 @@ class Wizard extends MY_Controller{
     $this->CB=$this->input->post('CB');
     $this->idEmpresa = substr($this->CB, 0, 7);
     $this->Articulos_model->updateArticulo($this->input->post('CB'),$this->input->post('tipo'),$this->input->post('valor'));
-    $this->masivo=$this->input->post('masivo');
+    $this->Masivo=$this->input->post('masivo');
     $this->ruta=$this->input->post('ruta');
     if($this->input->post('ruta')==1){
       $this->definoRubro();
@@ -203,12 +205,13 @@ class Wizard extends MY_Controller{
     $this->_getArticulo($this->CB);
     $data['ocultos']         = array( 'CB' => $this->CB,
                                       'id' => $this->Articulo->ID_ARTICULO,
-                                     'masivo'   => $this->masivo
+                                     'masivo'   => $this->Masivo
                                     );
     $data['accion'] = "articulos/wizard/definoDetalleDo";
     $data['tit']    = "Definicion de las Caracteristicas Extras";
     $data['medidas'] = array( 'OTRO'=>'NADA', 'GR'=>'GR', 'KG'=>'KG', 'ML'=>'ML', 'CM3'=>'CM3', 'UNID'=>'UNID');
     $data['palabrasClaves']=array('tradicional', 'diet', 'light', 'suave', 'fuerte', 'normal', 'clasico', 'extra');
+    $data['palabrasClavesRubro']=$this->Articulos_model->getKeyWords($this->Articulo->ID_SUBRUBRO);
     Template::set($data);
     Template::set('articulo', $this->Articulo);
     Template::set_view('articulos/wizard/detalleExt');
@@ -216,11 +219,12 @@ class Wizard extends MY_Controller{
   }
   function definoDetalleDo(){
     $this->CB=$this->input->post('CB');
-    $this->masivo=$this->input->post('masivo');
+    $this->Masivo=$this->input->post('masivo');
     $this->idEmpresa = substr($this->CB, 0, 7);
     $medida = trim($this->input->post('medida'));
     $medidas = ($medida!='')?strtoupper($medida).' '. strtoupper(($this->input->post('medidas')=='OTRO')?'':$this->input->post('medidas')):'';
-    $datos = array  ( 'detalle'        => $this->input->post('detalle'),
+    $datos = array  ( 'descripcion_articulo' => $this->input->post('detalle'),
+                      'detalle'        => $this->input->post('detalle'),
                       'especificacion' => strtoupper($this->input->post('especificacion')),
                       'medida'         => $medidas
                     );
@@ -236,12 +240,12 @@ class Wizard extends MY_Controller{
                                       'id'    => $this->Articulo->ID_ARTICULO,
                                       'tipo'  => 'preciovta_articulo',
                                       'valor' => '',
-                                     'masivo'   => $this->masivo
+                                     'masivo'   => $this->Masivo
                                     );
     $data['accion'] = "articulos/wizard/definoPrecioDo";
     $data['tit']    = "Definicion del Precio";
     Template::set($data);
-    $msg =  '<span id="tipo">PRECIO</span> : <input type="text" name="valor" size="8" /><br />';
+    $msg =  '<span id="tipo">PRECIO</span> : <input type="text" name="valor" value="'.  $this->Articulo->PRECIOVTA_ARTICULO.'" size="8" /><br />';
     Template::set('textoAsignar',$msg);
     Template::set('articulo', $this->Articulo);
     Template::set_view('articulos/wizard/detalle');
@@ -249,12 +253,13 @@ class Wizard extends MY_Controller{
   }
   function definoPrecioDo(){
     $this->CB=$this->input->post('CB');
-    $this->masivo=$this->input->post('masivo');
+    $this->Masivo=$this->input->post('masivo');
     $this->idEmpresa = substr($this->CB, 0, 7);
     $this->Articulos_model->updateArticulo($this->input->post('CB'),$this->input->post('tipo'),$this->input->post('valor'));
     $this->end();
   }
   function end(){
+    /*
     if($this->input->post('CB')){
       $this->CB=$this->input->post('CB');
     };
@@ -265,12 +270,16 @@ class Wizard extends MY_Controller{
     $data['nombreSubrubro'] = $this->Subrubros_model->getNombre($this->Articulo->ID_SUBRUBRO);
     $data['marcaSel']    = $this->Submarcas_model->ListaSelect();
     $data['nombreSubmarca'] = $this->Submarcas_model->getNombre($this->Articulo->ID_SUBMARCA);
-    $data['accion']      = 'articulos/update/'.$this->masivo;
+    $data['accion']      = 'articulos/update/'.$this->Masivo;
     $data['primaryKey']  = array( $this->Articulos_model->primaryKey, "CODIGOBARRA_ARTICULO");
     Assets::add_js('articulos/ver');
     Template::set($data);
-    Template::set_view('articulos/ver');
-    Template::render();
+    */
+    if($this->Masivo){
+      $this->masivo();
+    }else{
+      Template::redirect('articulos/');
+    }
   }
   function _getArticulo($CB){
     $arti = $this->Articulos_model->getByCodigobarra($CB);
@@ -278,14 +287,22 @@ class Wizard extends MY_Controller{
       $articulo = $this->Articulos_model->getByIdFull($arti->ID_ARTICULO);
       $this->Articulo = $articulo;
     }else{
-      $this->Articulo = $this->Articulos_model->Inicializar(TRUE);
+      $this->Articulo = $this->Articulos_model->Inicializar();
       $this->Articulo->CODIGOBARRA_ARTICULO = $CB;
+      $this->Articulo->empresa = $this->idEmpresa;
+      $this->Articulo->wizard=1;
+      $datos = (array) $this->Articulo;
+      $id=$this->Articulos_model->add($datos);
+      $articulo = $this->Articulos_model->getByIdFull($id);
+      $this->Articulo = $articulo;
     }
-
+    $this->Articulos_model->updateArticulo($CB,'empresa',$this->idEmpresa);
+    $this->Articulos_model->updateArticulo($CB,'wizard',1);
   }
   function masivo(){
-    $articulos=$this->Articulos_model->buscoPorMarca(0);
+    $articulos=$this->Articulos_model->filtroWizard();
     Template::set('articulos', $articulos);
+    Template::set_view('articulos/wizard/masivo');
     Template::render();
   }
 }
