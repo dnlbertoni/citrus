@@ -209,9 +209,10 @@ class Wizard extends MY_Controller{
                                     );
     $data['accion'] = "articulos/wizard/definoDetalleDo";
     $data['tit']    = "Definicion de las Caracteristicas Extras";
-    $data['medidas'] = array( 'OTRO'=>'NADA', 'GR'=>'GR', 'KG'=>'KG', 'ML'=>'ML', 'CM3'=>'CM3', 'UNID'=>'UNID');
+    $data['medidas'] = array( 'NADA', 'GR','CM3','UNID');
     $data['palabrasClaves']=array('tradicional', 'diet', 'light', 'suave', 'fuerte', 'normal', 'clasico', 'extra');
     $data['palabrasClavesRubro']=$this->Articulos_model->getKeyWords($this->Articulo->ID_SUBRUBRO);
+    $data['palabrasClavesMedida']=$this->Articulos_model->getKeyUnits($this->Articulo->ID_SUBRUBRO);
     Template::set($data);
     Template::set('articulo', $this->Articulo);
     Template::set_view('articulos/wizard/detalleExt');
@@ -256,6 +257,7 @@ class Wizard extends MY_Controller{
     $this->Masivo=$this->input->post('masivo');
     $this->idEmpresa = substr($this->CB, 0, 7);
     $this->Articulos_model->updateArticulo($this->input->post('CB'),$this->input->post('tipo'),$this->input->post('valor'));
+    $this->Articulos_model->updateArticulo($this->CB,'wizard',1);
     $this->end();
   }
   function end(){
@@ -297,10 +299,9 @@ class Wizard extends MY_Controller{
       $this->Articulo = $articulo;
     }
     $this->Articulos_model->updateArticulo($CB,'empresa',$this->idEmpresa);
-    $this->Articulos_model->updateArticulo($CB,'wizard',1);
   }
-  function masivo(){
-    $articulos=$this->Articulos_model->filtroWizard();
+  function masivo($orden='nombre'){
+    $articulos=$this->Articulos_model->filtroWizard($orden);
     Template::set('articulos', $articulos);
     Template::set_view('articulos/wizard/masivo');
     Template::render();

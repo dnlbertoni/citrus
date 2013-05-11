@@ -46,19 +46,6 @@
         <th>Nombre Final</th>
         <td colspan="4" class="reqTXT"><?php echo $articulo->detalle?></td>
       </tr>
-      <tr>
-        <th>Precio</th>
-        <td ><span class="reqNUM"><?php echo $articulo->PRECIOVTA_ARTICULO?></span></td>
-        <td></td>
-        <th>Tasa Iva</th>
-        <td>
-          <div id="radio-iva">
-            <?php echo form_label('21%', 'iva1');?><?php echo form_radio('TASAIVA_ARTICULO', 21, ($articulo->TASAIVA_ARTICULO==21)?true:false,'id="iva1"')?>
-            <?php echo form_label('10.5%', 'iva2');?><?php echo form_radio('TASAIVA_ARTICULO', 10.50, ($articulo->TASAIVA_ARTICULO==10.50)?true:false,'id="iva2"')?>
-            <?php echo form_label('OTRO', 'iva3');?><?php echo form_radio('TASAIVA_ARTICULO', 21, ($articulo->TASAIVA_ARTICULO==0)?true:false,'id="iva3"')?>
-          </div>
-        </td>
-      </tr>
     </table>
   </div>
   <p>&nbsp;</p>
@@ -66,40 +53,15 @@
     <h2 class="ui-widget-header"><span class="ui-icon ui-icon-circle-plus" style="display: inline-block;"></span>Asignar...</h2>
     <div id="resultado" class="ui-widget-content">
       <?php echo form_open($accion, 'id="wizard"', $ocultos)?>
-      <div>
-          <?php echo form_label('Detalles y especificaiones:','especificacion')?>
-          <?php echo form_input('especificacion', '', 'id="especificacion" size="20"');?>
-          <div style="width: 80%;margin:auto;">
-            <h5>Palabras normalmente usadas</h5>
-            <?php foreach ($palabrasClaves as $clave):?>
-              <div class="wordkey"><?php echo $clave?></div>
-            <?php endforeach;?>
+      <?php echo form_label('Precio', 'preciovta');?>
+      <?php echo fomr_input('preciovta_articulo', $articulo->PRECIOVTA_ARTICULO, 'id="preciovta" class="reqNUM"');?>
+      <label>Tasa Iva</label>
+          <div id="radio-iva">
+            <?php echo form_label('21%', 'iva1');?><?php echo form_radio('TASAIVA_ARTICULO', 21, ($articulo->TASAIVA_ARTICULO==21)?true:false,'id="iva1"')?>
+            <?php echo form_label('10.5%', 'iva2');?><?php echo form_radio('TASAIVA_ARTICULO', 10.50, ($articulo->TASAIVA_ARTICULO==10.50)?true:false,'id="iva2"')?>
+            <?php echo form_label('OTRO', 'iva3');?><?php echo form_radio('TASAIVA_ARTICULO', 21, ($articulo->TASAIVA_ARTICULO==0)?true:false,'id="iva3"')?>
           </div>
-        <p>&nbsp;</p>
-        <div style="width: 80%;margin:auto;">
-          <h5>Palabras mas usadas en el Tipo de Producto</h5>
-            <?php foreach ($palabrasClavesRubro as $clave):?>
-              <div class="wordkey"><?php echo $clave?></div>
-            <?php endforeach;?>
-        </div>
       </div>
-      <p>&nbsp;</p>
-      <div>
-        <?php echo form_label('Peso / Unidades ', 'medida');?>
-        <?php echo form_input('medida','','id="medida" size="8"');?>
-        <?php foreach ($medidas as $clave):?>
-            <div class="wordkeymedidas"><?php echo $clave?></div>
-        <?php endforeach;?>
-        <div style="width: 80%;margin:auto;">
-          <h5>Peso y medias mas usados en el Tipo de Producto</h5>
-          <?php foreach ($palabrasClavesMedida as $clave):?>
-            <div class="wordkeyunit"><?php echo $clave?></div>
-          <?php endforeach;?>
-        </div>
-      </div>
-      Nombre Generado:
-      <?php echo form_input('detalle', '', 'id="detalle" size="50" disabled="disabled"');?>
-      <br />
       <div id="botonBack">Atras</div>
       <div id="botonNext">Continuar</div>
       <div id="botonSkip">Salta Paso</div>

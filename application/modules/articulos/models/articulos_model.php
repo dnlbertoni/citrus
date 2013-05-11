@@ -361,7 +361,7 @@ class Articulos_model extends MY_Model{
     $this->db->update($this->getTable());
     return true;
   }
-  function filtroWizard(){
+  function filtroWizard($orden){
     $this->db->select($this->tabla->id . "     AS id");
     $this->db->select($this->tabla->nombre . " AS nombre");
     $this->db->select($this->tabla->precio . " AS precio");
@@ -376,7 +376,7 @@ class Articulos_model extends MY_Model{
     $this->db->or_where('tbl_articulos.wizard IS NULL','', FALSE);
     //$this->db->limit(250);
     $this->db->order_by('estado', 'DESC');
-    $this->db->order_by('tbl_articulos.id_marca', 'DESC');
+    $this->db->order_by($orden, 'DESC');
     $q = $this->db->get();
     if($q->num_rows() > 0){
       return $q->result();
@@ -404,6 +404,31 @@ class Articulos_model extends MY_Model{
           }
         }
       }
+      $palabras = array_unique($palabras);
+      asort($palabras);
+    }else{
+      $palabras=array();
+    }
+    return $palabras;
+  }
+  function getKeyUnits($id_subrubro=false){
+    $this->db->distinct();
+    $this->db->select('medida');
+    $this->db->from($this->getTable());
+    if($id_subrubro){
+      $this->db->where('id_subrubro', $id_subrubro);
+    };
+    $this->db->where('medida IS NOT NULL', '', FALSE);
+    $this->db->where('TRIM(medida) <>""', '', FALSE);
+    $q = $this->db->get()->result();
+    if(count($q)>0){
+      foreach($q as $palabra){
+        $aux =  explode(' ', $palabra->medida);
+        foreach($aux as $a){
+            $palabras[]= intval($a);
+        }
+      }
+      $palabras = array_unique($palabras);
       asort($palabras);
     }else{
       $palabras=array();

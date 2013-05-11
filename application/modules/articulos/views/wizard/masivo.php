@@ -1,11 +1,11 @@
 <div class="post">
   <table id="datos">
     <thead>
-    <th>Codigo</th>
-    <th>Descripcion</th>
-    <th>Precio</th>
-    <th>Subrubro</th>
-    <th>Marca</th>
+    <th><?php echo anchor('articulos/wizard/masivo/id','Codigo')?></th>
+    <th><?php echo anchor('articulos/wizard/masivo/nombre','Descripcion')?></th>
+    <th><?php echo anchor('articulos/wizard/masivo/precio','Precio')?></th>
+    <th><?php echo anchor('articulos/wizard/masivo/subrubro','Subrubro')?></th>
+    <th><?php echo anchor('articulos/wizard/masivo/marca','Marca')?></th>
     <th >&nbsp;</th>
     </thead>
     <tbody>
