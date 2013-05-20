@@ -229,7 +229,7 @@ class Wizard extends MY_Controller{
                       'especificacion' => strtoupper($this->input->post('especificacion')),
                       'medida'         => $medidas
                     );
-    $this->Articulos_model->updateMOd($this->input->post('id'),$datos);
+    $this->Articulos_model->updateMod($this->input->post('id'),$datos);
     $this->definoPrecio();
   }
   function definoPrecio(){
@@ -237,46 +237,37 @@ class Wizard extends MY_Controller{
       $this->CB=$this->input->post('CB');
     };
     $this->_getArticulo($this->CB);
-    $data['ocultos']         = array( 'CB'    => $this->CB,
-                                      'id'    => $this->Articulo->ID_ARTICULO,
-                                      'tipo'  => 'preciovta_articulo',
-                                      'valor' => '',
-                                     'masivo'   => $this->Masivo
+    $data['ocultos']         = array( 'CB'     => $this->CB,
+                                      'id'     => $this->Articulo->ID_ARTICULO,
+                                      'tipo'   => 'preciovta_articulo',
+                                      'valor'  => '',
+                                      'masivo'  => $this->Masivo
                                     );
     $data['accion'] = "articulos/wizard/definoPrecioDo";
     $data['tit']    = "Definicion del Precio";
+    $data['markupRubros']=$this->Articulos_model->getMarkupRubro($this->Articulo->ID_SUBRUBRO);
     Template::set($data);
-    $msg =  '<span id="tipo">PRECIO</span> : <input type="text" name="valor" value="'.  $this->Articulo->PRECIOVTA_ARTICULO.'" size="8" /><br />';
-    Template::set('textoAsignar',$msg);
     Template::set('articulo', $this->Articulo);
-    Template::set_view('articulos/wizard/detalle');
+    Template::set_view('articulos/wizard/detallePrecio');
     Template::render();
   }
   function definoPrecioDo(){
     $this->CB=$this->input->post('CB');
     $this->Masivo=$this->input->post('masivo');
     $this->idEmpresa = substr($this->CB, 0, 7);
-    $this->Articulos_model->updateArticulo($this->input->post('CB'),$this->input->post('tipo'),$this->input->post('valor'));
+    $datos = array  ( 'preciovta_articulo'   => $this->input->post('preciovta_articulo'),
+                      'tasaiva_articulo'     => $this->input->post('TASAIVA_ARTICULO'),
+                      'preciocosto_articulo' => $this->input->post('preciocosto_articulo'),
+                      'markup_articulo'      => $this->input->post('markup_articulo')
+                    );
+    $this->Articulos_model->updateMod($this->input->post('id'),$datos);
     $this->Articulos_model->updateArticulo($this->CB,'wizard',1);
     $this->end();
   }
-  function end(){
-    /*
-    if($this->input->post('CB')){
-      $this->CB=$this->input->post('CB');
-    };
-    $this->_getArticulo($this->CB);
-    $data['Articulo']    = $this->Articulo;
-    $data['new']         = FALSE;
-    $data['subrubroSel'] = $this->Subrubros_model->ListaSelect();
-    $data['nombreSubrubro'] = $this->Subrubros_model->getNombre($this->Articulo->ID_SUBRUBRO);
-    $data['marcaSel']    = $this->Submarcas_model->ListaSelect();
-    $data['nombreSubmarca'] = $this->Submarcas_model->getNombre($this->Articulo->ID_SUBMARCA);
-    $data['accion']      = 'articulos/update/'.$this->Masivo;
-    $data['primaryKey']  = array( $this->Articulos_model->primaryKey, "CODIGOBARRA_ARTICULO");
-    Assets::add_js('articulos/ver');
-    Template::set($data);
-    */
+  function end($parametro=false){
+    if($parametro){
+      $this->Masivo=$parametro;
+    }
     if($this->Masivo){
       $this->masivo();
     }else{

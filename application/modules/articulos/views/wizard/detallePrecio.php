@@ -53,9 +53,26 @@
     <h2 class="ui-widget-header"><span class="ui-icon ui-icon-circle-plus" style="display: inline-block;"></span>Asignar...</h2>
     <div id="resultado" class="ui-widget-content">
       <?php echo form_open($accion, 'id="wizard"', $ocultos)?>
+      <?php echo form_label('Costo', 'preciocosto');?>
+      <?php echo form_input('preciocosto_articulo', $articulo->PRECIOCOSTO_ARTICULO, 'id="preciocosto" size="8"');?>
+      <div id="botonAjustoCosto">Rectifico Costo</div>
+      <br />
+      <?php echo form_label('Markup', 'preciovta');?>
+      Segun datos ( <span id="markupActual"></span> )
+      <?php echo form_input('markup_articulo', ($articulo->MARKUP_ARTICULO==0)?70.00:$articulo->MARKUP_ARTICULO, 'id="markup" size="5"');?>
+      <span id="minusfive" > -5% </span>
+      <span id="plusfive"  > +5% </span>
+        <div style="width: 80%;margin:auto;">
+          <h5>Markup's usados en este rubro</h5>
+          <?php foreach ($markupRubros as $clave):?>
+            <div class="markupRubros"><?php echo $clave?></div>
+          <?php endforeach;?>
+        </div>
+      <br />
       <?php echo form_label('Precio', 'preciovta');?>
-      <?php echo fomr_input('preciovta_articulo', $articulo->PRECIOVTA_ARTICULO, 'id="preciovta" class="reqNUM"');?>
-      <label>Tasa Iva</label>
+      <?php echo form_input('preciovta_articulo', $articulo->PRECIOVTA_ARTICULO, 'id="preciovta" size="8"');?>
+      <br />
+      Tasa Iva
           <div id="radio-iva">
             <?php echo form_label('21%', 'iva1');?><?php echo form_radio('TASAIVA_ARTICULO', 21, ($articulo->TASAIVA_ARTICULO==21)?true:false,'id="iva1"')?>
             <?php echo form_label('10.5%', 'iva2');?><?php echo form_radio('TASAIVA_ARTICULO', 10.50, ($articulo->TASAIVA_ARTICULO==10.50)?true:false,'id="iva2"')?>
@@ -64,7 +81,7 @@
       </div>
       <div id="botonBack">Atras</div>
       <div id="botonNext">Continuar</div>
-      <div id="botonSkip">Salta Paso</div>
+      <?php echo anchor('articulos/wizard/end/1', 'Salir Asistente', 'id="botonSkip"')?>
       <?php echo form_close();?>
       <input type="hidden" id="paginaAjaxGenero" value="<?php echo base_url(). 'index.php/articulos/generoNombre'?>" />
     </div>
@@ -97,36 +114,53 @@ $(document).ready(function(){
     $("#detalle").removeAttr('disabled');
     $("#wizard").submit();
   });
-  $(".wordkey").button();
-  $(".wordkeyunit").button();
-  $(".wordkeymedidas").button();
-  $(".wordkey").click(function(){
+  $("#botonBack").click(function(){
+        parent.history.back();
+        return false;
+  });
+  $(".markupRubros").button();
+  $(".markupRubros").click(function(){
     valor=$(this).text();
-    $("#especificacion").val(valor);
-    generoNombre();
+    $("#markup").val(valor);
   });
-  $(".wordkeyunit").click(function(){
-    valor=$(this).text();
-    $("#medida").val(valor);
-    generoNombre();
+  $("#plusfive").button();
+  $("#plusfive").click(function(){
+    valor=parseFloat($("#markup").val())+5;
+    $("#markup").val(valor);
+    precio = parseFloat($("#preciocosto").val());
+    markup = parseFloat($("#markup").val())/100;
+    costo = (precio * (1+markup)).toFixed(2);
+    $("#preciovta").val(costo);
   });
-  $(".wordkeymedidas").click(function(){
-    if($(this).text()==='NADA'){
-      valor='';
-    }else{
-      valor=$("#medida").val()+$(this).text();
-    }
-    $("#medida").val(valor);
-    generoNombre();
+  $("#minusfive").button();
+  $("#minusfive").click(function(){
+    valor=parseFloat($("#markup").val())-5;
+    $("#markup").val(valor);
+    precio = parseFloat($("#preciocosto").val());
+    markup = parseFloat($("#markup").val())/100;
+    costo = (precio * (1+markup)).toFixed(2);
+    $("#preciovta").val(costo);
   });
-  $("#especificacion").change(function(){
-    generoNombre();
+  if( isNaN(parseFloat($("#preciocosto").val())) || parseFloat($("#preciocosto").val())==0 ){
+   precio = parseFloat($("#preciovta").val());
+   markup = parseFloat($("#markup").val())/100;
+   costo = (precio / (1+markup)).toFixed(2);
+   $("#preciocosto").val(costo);
+  };
+  var valor=((parseFloat($("#preciovta").val())/parseFloat($("#preciocosto").val())-1)*100).toFixed(2);
+  $("#markupActual").text(valor);
+  $("#markup").keyup(function(){
+    ajustoPrecio();
   });
-  $("#especificacion").keypress(function(){
-    generoNombre();
+  $("#preciovta").keyup(function(){
+    ajustoCosto();
   });
-  $("#medida").change(function(){
-    generoNombre();
+  $("#preciocosto").keyup(function(){
+    ajustoPrecio();
+  });
+  $("#botonAjustoCosto").button();
+  $("#botonAjustoCosto").click(function(){
+    ajustoCosto();
   });
 });
 function generoNombre(){
@@ -152,5 +186,17 @@ function generoNombre(){
              $("#detalle").val(msg);
            }
   }).responseText;
+}
+function ajustoCosto(){
+    precio = parseFloat($("#preciovta").val());
+    markup = parseFloat($("#markup").val())/100;
+    costo = (precio / (1+markup)).toFixed(2);
+    $("#preciocosto").val(costo);
+}
+function ajustoPrecio(){
+    precio = parseFloat($("#preciocosto").val());
+    markup = parseFloat($("#markup").val())/100;
+    costo = (precio * (1+markup)).toFixed(2);
+    $("#preciovta").val(costo);
 }
 </script>

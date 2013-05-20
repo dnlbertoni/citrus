@@ -102,7 +102,7 @@
       <br />
       <div id="botonBack">Atras</div>
       <div id="botonNext">Continuar</div>
-      <div id="botonSkip">Salta Paso</div>
+      <?php echo anchor('articulos/wizard/end/1', 'Salir Asistente', 'id="botonSkip"')?>
       <?php echo form_close();?>
       <input type="hidden" id="paginaAjaxGenero" value="<?php echo base_url(). 'index.php/articulos/generoNombre'?>" />
     </div>
@@ -139,7 +139,7 @@ $(document).ready(function(){
   $(".wordkeyunit").button();
   $(".wordkeymedidas").button();
   $(".wordkey").click(function(){
-    valor=$(this).text();
+    valor=$("#especificacion").val() + ' ' + $(this).text();
     $("#especificacion").val(valor);
     generoNombre();
   });
@@ -165,6 +165,10 @@ $(document).ready(function(){
   });
   $("#medida").change(function(){
     generoNombre();
+  });
+  $("#botonBack").click(function(){
+        parent.history.back();
+        return false;
   });
 });
 function generoNombre(){

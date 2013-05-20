@@ -68,6 +68,7 @@
       <?php echo form_open($accion, 'id="wizard"', $ocultos)?>
       <?php echo $textoAsignar?>
       <div id="botonNext">Continuar</div>
+      <?php echo anchor('articulos/wizard/end/1', 'Salir Asistente', 'id="botonSkip"')?>
       <?php echo form_close();?>
     </div>
   </div>

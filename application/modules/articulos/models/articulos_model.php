@@ -435,4 +435,29 @@ class Articulos_model extends MY_Model{
     }
     return $palabras;
   }
+  function getMarkupRubro($id_subrubro=false){
+    $this->db->distinct();
+    $this->db->select('markup_articulo as markup');
+    $this->db->from($this->getTable());
+    if($id_subrubro){
+      $this->db->where('id_subrubro', $id_subrubro);
+    };
+    $this->db->where('markup_articulo IS NOT NULL', '', FALSE);
+    $this->db->where('preciocosto_articulo > 0', '', FALSE);
+    $this->db->where('markup_articulo > 0', '', FALSE);
+    $q = $this->db->get()->result();
+    if(count($q)>0){
+      foreach($q as $palabra){
+        $aux =  explode(' ', $palabra->markup);
+        foreach($aux as $a){
+            $palabras[]= intval($a);
+        }
+      }
+      $palabras = array_unique($palabras);
+      asort($palabras);
+    }else{
+      $palabras=array();
+    }
+    return $palabras;
+  }
 }

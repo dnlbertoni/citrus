@@ -19,7 +19,7 @@
  *@TODO: Unificar el Template
  */
 class Articulos extends MY_Controller{
-  private $wizard = false;
+  private $wizard = true;
   function __construct(){
     parent::__construct();
     $this->load->model('Articulos_model');
