@@ -293,8 +293,17 @@ class Wizard extends MY_Controller{
   }
   function masivo($orden='nombre'){
     $articulos=$this->Articulos_model->filtroWizard($orden);
+    $progreso=$this->Articulos_model->getStatusWizard();
+    Template::set('progreso', $progreso);
     Template::set('articulos', $articulos);
     Template::set_view('articulos/wizard/masivo');
     Template::render();
+  }
+  function outWizard($codigo){
+    if($codigo){
+      $this->CB=$codigo;
+    };
+    $this->Articulos_model->updateArticulo($this->CB, 'wizard', 2);
+    Template::redirect('articulos/wizard/masivo');
   }
 }

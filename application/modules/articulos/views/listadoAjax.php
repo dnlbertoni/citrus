@@ -103,7 +103,7 @@ $(document).ready(function(){
         $(nombre).removeClass('focus');
       }
     });
-    $("#botBorrarLote").click(function(){
+    $("#botBorrarLote1").click(function(){
       $("#resultadosAjax-form").attr('action', <?php echo $borraLotes?>);
       $('#resultadosAjax-form').submit();
     });

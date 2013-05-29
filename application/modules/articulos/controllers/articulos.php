@@ -403,7 +403,8 @@ class Articulos extends MY_Controller{
   }
   function setMarca(){
     $estado=$this->Articulos_model->updateArticulo($this->input->post('codigobarra'),'id_submarca', $this->input->post('id_submarca'));
-  }}
+  }
+}
 
 
 /*

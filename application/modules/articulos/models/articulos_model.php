@@ -149,6 +149,7 @@ class Articulos_model extends MY_Model{
     $id = intval($id);
     $this->db->_reset_select();
     $this->db->select("id_articulo AS id, descripcion_articulo AS descripcion, preciovta_articulo AS precio");
+    $this->db->select("preciocosto_articulo   AS costo");
     $this->db->from($this->tabla->name);
     $this->db->where($this->tabla->id, $id);
     return $this->db->get()->row();
@@ -175,8 +176,9 @@ class Articulos_model extends MY_Model{
     $this->db->update($this->tabla->name,$datos);
     $datPrecio = $this->getDatosBasicos($id);
     $precio    = $datPrecio->precio;
+    $costo     = $datPrecio->costo;
     if($precio)
-      $this->actualizoPrecio($id, $precio);
+      $this->actualizoPrecio($id, $precio, $costo);
     return true;
   }
   function getDatosPrecio($codigo){
@@ -206,9 +208,9 @@ class Articulos_model extends MY_Model{
   function getByIdFull($id){
 	$this->db->from($this->getTable());
 	$this->db->join('tbl_subrubros', 'tbl_subrubros.id_subrubro = tbl_articulos.id_subrubro', 'left');
-	$this->db->join('tbl_rubros', 'tbl_rubros.id_rubro = tbl_subrubros.id_rubro', 'inner');
+	$this->db->join('tbl_rubros', 'tbl_rubros.id_rubro = tbl_subrubros.id_rubro', 'left');
 	$this->db->join('stk_submarcas', 'stk_submarcas.id_submarca = tbl_articulos.id_marca', 'left');
-	$this->db->join('stk_marcas', 'stk_marcas.id_marca = stk_submarcas.id_marca', 'inner');
+	$this->db->join('stk_marcas', 'stk_marcas.id_marca = stk_submarcas.id_marca', 'left');
 	$this->db->where($this->getPrimaryKey(), $id);
 	return $this->db->get()->row();
   }
@@ -281,17 +283,31 @@ class Articulos_model extends MY_Model{
     $this->db->order_by("cantidad", "DESC");
     return $this->db->get()->result();
   }
-  function actualizoPrecio($id, $precio){
+  function actualizoPrecio($id, $precio, $costo=false){
     $this->db->set('preciovta_articulo', $precio);
     $this->db->set('estado_articulo', 1);
     $this->db->where('id_articulo', $id);
     $this->db->update($this->getTable());
     $this->db->_reset_select();
-    $this->db->set('id_articulo', $id);
-    $this->db->set('fecha', 'NOW()', FALSE);
-    $this->db->set('precio', $precio);
-    $this->db->set('impreso', 0);
-    $this->db->insert('tbl_preciosmovim');
+    //busco ultimo precio en la base y lo comparo
+    $this->db->select('precio');
+    $this->db->select('fecha');
+    $this->db->from('tbl_preciosmovim');
+    $this->db->where('id_articulo', $id);
+    $this->db->order_by('fecha', 'DESC');
+    $this->db->limit(1);
+    $q=$this->db->get()->row();
+    if($precio != $q->precio){ // grabo en preciosmovim
+      $this->db->_reset_select();
+      $this->db->set('id_articulo', $id);
+      $this->db->set('fecha', 'NOW()', FALSE);
+      $this->db->set('precio', $precio);
+      if($costo){
+        $this->db->set('costo', $costo);
+      }
+      $this->db->set('impreso', 0);
+      $this->db->insert('tbl_preciosmovim');
+    }
     return true;
   }
   function getActivos(){
@@ -372,7 +388,7 @@ class Articulos_model extends MY_Model{
     $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "left");
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
     $this->db->from($this->tabla->name);
-    $this->db->where('tbl_articulos.wizard <>', 1, FALSE);
+    $this->db->where('tbl_articulos.wizard <', 1, FALSE);
     $this->db->or_where('tbl_articulos.wizard IS NULL','', FALSE);
     //$this->db->limit(250);
     $this->db->order_by('estado', 'DESC');
@@ -459,5 +475,10 @@ class Articulos_model extends MY_Model{
       $palabras=array();
     }
     return $palabras;
+  }
+  function getStatusWizard(){
+    $this->db->select('SUM(IF(wizard=1,1,0))/COUNT(id_articulo)*100 AS progreso', FALSE);
+    $this->db->from($this->getTable());
+    return $this->db->get()->row()->progreso;
   }
 }

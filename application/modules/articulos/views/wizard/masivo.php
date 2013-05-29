@@ -1,3 +1,6 @@
+<h1>Existen <?php echo count($articulos);?> articulos para revisar...</h1>
+<h2>Porgreso <?php echo $progreso?></h2>
+<div id="progressbar"></div>
 <div class="post">
   <table id="datos">
     <thead>
@@ -9,7 +12,6 @@
     <th >&nbsp;</th>
     </thead>
     <tbody>
-      Existen <?php echo count($articulos);?> articulos para revisar...
       <?php $x=0;?>
       <?php foreach($articulos as $articulo):?>
       <tr <?php echo 'id="linea_'.$articulo->id.'"'?> class="linea est_<?php echo $articulo->estado?>">
@@ -20,6 +22,7 @@
         <td><?php echo $articulo->marca?></td>
         <td>
           <?php echo anchor('articulos/wizard/index/'.$articulo->codigobarra, 'Asistente', 'class="botonAsistente"')?>
+          <?php echo anchor('articulos/wizard/outWizard/'.$articulo->codigobarra, 'Sacar Wizard', 'class="botonOut botonAjax"')?>
           <?php echo anchor('articulos/borrar/'.$articulo->id.'/1', 'Borrar', 'class="botonBorrar botonAjax"')?>
         </td>
       </tr>
@@ -33,7 +36,9 @@
 </div>
 <script>
 $(document).ready(function(){
+  $("#progressbar").progressbar({value:<?php echo $progreso?>});
   $(".botonAsistente").button({icons:{primary:'ui-icon-star'}, text:false});
+  $(".botonOut").button({icons:{primary:'ui-icon-cancel'}, text:false});
   $(".botonBorrar").button({icons:{primary:'ui-icon-trash'}, text:false});
 });
 </script>
