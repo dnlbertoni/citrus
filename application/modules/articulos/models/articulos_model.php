@@ -390,7 +390,7 @@ class Articulos_model extends MY_Model{
     $this->db->from($this->tabla->name);
     $this->db->where('tbl_articulos.wizard <', 1, FALSE);
     $this->db->or_where('tbl_articulos.wizard IS NULL','', FALSE);
-    //$this->db->limit(250);
+    //$this->db->limit(50);
     $this->db->order_by('estado', 'DESC');
     $this->db->order_by($orden, 'DESC');
     $q = $this->db->get();

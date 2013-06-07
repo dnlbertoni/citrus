@@ -14,6 +14,7 @@ class Wizard extends MY_Controller{
     parent::__construct();
     $this->load->model('Articulos_model');
     $this->load->model('Empresas_model');
+    $this->load->model('Wizard_model');
     $this->load->model('Rubros_model');
     $this->load->model('Subrubros_model','',TRUE);
     $this->load->model('Marcas_model','',TRUE);
@@ -294,6 +295,13 @@ class Wizard extends MY_Controller{
   function masivo($orden='nombre'){
     $articulos=$this->Articulos_model->filtroWizard($orden);
     $progreso=$this->Articulos_model->getStatusWizard();
+    $diasDetalle=$this->Wizard_model->getWizardDias();
+    $hoy = new DateTime();
+    $primerDia=new DateTime('2012-05-01');
+    $d1String = $hoy->format('U');
+    $d2String = $primerDia->format('U');
+    $dif=abs($d1String - $d2String)/(60*60*24);
+    Template::set('dias', $dif );
     Template::set('progreso', $progreso);
     Template::set('articulos', $articulos);
     Template::set_view('articulos/wizard/masivo');

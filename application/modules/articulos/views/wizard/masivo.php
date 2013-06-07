@@ -1,6 +1,16 @@
 <h1>Existen <?php echo count($articulos);?> articulos para revisar...</h1>
-<h2>Porgreso <?php echo $progreso?></h2>
+<h2>Avance <?php echo round($progreso, 2)?>%</h2>
 <div id="progressbar"></div>
+<div class="post">
+  <table>
+    <tr>
+      <th>Dias Transc.</th>
+      <td><?php echo $dias?></td>
+      <th>Articulos</th>
+      <td><?php //echo $articulosHechos?></td>
+    </tr>
+  </table>
+</div>
 <div class="post">
   <table id="datos">
     <thead>
@@ -27,7 +37,7 @@
         </td>
       </tr>
       <?php $x++;
-      if($x>250){
+      if($x>50){
         break;
       }?>
       <?php endforeach;?>
