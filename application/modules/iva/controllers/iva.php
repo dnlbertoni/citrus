@@ -300,4 +300,38 @@ class Iva extends MY_Controller{
     $comando = sprintf("rm -f $filename");
     exec($comando);
   }
+  function subirLista(){
+      $error = array('error' => '');
+      Template::set($error);
+    Template::render();
+  }
+  function subirCSVDo(){
+    $config['upload_path'] = TMP;
+	$config['allowed_types'] = 'csv|txt';
+	$config['max_size']	= '20480';
+	$this->load->library('upload', $config);
+	if ( ! $this->upload->do_upload()){
+      $error = array('error' => $this->upload->display_errors());
+      Template::set($error);
+      Template::set_view('iva/subirLista');
+	}else{
+      $archivo =  $this->upload->data();
+      $this->load->library('Getcsv');
+      $facturas=$this->getcsv->set_file_path($archivo['full_path'], ";")->get_array();
+      /*
+       * grabo en las tablas
+       */
+      foreach ($facturas as $fac){
+        //grabo en facencab
+        foreach($fac as $key=>$value){
+          $datos[$key]=$value;
+        }
+        $id=$this->Facencab_model->add($datos);
+      }
+      $data['facturas'] = $facturas;
+      Template::set($data);
+      Template::set_view('iva/archivoAS');
+	}
+    Template::render();
+  }
 }
