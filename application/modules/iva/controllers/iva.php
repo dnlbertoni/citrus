@@ -324,7 +324,7 @@ class Iva extends MY_Controller{
       foreach ($facturas as $fac){
         //grabo en facencab
         foreach($fac as $key=>$value){
-          $datos[$key]=$value;
+            $datos[$key]=$value;
         }
         $id=$this->Facencab_model->add($datos);
       }
