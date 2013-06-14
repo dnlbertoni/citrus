@@ -404,6 +404,17 @@ class Articulos extends MY_Controller{
   function setMarca(){
     $estado=$this->Articulos_model->updateArticulo($this->input->post('codigobarra'),'id_submarca', $this->input->post('id_submarca'));
   }
+  function chekeoPrecios(){
+    $this->load->model('Preciosmovim_model');
+    $preciosMovim = $this->Preciosmovim_model->ultimosPrecios();
+    foreach($preciosMovim as $nuevo){
+      $articulo = $this->Articulos_model->getDatosBasicos($nuevo->id_articulo);
+      if($articulo->precio < $nuevo->precio){
+        $this->Articulos_model->actualizoPrecio($nuevo->id_articulo, $nuevo->precio, ($nuevo->precio / 1.7));
+      }
+      echo "<p>".$articulo->descripcion."</p>";
+    }
+  }
 }
 
 

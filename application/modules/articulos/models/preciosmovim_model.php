@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -31,6 +31,13 @@ class Preciosmovim_model extends MY_Model{
         $this->add($datos);
       }
     }
+  }
+  function ultimosPrecios(){
+    $this->db->select('id_articulo');
+    $this->db->select('max(precio) as precio', FALSE);
+    $this->db->from($this->getTable());
+    $this->db->group_by('id_articulo');
+    return $this->db->get()->result();
   }
 }
 
