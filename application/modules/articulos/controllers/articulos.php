@@ -408,11 +408,14 @@ class Articulos extends MY_Controller{
     $this->load->model('Preciosmovim_model');
     $preciosMovim = $this->Preciosmovim_model->ultimosPrecios();
     foreach($preciosMovim as $nuevo){
+      $precio=$this->Preciosmovim_model->precioFecha($nuevo->id_articulo, $nuevo->fecha);
       $articulo = $this->Articulos_model->getDatosBasicos($nuevo->id_articulo);
-      if($articulo->precio < $nuevo->precio){
-        $this->Articulos_model->actualizoPrecio($nuevo->id_articulo, $nuevo->precio, ($nuevo->precio / 1.7));
+      if($articulo){
+        //if($articulo->precio < $precio){
+          $this->Articulos_model->actualizoPrecio($nuevo->id_articulo, $precio, ($precio / 1.7));
+          echo "<p>".$articulo->descripcion."<span> ".$articulo->precio."</span><span> ".$precio."</span></p>";
+        //}
       }
-      echo "<p>".$articulo->descripcion."</p>";
     }
   }
 }

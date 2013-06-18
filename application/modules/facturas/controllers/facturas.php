@@ -6,10 +6,8 @@ class Facturas extends MY_Controller {
     $this->load->model('Tipcom_model','',true);
 
     Template::set('title','Modulo de Facturas');
-    $datos['tareas'][] = array( 'facturas/add/10', 'Agregar Fac Cpras');
-    $datos['tareas'][] = array( 'facturas/add/13', 'Agregar N/C Cpras');
-    $datos['tareas'][] = array( 'facturas/cierresZmanual', 'Agregar Cierre Z Manual');
-    $datos['tareas'][] = array( 'facturas/addCierresZ', 'Agregar Cierre Z Controlador');
+    $datos['tareas'][] = array( 'facturas/buscar', 'Facturas Compra');
+
     Template::set($datos);
     Template::set_block('tareas','tareas'); // panel de tareas
   }
@@ -164,6 +162,26 @@ class Facturas extends MY_Controller {
     Assets::add_js('pos/muestroZ');
     Template::set($data);
     Template::set_view('pos/muestroZ');
+    Template::render();
+  }
+  function buscar(){
+    $this->load->model('Cuenta_model');
+    $proveedores=$this->Cuenta_model->getProveedoresLista();
+    Template::set('targetCuenta', sprintf("'%sindex.php/cuenta/searchAjax%s'", base_url(),'/cuentaAjax'));
+    Template::set('opProvee', $proveedores);
+    Template::set('accion', 'facturas/buscarDo');
+    Template::render();
+  }
+  function buscarDo(){
+    $facturas=$this->Facencab_model->getCuentasFechas($this->input->post('cuenta_id'), $this->input->post('desde'), $this->input->post('hasta'));
+    $fechas  = "Desde:";
+    $fechas .= ($this->input->post('desde') != "")? $this->input->post('desde') : "Primer Registro";
+    $fechas .= " - Hasta:";
+    $fechas .= ($this->input->post('hasta') != "")? $this->input->post('hasta') : "Ultimo Registro";
+    Template::set('fechas', $fechas);
+    Template::set('provee', ($this->input->post('cuenta_id')!='')?$this->input->post('cuenta_nombre'):'Todos');
+    Template::set('facturas', $facturas);
+    Template::set_view('facturas/listado');
     Template::render();
   }
   function estado(){

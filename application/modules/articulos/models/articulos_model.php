@@ -189,7 +189,7 @@ class Articulos_model extends MY_Model{
     $this->db->where($this->tabla->codigobarra, $codigo);
     $q =  $this->db->get();
     if($q->num_rows()>0)
-            return $q->row();
+      return $q->row();
     else
       return false;
   }
@@ -297,6 +297,7 @@ class Articulos_model extends MY_Model{
     $this->db->order_by('fecha', 'DESC');
     $this->db->limit(1);
     $q=$this->db->get()->row();
+    /*
     if($precio != $q->precio){ // grabo en preciosmovim
       $this->db->_reset_select();
       $this->db->set('id_articulo', $id);
@@ -308,6 +309,8 @@ class Articulos_model extends MY_Model{
       $this->db->set('impreso', 0);
       $this->db->insert('tbl_preciosmovim');
     }
+     *
+     */
     return true;
   }
   function getActivos(){
