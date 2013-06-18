@@ -184,6 +184,13 @@ class Facturas extends MY_Controller {
     Template::set_view('facturas/listado');
     Template::render();
   }
+  function view($id){
+    $factura = $this->facencab_model->getById($id);
+    $data['accion']='facturas/editar';
+    $data['factura']=$factura;
+    Template::set_view('factura/ver');
+    Template::render();
+  }
   function estado(){
     $this->load->library('hasar');
     $data['respuesta']=$this->hasar->Estado();
