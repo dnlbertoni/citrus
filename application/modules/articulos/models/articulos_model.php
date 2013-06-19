@@ -354,10 +354,11 @@ class Articulos_model extends MY_Model{
     return $this->db->get()->result();
   }
   function getByCodigobarraCsv($Cb){
+    $this->db->select('id_articulo          as id');
     $this->db->select('codigobarra_articulo as codigobarra');
     $this->db->select('descripcion_articulo as descripcion');
     $this->db->select('preciocosto_articulo as costo');
-    $this->db->select('preciovta_articulo as precio');
+    $this->db->select('preciovta_articulo   as precio');
     $this->db->select('tbl_articulos.id_subrubro as id_subruro');
     $this->db->select('descripcion_subrubro as nombre_subrubro');
     $this->db->select('tbl_articulos.id_marca as id_submarca');

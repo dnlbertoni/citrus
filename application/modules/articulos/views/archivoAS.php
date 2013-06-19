@@ -16,11 +16,13 @@
           <th>Nombre</th><td><?php echo $c['PRODUCTO'];?></td><td><?php echo $c['detalle_db']['descripcion'];?></td>
         </tr>
         <tr>
-          <th>Costo</th><td><?php echo $c['COSTO'];?></td><td><?php echo $c['detalle_db']['costo'];?></td>
+          <th>Costo</th><td id="costo_<?php echo $c['BARRAS'];?>"><?php echo $c['COSTO'];?></td><td ><?php echo $c['detalle_db']['costo'];?></td>
         </tr>
+        <!--
         <tr>
-          <th>Rubro</th><td><?php echo $c['RUBRO'];?></td><td><?php echo form_dropdown('subrubro',$selSubrubros,1)?></td>
+          <th>Rubro</th><td><?php //echo $c['RUBRO'];?></td><td><?php //echo form_dropdown('subrubro',$selSubrubros,1)?></td>
         </tr>
+        -->
         <tr>
           <th>Precio</th>
           <td><?php echo $c['PRECIO'];?></td><td><?php echo $c['detalle_db']['precio'];?></td>
@@ -29,7 +31,9 @@
       </table>
       <div>
         <span>Ultima Fecha de Modificacion: <?php echo $c['detalle_db']['fechamodif'];?></span>
-        <span><?php echo anchor('articulos/getDatosArticuloCSV/'.$c['BARRAS'],'Buscar Datos', 'id="'.$c['BARRAS'].'_bot", class="botonAjax"');?></span>
+        <span><?php //echo anchor('articulos/getDatosArticuloCSV/'.$c['BARRAS'],'Buscar Datos', 'id="'.$c['BARRAS'].'_bot", class="botonAjax"');?></span>
+        <span><?php echo anchor('articulos/graboDesdeCSV/', 'Grabo', 'id="'.$c['BARRAS'].'" class="botonGrabo"')?></span>
+        <span id="graba_<?php echo $c['BARRAS'];?>"></span>
       </div>
     </div>
   <?php endforeach;?>
@@ -46,6 +50,21 @@ $(document).ready(function(){
     nombre=nombr[0];
     url=$(this).attr('href');
     detalleArticulo(nombre, url);
+  });
+  $(".botonGrabo").button({icons:{primary:'ui-icon-disk'}});
+  $(".botonGrabo").click(function(e){
+    e.preventDefault();
+    var nom   = $(this).attr('id');
+    var url = $(this).attr('href');
+    nombre="#costo_"+nom;
+    var CB    = nom;
+    var costo = $(nombre).text();
+    $.post(url,{codigobarra:CB, costo:costo}, function(data){
+      nombre="#graba_"+nom;
+      $(nombre).html(data);
+      nombre="#"+nom;
+      $(nombre).hide();
+    });
   });
 });
 function detalleArticulo(CB, url){

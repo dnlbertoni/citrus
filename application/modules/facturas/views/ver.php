@@ -89,7 +89,7 @@
       <td>IVA 21%</td>
       <td><?php
          $datinput = array( 'id'    =>  'ivamax',
-                            'value' => $factura->ivamax,             
+                            'value' => $factura->ivamax,
                             'name'  =>  'ivamax'
          );
          echo form_input($datinput);?></td>
@@ -136,12 +136,12 @@
       <td colspan="2"> <?php echo form_submit('Grabar', 'Grabar');?></td>
     </tr>
   </table>
-  <?php echo form_close();?>  
+  <?php echo form_close();?>
 </div>
 <div id="buscoCuenta"></div>
 
 <script>
-  $(document).ready(function(){
+$(document).ready(function(){
     buscaCuenta();
     $("#botBuscaCuenta").button({icons:{primary:'ui-icon-search'}});
     $("#botBuscaCuenta").click(function(){

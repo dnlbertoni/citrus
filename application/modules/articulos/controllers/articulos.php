@@ -41,6 +41,7 @@ class Articulos extends MY_Controller{
     $datos['tareas'][] = array('articulos/submarcas/', 'Submarcas');
     $datos['tareas'][] = array('articulos/submarcas/agregar/ajax', 'Agregar Submarcas', 'class="ajaxLoad"');
     $datos['tareas'][] = array('articulos/estadisticas', 'Estadisticas');
+    $datos['tareas'][] = array('articulos/subirListaAS', 'Lista Precios Jhonson');
     Template::set($datos);
     Template::set_block('tareas','tareas'); // panel de tareas
 
@@ -364,14 +365,14 @@ class Articulos extends MY_Controller{
         if($this->getDatosArticuloCSV($prod['BARRAS'])){
           $productos[$x]['BARRAS']=$prod['BARRAS'];
           $productos[$x]['PRODUCTO']=$prod['PRODUCTO'];
-          $productos[$x]['RUBRO']=$prod['RUBRO'];
+          //$productos[$x]['RUBRO']=$prod['RUBRO'];
           $productos[$x]['COSTO']=  round((float)$prod['COSTO'], 2);
           $productos[$x]['PRECIO']=  round($productos[$x]['COSTO']*$coef, 2);
-          $productos[$x]['detalle_db']=$this->getDatosArticuloCSV($prod['BARRAS']);
+          $productos[$x]['detalle_db'] = $this->getDatosArticuloCSV($prod['BARRAS']);
         }else{
           $nuevos[$x]['BARRAS']=$prod['BARRAS'];
           $nuevos[$x]['PRODUCTO']=$prod['PRODUCTO'];
-          $productos[$x]['RUBRO']=$prod['RUBRO'];
+          //$productos[$x]['RUBRO']=$prod['RUBRO'];
           $nuevos[$x]['COSTO']=  round((float)$prod['COSTO'], 2);
           $nuevos[$x]['PRECIO']=  round($nuevos[$x]['COSTO']*$coef, 2);
         }
@@ -379,7 +380,7 @@ class Articulos extends MY_Controller{
       }
       $data['productos'] = $productos;
       $data['nuevos']    = $nuevos;
-      $data['selSubrubros']=$this->Subrubros_model->toDropDown('id_subrubro','descripcion_subrubro');
+      //$data['selSubrubros']=$this->Subrubros_model->toDropDown('id_subrubro','descripcion_subrubro');
       Template::set($data);
       Template::set_view('articulos/archivoAS');
 	}
@@ -397,6 +398,12 @@ class Articulos extends MY_Controller{
     }else{
       return false;
     }
+  }
+  function graboDesdeCSV(){
+    $precio=$this->input->post('costo') * 1.7;
+    $this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'preciocosto_articulo', $this->input->post('costo'));
+    $this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'preciovta_articulo', $precio);
+    echo "Grabacion Ok";
   }
   function setRubro(){
     $estado=$this->Articulos_model->updateArticulo($this->input->post('codigobarra'),'id_subrubro', $this->input->post('id_subrubro'));

@@ -23,9 +23,9 @@
   <td><?php echo money_format('%= (#10.2n', $f->importe)?></td>
   <td><?php echo $f->periva?></td>
   <td>
-    <?php echo anchor('facturas/ver'.$f->id,'Ver',       'class="botView ajax"')?>
-    <?php echo anchor('facturas/editar'.$f->id,'Editar', 'class="botEdit ajax"')?>
-    <?php echo anchor('facturas/borrar'.$f->id,'Borrar', 'class="botDel ajax"')?>
+    <?php echo anchor('facturas/view/'.$f->id,'Ver',       'class="botView ajax"')?>
+    <?php echo anchor('facturas/editar/'.$f->id,'Editar', 'class="botEdit ajax"')?>
+    <?php echo anchor('facturas/borrar/'.$f->id,'Borrar', 'class="botDel ajax"')?>
   </td>
 </tr>
 <?php endforeach; ?>

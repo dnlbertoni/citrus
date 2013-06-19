@@ -70,6 +70,7 @@
      $data['dias']   = $dias;
      $data['accion'] = ($tamano==1)? 'carteles/topdf/cartelesPrecios' : 'carteles/topdf/cartelesVinos';
      $data['articulos'] = $Articulos;
+     $data['total']=count($Articulos);
      Template::set($data);
      Template::render();
    }

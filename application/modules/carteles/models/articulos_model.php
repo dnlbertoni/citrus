@@ -1,14 +1,14 @@
 <?php
 /*
  * Modelo de tabla articulos para la impresion de carteles varios
- * 
+ *
  */
- 
+
 class Articulos_model extends MY_Model{
   var $tabla = "tbl_articulos";
   function __construct(){
     parent::__construct();
-    $this->setTable("tbl_articulos");    
+    $this->setTable("tbl_articulos");
   }
   function getDatosBasicos($id){
   $id = intval($id);
@@ -48,7 +48,7 @@ class Articulos_model extends MY_Model{
     //echo $this->db->_compile_select();
     return $this->db->get()->result();
   }
-  function PendientesImpresion(){
+  function PendientesImpresion($limite=false){
     $this->db->distinct();
     $this->db->select('tbl_preciosmovim.id_articulo      AS id');
     $this->db->select('codigobarra_articulo AS Codigobarra');
@@ -61,6 +61,9 @@ class Articulos_model extends MY_Model{
     $this->db->join('tbl_subrubros', 'tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro', 'inner');
     $this->db->join('stk_submarcas', 'tbl_articulos.id_marca = stk_submarcas.id_submarca', 'inner');
     $this->db->where('impreso',0);
+    if($limite){
+      $this->db->limit($limite);
+    }
     $this->db->order_by('Subrubro');
     $this->db->order_by('Submarca');
     return $this->db->get()->result();
