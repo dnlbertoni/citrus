@@ -7,7 +7,7 @@ class Submarcas extends MY_Controller{
     $this->load->model("Submarcas_model", "", TRUE);
   }
   function index(){
-    $submarcas = $this->Submarcas_model->getAllConMarcas();
+    $submarcas = $this->Submarcas_model->getAllConArticulos();
     $data['submarcas'] = $submarcas;
     Assets::add_js('ui-tableFilter');
     Template::set($data);
@@ -110,5 +110,12 @@ class Submarcas extends MY_Controller{
     $data['target']    = $this->input->post('destino');
     $data['targetMarca'] = sprintf("'%sindex.php/articulos/submarcas/agregar/ajax'", base_url());
     $this->load->view('articulos/submarcas/listadoAjax', $data);
+  }
+  function verArticulos($id){
+    $data['submarca']=$this->Submarcas_model->getNombre($id);
+    $sub=$this->Submarcas_model->getById($id);
+    $data['marca']=$this->Marcas_model->getNombre($sub->ID_MARCA);
+    $data['articulos']=$this->Submarcas_model->getArticulosFromSubmarca($id);
+    $this->load->view('submarcas/listadoArticulos', $data);
   }
 }

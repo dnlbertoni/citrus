@@ -251,3 +251,11 @@ input button{
   background-color: red;
   color: white;
 }
+.est_w{
+  background-color: lightgreen;
+  color: black;
+}
+.est_nw{
+  background-color: orange;
+  color: white;
+}

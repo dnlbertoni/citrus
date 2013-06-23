@@ -15,7 +15,7 @@ class Subrubros extends MY_Controller{
     Template::set($datos);
     Template::set_block('tareas', 'tareas'); // panel de tareas
 
-    $subrubros = $this->Subrubros_model->getAllConRubros();
+    $subrubros = $this->Subrubros_model->getAllConArticulos();
     $data['subrubros'] = $subrubros;
     Template::set($data);
     Template::render();
@@ -118,5 +118,12 @@ class Subrubros extends MY_Controller{
     $data['target']    = $this->input->post('destino');
     $data['targetRubro'] = sprintf("'%sindex.php/articulos/subrubros/agregar/ajax'", base_url());
     $this->load->view('articulos/subrubros/listadoAjax', $data);
+  }
+  function verArticulos($id){
+    $data['subrubro']=$this->Subrubros_model->getNombre($id);
+    $sub=$this->Subrubros_model->getById($id);
+    $data['rubro']=$this->Rubros_model->getNombre($sub->ID_RUBRO);
+    $data['articulos']=$this->Subrubros_model->getArticulosFromSubrubro($id);
+    $this->load->view('subrubros/listadoArticulos', $data);
   }
 }

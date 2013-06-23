@@ -11,10 +11,11 @@ class Wizard_model extends MY_Model{
     $this->setTable('wizard');
   }
   function getWizardDias(){
-    $this->db->select('DATE_FORMAT(time, "%d-%m-%Y") AS fecha', FALSE);
-    $this->db->select('COUNT(id_articulo) AS cantidad');
+    $this->db->select('MIN(time)          AS minimo', FALSE);
+    $this->db->select('MAX(time)          AS maximo', FALSE);
+    $this->db->select('COUNT(id_articulo) AS cantidad', FALSE);
+    $this->db->select('TO_DAYS(MAX(time)) - TO_DAYS(MIN(time)) AS dias ', FALSE);
     $this->db->from($this->getTable());
-    $this->db->group_by('fecha');
-    return $this->db->get()->result();
+    return $this->db->get()->row();
   }
 }

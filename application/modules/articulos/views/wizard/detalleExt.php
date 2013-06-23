@@ -68,7 +68,7 @@
       <?php echo form_open($accion, 'id="wizard"', $ocultos)?>
       <div>
           <?php echo form_label('Detalles y especificaiones:','especificacion')?>
-          <?php echo form_input('especificacion', '', 'id="especificacion" size="20"');?>
+          <?php echo form_input('especificacion', $articulo->especificacion, 'id="especificacion" size="20"');?>
           <div style="width: 80%;margin:auto;">
             <h5>Palabras normalmente usadas</h5>
             <?php foreach ($palabrasClaves as $clave):?>
@@ -86,7 +86,7 @@
       <p>&nbsp;</p>
       <div>
         <?php echo form_label('Peso / Unidades ', 'medida');?>
-        <?php echo form_input('medida','','id="medida" size="8"');?>
+        <?php echo form_input('medida',$articulo->medida,'id="medida" size="8"');?>
         <?php foreach ($medidas as $clave):?>
             <div class="wordkeymedidas"><?php echo $clave?></div>
         <?php endforeach;?>

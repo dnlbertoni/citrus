@@ -18,6 +18,21 @@ class Submarcas_model extends MY_Model{
     $this->db->order_by('nombre');
     return $this->db->get()->result();
   }
+  function getAllConArticulos(){
+    $this->db->select('stk_submarcas.ID_SUBMARCA AS ID_SUBMARCA');
+    $this->db->select('DETALLE_SUBMARCA');
+    $this->db->select('DETALLE_MARCA AS marca');
+    $this->db->select('ALIAS_SUBMARCA');
+    $this->db->select('COUNT(id_articulo) AS articulos', FALSE);
+    $this->db->select('SUM(IF(wizard=1,1,0)) AS Warticulos', FALSE);
+    $this->db->from('tbl_articulos');
+    $this->db->join("stk_submarcas", "stk_submarcas.id_submarca = tbl_articulos.id_marca", "right");
+    $this->db->join("stk_marcas", "stk_submarcas.id_marca = stk_marcas.id_marca", "right");
+    $this->db->group_by('tbl_articulos.id_marca');
+    $this->db->order_by('detalle_marca');
+    $this->db->order_by('alias_submarca');
+    return $this->db->get()->result();
+  }
   function getResto($sugeridos){
     $this->db->select('ID_SUBMARCA');
     $this->db->select('DETALLE_SUBMARCA');
@@ -66,5 +81,19 @@ class Submarcas_model extends MY_Model{
 	}else{
 	  return false;
 	}
+  }
+  function getArticulosFromSubmarca($id=false){
+      $this->db->select('id_articulo AS id');
+      $this->db->select('codigobarra_articulo AS cb');
+      $this->db->select('DESCRIPCION_articulo AS nombre');
+      $this->db->select('CONCAT(descripcion_subrubro, " ( ", descripcion_rubro, " ) ") AS rubro', FALSE);
+      $this->db->select('wizard AS w');
+      $this->db->from('tbl_articulos');
+      $this->db->join("tbl_subrubros", "tbl_subrubros.id_subrubro = tbl_articulos.id_subrubro", "inner");
+      $this->db->join("stk_submarcas", "stk_submarcas.id_submarca = tbl_articulos.id_marca", "inner");
+      $this->db->join("tbl_rubros",    "tbl_subrubros.id_rubro    = tbl_rubros.id_rubro", "inner");
+      $this->db->where('tbl_articulos.id_marca', $id);
+      $this->db->order_by('nombre');
+      return $this->db->get()->result();
   }
 }

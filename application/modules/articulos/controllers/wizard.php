@@ -297,11 +297,11 @@ class Wizard extends MY_Controller{
     $progreso=$this->Articulos_model->getStatusWizard();
     $diasDetalle=$this->Wizard_model->getWizardDias();
     $hoy = new DateTime();
-    $primerDia=new DateTime('2012-05-01');
-    $d1String = $hoy->format('U');
-    $d2String = $primerDia->format('U');
-    $dif=abs($d1String - $d2String)/(60*60*24);
-    Template::set('dias', $dif );
+    $dias = (count($articulos)/($diasDetalle->cantidad/$diasDetalle->dias));
+    $format = "+".intval($dias)." days";
+    $hoy->modify($format);
+    Template::set('dd', $diasDetalle );
+    Template::set('fechaAdivinada', $hoy->format('d/m/Y'));
     Template::set('progreso', $progreso);
     Template::set('articulos', $articulos);
     Template::set_view('articulos/wizard/masivo');

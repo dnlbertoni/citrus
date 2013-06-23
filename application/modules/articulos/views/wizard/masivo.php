@@ -5,9 +5,19 @@
   <table>
     <tr>
       <th>Dias Transc.</th>
-      <td><?php echo $dias?></td>
+      <td><?php echo $dd->dias?></td>
       <th>Articulos</th>
-      <td><?php //echo $articulosHechos?></td>
+      <td><?php echo $dd->cantidad?></td>
+    </tr>
+    <tr>
+      <th>Promedio de Articulos Diarios</th>
+      <td><?php echo round($dd->cantidad/$dd->dias,2)?></td>
+      <th>Proyeccion dias</th>
+      <td><?php echo round((count($articulos)/($dd->cantidad/$dd->dias))/30, 2)?> meses</td>
+    </tr>
+    <tr>
+      <th colspan="2">Fecha Posible finalizacion</th>
+      <td colspan="2"><?php echo$fechaAdivinada?></td>
     </tr>
   </table>
 </div>
