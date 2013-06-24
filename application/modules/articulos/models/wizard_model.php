@@ -18,4 +18,14 @@ class Wizard_model extends MY_Model{
     $this->db->from($this->getTable());
     return $this->db->get()->row();
   }
+  function getWizardSemanas(){
+    $this->db->select('COUNT(id_articulo) AS cantidad', FALSE);
+    $this->db->select('DATE_FORMAT(time, "%U") AS semana ', FALSE);
+    $this->db->select('DATE_FORMAT(time, "%Y") AS ano ', FALSE);
+    $this->db->from($this->getTable());
+    $this->db->group_by('DATE_FORMAT(time, "%U")');
+    $this->db->order_by('ano', 'asc');
+    $this->db->order_by('semana', 'asc');
+    return $this->db->get()->result();
+  }
 }

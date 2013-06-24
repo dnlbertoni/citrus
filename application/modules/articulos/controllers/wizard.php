@@ -211,7 +211,7 @@ class Wizard extends MY_Controller{
     $data['accion'] = "articulos/wizard/definoDetalleDo";
     $data['tit']    = "Definicion de las Caracteristicas Extras";
     $data['medidas'] = array( 'NADA', 'GR','CM3','UNID');
-    $data['palabrasClaves']=array('tradicional', 'diet', 'light', 'suave', 'fuerte', 'normal', 'clasico', 'extra');
+    $data['palabrasClaves']=array('NADA','tradicional', 'diet', 'light', 'suave', 'fuerte', 'normal', 'clasico', 'extra');
     $data['palabrasClavesRubro']=$this->Articulos_model->getKeyWords($this->Articulo->ID_SUBRUBRO);
     $data['palabrasClavesMedida']=$this->Articulos_model->getKeyUnits($this->Articulo->ID_SUBRUBRO);
     Template::set($data);
@@ -296,10 +296,12 @@ class Wizard extends MY_Controller{
     $articulos=$this->Articulos_model->filtroWizard($orden);
     $progreso=$this->Articulos_model->getStatusWizard();
     $diasDetalle=$this->Wizard_model->getWizardDias();
+    $semanas=$this->Wizard_model->getWizardSemanas();
     $hoy = new DateTime();
     $dias = (count($articulos)/($diasDetalle->cantidad/$diasDetalle->dias));
     $format = "+".intval($dias)." days";
     $hoy->modify($format);
+    Template::set('semanas', $semanas);
     Template::set('dd', $diasDetalle );
     Template::set('fechaAdivinada', $hoy->format('d/m/Y'));
     Template::set('progreso', $progreso);

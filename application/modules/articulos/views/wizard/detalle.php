@@ -12,25 +12,16 @@
       <tr>
         <th>Subrubro</th>
         <td>
-          (<span class="reqNUM"><?php echo $articulo->ID_SUBRUBRO ?></span>)
+          (<span class="reqNUM" id="ID_SUBRUBRO"><?php echo $articulo->ID_SUBRUBRO ?></span>)
           <?php echo $articulo->DESCRIPCION_SUBRUBRO?>
-        </td>
-        <td></td>
-        <th>Rubro</th>
-        <td>
-          (<span class="reqNUM"><?php echo $articulo->ID_RUBRO ?></span>)
+           - (<span class="reqNUM"><?php echo $articulo->ID_RUBRO ?></span>)
           <?php echo $articulo->DESCRIPCION_RUBRO?>
         </td>
-      </tr>
-      <tr>
+        <td></td>
         <th>Submarca</th>
         <td>
-          (<span class="reqNUM"><?php echo $articulo->ID_SUBMARCA ?></span>)
+          (<span class="reqNUM" id="ID_MARCA"><?php echo $articulo->ID_SUBMARCA ?></span>)
           <?php echo $articulo->DETALLE_SUBMARCA?>
-        </td>
-        <td></td>
-        <th>Marca</th>
-        <td>
           (<span class="reqNUM"><?php echo $articulo->ID_MARCA ?></span>)
           <?php echo $articulo->DETALLE_MARCA?>
         </td>

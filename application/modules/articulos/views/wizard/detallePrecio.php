@@ -14,23 +14,14 @@
         <td>
           (<span class="reqNUM" id="ID_SUBRUBRO"><?php echo $articulo->ID_SUBRUBRO ?></span>)
           <?php echo $articulo->DESCRIPCION_SUBRUBRO?>
-        </td>
-        <td></td>
-        <th>Rubro</th>
-        <td>
-          (<span class="reqNUM"><?php echo $articulo->ID_RUBRO ?></span>)
+           - (<span class="reqNUM"><?php echo $articulo->ID_RUBRO ?></span>)
           <?php echo $articulo->DESCRIPCION_RUBRO?>
         </td>
-      </tr>
-      <tr>
+        <td></td>
         <th>Submarca</th>
         <td>
           (<span class="reqNUM" id="ID_MARCA"><?php echo $articulo->ID_SUBMARCA ?></span>)
           <?php echo $articulo->DETALLE_SUBMARCA?>
-        </td>
-        <td></td>
-        <th>Marca</th>
-        <td>
           (<span class="reqNUM"><?php echo $articulo->ID_MARCA ?></span>)
           <?php echo $articulo->DETALLE_MARCA?>
         </td>
@@ -48,11 +39,14 @@
       </tr>
     </table>
   </div>
-  <p>&nbsp;</p>
   <div id="asignar" class="ui-widget">
     <h2 class="ui-widget-header"><span class="ui-icon ui-icon-circle-plus" style="display: inline-block;"></span>Asignar...</h2>
     <div id="resultado" class="ui-widget-content">
       <?php echo form_open($accion, 'id="wizard"', $ocultos)?>
+      <div id="botonBack">Atras</div>
+      <div id="botonNext">Continuar</div>
+      <?php echo anchor('articulos/wizard/end/1', 'Salir Asistente', 'id="botonSkip"')?>      
+      <br />
       <?php echo form_label('Costo', 'preciocosto');?>
       <?php echo form_input('preciocosto_articulo', $articulo->PRECIOCOSTO_ARTICULO, 'id="preciocosto" size="8"');?>
       <div id="botonAjustoCosto">Rectifico Costo</div>
@@ -79,9 +73,6 @@
             <?php echo form_label('OTRO', 'iva3');?><?php echo form_radio('TASAIVA_ARTICULO', 21, ($articulo->TASAIVA_ARTICULO==0)?true:false,'id="iva3"')?>
           </div>
       </div>
-      <div id="botonBack">Atras</div>
-      <div id="botonNext">Continuar</div>
-      <?php echo anchor('articulos/wizard/end/1', 'Salir Asistente', 'id="botonSkip"')?>
       <?php echo form_close();?>
       <input type="hidden" id="paginaAjaxGenero" value="<?php echo base_url(). 'index.php/articulos/generoNombre'?>" />
     </div>

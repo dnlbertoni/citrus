@@ -8,16 +8,69 @@
       <td><?php echo $dd->dias?></td>
       <th>Articulos</th>
       <td><?php echo $dd->cantidad?></td>
-    </tr>
-    <tr>
       <th>Promedio de Articulos Diarios</th>
       <td><?php echo round($dd->cantidad/$dd->dias,2)?></td>
       <th>Proyeccion dias</th>
       <td><?php echo round((count($articulos)/($dd->cantidad/$dd->dias))/30, 2)?> meses</td>
     </tr>
+  </table>
+  <table>
     <tr>
-      <th colspan="2">Fecha Posible finalizacion</th>
-      <td colspan="2"><?php echo$fechaAdivinada?></td>
+      <th colspan='6'>Tendencia</th>
+    </tr>
+    <tr>
+      <th>Semana Nro</th>
+      <th>Cant.</th>
+      <th>Variacion</th>
+      <th>Prom. Semanal</th>
+      <th>Prom. Diario</th>
+      <th>Proy. Diaria</th>
+    </tr>
+    <?php 
+      $total=0;
+      $vez=0;
+      $semAnt=false;
+      $muestro=count($semanas)-4;
+    ?>
+    <?php foreach($semanas as $ss):?>
+      <?php 
+        if($semAnt){
+          $aux=(( $ss->cantidad / $semAnt)-1)*100;
+          $semAnt=$ss->cantidad;
+        }else{
+          $semAnt=$ss->cantidad;
+        };
+        $total +=$ss->cantidad;
+        $vez++;
+      ?>
+      <?php if($vez>=$muestro):?>
+      <tr>
+        <td><?php echo $ss->semana?></td>
+        <td><?php echo $ss->cantidad?></td>
+        <td><?php echo sprintf("%4.2f",$aux);?>%
+        </td>
+        <td><?php echo sprintf("%4.2f",($total/$vez))?></td>
+        <td><?php echo sprintf("%4.2f",($total/$vez)/7)?></td>
+        <td>
+          <?php 
+          $resto=(count($articulos)+$total)/(($total/$vez)/7);
+          $inicio=new DateTime($ss->ano.'-01-01');
+          $inicio->modify('+'.$ss->semana.' weeks');
+          $format = "+".intval($resto)." days";
+          $inicio->modify($format);
+          echo $inicio->format('d/m/Y');
+          ?>
+        </td>
+      </tr>
+      <?php endif;?>
+    <?php endforeach;?>
+    <tr>
+      <th>Total / Promedio</th>
+      <th><?php echo $total?></th>
+      <th>&nbsp;</th>
+      <th><?php echo $total/$vez;?> art. x Semana</th>
+      <th><?php echo round($dd->cantidad/$dd->dias,2)?></th>
+      <th><?php echo$fechaAdivinada?></th>
     </tr>
   </table>
 </div>

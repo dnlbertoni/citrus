@@ -418,7 +418,7 @@ class Articulos_model extends MY_Model{
       foreach($q as $palabra){
         $aux =  explode(' ', $palabra->especificacion);
         foreach($aux as $a){
-          $exclusiones=array('de', 'sabor', 'la', 'a', 'y', 'el', 'del');
+          $exclusiones=array(' ','','de', 'sabor', 'la', 'a', 'y', 'el', 'del');
           if(!in_array(strtolower($a), $exclusiones)){
             $palabras[]=  strtoupper($a);
           }
