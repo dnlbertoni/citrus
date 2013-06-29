@@ -50,9 +50,23 @@
           </div>
         </td>
       </tr>
+      <tr>
+        <th>Fecha Creacion</th>
+        <th><?php echo $articulo->FECHACREACION_ARTICULO?></th>
+        <td>&nbsp;</td>
+        <th>Fecha Modificacion</th>
+        <th><?php echo $articulo->FECHAMODIF_ARTICULO?></th>
+      </tr>
+      <tr>
+        <th>Cantidad vendida</th>
+        <th><?php echo $ventas?></th>
+        <td>&nbsp;</td>
+        <th>Ultima Fecha Facturada</th>
+        <th><?php echo $ultimaVenta?></th>
+      </tr>
     </table>
   </div>
-  
+
   <div id="asignar" class="ui-widget">
     <h2 class="ui-widget-header"><span class="ui-icon ui-icon-circle-plus" style="display: inline-block;"></span>Asignar...</h2>
     <div id="resultado" class="ui-widget-content">
@@ -60,7 +74,7 @@
       <div id="botonBack">Atras</div>
       <div id="botonNext">Continuar</div>
       <?php echo anchor('articulos/wizard/end/1', 'Salir Asistente', 'id="botonSkip"')?>
-      
+
       <div>
           <?php echo form_label('Detalles y especificaiones:','especificacion')?>
           <?php echo form_input('especificacion', $articulo->especificacion, 'id="especificacion" size="20"');?>
@@ -133,8 +147,8 @@ $(document).ready(function(){
     if($(this).text()==='NADA'){
       valor='';
     }else{
-      valor=$("#especificacion").val()+$(this).text();
-    }    
+      valor=$("#especificacion").val()+$(this).text() + " ";
+    }
     $("#especificacion").val(valor);
     generoNombre();
   });

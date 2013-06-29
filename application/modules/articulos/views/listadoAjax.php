@@ -5,8 +5,8 @@ $borraLotes =sprintf("'%sindex.php/articulos/borrarLote'", base_url());
 <?php if (!$vacio):?>
 <div>
 <br/>
-<div id="allSelect" class="botonAjax">Seleccionar Todos</div>
-<div id="allUnselect" class="botonAjax">Deseleccionar Todos</div>
+<div id="allSelect" class="boton">Seleccionar Todos</div>
+<div id="allUnselect" class="boton">Deseleccionar Todos</div>
 <div id="accionSet">
   <?php echo form_label('Asignar Marca', 'accion1');?><?php echo form_radio('accion', 'marca', false, 'id="accion1"');?>
   <?php echo form_label('Asignar Rubro', 'accion2');?><?php echo form_radio('accion', 'rubro', false, 'id="accion2"');?>
@@ -36,14 +36,15 @@ $borraLotes =sprintf("'%sindex.php/articulos/borrarLote'", base_url());
       <td><?php echo $articulo->subrubro?></td>
       <td><?php echo $articulo->marca?></td>
       <td><?php echo form_checkbox($articulo->id,$articulo->id,false,'id="'.$articulo->id.'"')?></td>
-      <td><?php echo anchor('articulos/ver/'.$articulo->id, 'Editar', 'class="botonAjax"')?></td>
-      <td><?php echo anchor('articulos/borrar/'.$articulo->id, 'Borrar', 'class="botonAjax"')?></td>
+      <td><?php echo anchor('articulos/wizard/index/'.$articulo->codigobarra, 'Asistente', 'class="botWi botonAjax"')?></td>
+      <td><?php echo anchor('articulos/ver/'.$articulo->id, 'Editar', 'class="botEd botonAjax"')?></td>
+      <td><?php echo anchor('articulos/borrar/'.$articulo->id, 'Borrar', 'class="botDel botonAjax"')?></td>
     </tr>
     <?php endforeach;?>
   </tbody>
 </table>
-<div id="botCambiar" class="botonAjax">Cambiar Seleccionados</div>
-<div id="botBorrarLote" class="botonAjax">Borrar Seleccionados</div>
+<div id="botCambiar" class="boton">Cambiar Seleccionados</div>
+<div id="botBorrarLote" class="boton">Borrar Seleccionados</div>
 <?php echo form_close();?>
 <?php endif;?>
 
@@ -60,8 +61,10 @@ $(document).ready(function(){
       $.uiTableFilter( theTable, this.value );
     })
 
-    $('.botonAjax').button();
-    $('.botonAjax').css('font-size','8px');
+    $(".botWi").button({icons:{primary:'ui-icon-star'}, text:false});
+    $(".botEd").button({icons:{primary:'ui-icon-pencil'}, text:false});
+    $(".botDel").button({icons:{primary:'ui-icon-trash'}, text:false});
+    $(".boton").button();
     $('.est_1').each(function(){
 	  $(this).css('background-color', 'green');
 	  $(this).css('color','#FFF');

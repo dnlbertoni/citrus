@@ -37,6 +37,20 @@
         <th>Nombre Final</th>
         <td colspan="4" class="reqTXT"><?php echo $articulo->detalle?></td>
       </tr>
+      <tr>
+        <th>Fecha Creacion</th>
+        <th><?php echo $articulo->FECHACREACION_ARTICULO?></th>
+        <td>&nbsp;</td>
+        <th>Fecha Modificacion</th>
+        <th><?php echo $articulo->FECHAMODIF_ARTICULO?></th>
+      </tr>
+      <tr>
+        <th>Cantidad vendida</th>
+        <th><?php echo $ventas?></th>
+        <td>&nbsp;</td>
+        <th>Ultima Fecha Facturada</th>
+        <th><?php echo $ultimaVenta?></th>
+      </tr>
     </table>
   </div>
   <div id="asignar" class="ui-widget">
@@ -45,7 +59,7 @@
       <?php echo form_open($accion, 'id="wizard"', $ocultos)?>
       <div id="botonBack">Atras</div>
       <div id="botonNext">Continuar</div>
-      <?php echo anchor('articulos/wizard/end/1', 'Salir Asistente', 'id="botonSkip"')?>      
+      <?php echo anchor('articulos/wizard/end/1', 'Salir Asistente', 'id="botonSkip"')?>
       <br />
       <?php echo form_label('Costo', 'preciocosto');?>
       <?php echo form_input('preciocosto_articulo', $articulo->PRECIOCOSTO_ARTICULO, 'id="preciocosto" size="8"');?>

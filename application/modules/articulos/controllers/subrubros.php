@@ -17,6 +17,7 @@ class Subrubros extends MY_Controller{
 
     $subrubros = $this->Subrubros_model->getAllConArticulos();
     $data['subrubros'] = $subrubros;
+    Assets::add_js('ui-tableFilter');
     Template::set($data);
     Template::render();
   }

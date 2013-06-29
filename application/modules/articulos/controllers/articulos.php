@@ -33,13 +33,9 @@ class Articulos extends MY_Controller{
     //panel de tareas
     $datos['tareas'][] = array('articulos/precios/', 'Cambio Precios');
     $datos['tareas'][] = array('articulos/rubros/', 'Rubros');
-    $datos['tareas'][] = array('articulos/rubros/agregar/ajax', 'Agregar Rubros');
     $datos['tareas'][] = array('articulos/subrubros/', 'Subrubros');
-    $datos['tareas'][] = array('articulos/subrubros/agregar/ajax', 'Agregar Subrubros', 'class="ajaxLoad"');
     $datos['tareas'][] = array('articulos/marcas/', 'Marcas');
-    $datos['tareas'][] = array('articulos/marcas/agregar/ajax', 'Agregar Marcas', 'class="ajaxLoad"');
     $datos['tareas'][] = array('articulos/submarcas/', 'Submarcas');
-    $datos['tareas'][] = array('articulos/submarcas/agregar/ajax', 'Agregar Submarcas', 'class="ajaxLoad"');
     $datos['tareas'][] = array('articulos/estadisticas', 'Estadisticas');
     $datos['tareas'][] = array('articulos/subirListaAS', 'Lista Precios Jhonson');
     Template::set($datos);

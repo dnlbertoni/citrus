@@ -21,6 +21,7 @@ class Rubros extends MY_Controller{
     $datos['tareas'][] = array('articulos/submarcas/', 'Submarcas');
     Template::set($datos);
     Template::set_block('tareas', 'tareas'); // panel de tareas
+    Assets::add_js('ui-tableFilter');
 
     $rubros = $this->Rubros_model->getAll('DESCRIPCION_RUBRO');
     $data['rubros'] = $rubros;

@@ -48,6 +48,7 @@ class Articulos_model extends MY_Model{
     $this->db->select("descripcion_subrubro    AS subrubro");
     $this->db->select("detalle_submarca           AS marca");
     $this->db->select("estado_articulo         AS estado");
+    $this->db->select("codigobarra_articulo    AS codigobarra");
     $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "left");
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
     $this->db->from($this->tabla->name);
@@ -66,6 +67,7 @@ class Articulos_model extends MY_Model{
     $this->db->select($this->tabla->precio . " AS precio");
     $this->db->select("descripcion_subrubro    AS subrubro");
     $this->db->select("detalle_submarca           AS marca");
+    $this->db->select("codigobarra_articulo    AS codigobarra");
     $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "left");
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
     $this->db->from($this->tabla->name);
@@ -85,6 +87,7 @@ class Articulos_model extends MY_Model{
     $this->db->select("descripcion_subrubro    AS subrubro");
     $this->db->select("detalle_submarca           AS marca");
     $this->db->select("estado_articulo         AS estado");
+    $this->db->select("codigobarra_articulo    AS codigobarra");
     $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "left");
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
     $this->db->from($this->tabla->name);
@@ -102,8 +105,9 @@ class Articulos_model extends MY_Model{
     $this->db->select($this->tabla->nombre . " AS nombre");
     $this->db->select($this->tabla->precio . " AS precio");
     $this->db->select("descripcion_subrubro    AS subrubro");
-    $this->db->select("detalle_submarca           AS marca");
+    $this->db->select("detalle_submarca        AS marca");
     $this->db->select("estado_articulo         AS estado");
+    $this->db->select("codigobarra_articulo    AS codigobarra");
     $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "left");
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
     $this->db->from($this->tabla->name);
@@ -128,6 +132,7 @@ class Articulos_model extends MY_Model{
     $this->db->select("descripcion_subrubro    AS subrubro");
     $this->db->select("detalle_submarca        AS marca");
     $this->db->select("estado_articulo         AS estado");
+    $this->db->select("codigobarra_articulo    AS codigobarra");
     $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "inner");
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "inner");
     $this->db->from($this->tabla->name);
@@ -395,8 +400,9 @@ class Articulos_model extends MY_Model{
     $this->db->where('tbl_articulos.wizard <', 1, FALSE);
     $this->db->or_where('tbl_articulos.wizard IS NULL','', FALSE);
     //$this->db->limit(50);
+    $this->db->order_by('tbl_articulos.id_marca', 'ASC');
     $this->db->order_by('estado', 'DESC');
-    $this->db->order_by($orden, 'DESC');
+    $this->db->order_by($orden, 'ASC');
     $q = $this->db->get();
     if($q->num_rows() > 0){
       return $q->result();

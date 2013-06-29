@@ -50,6 +50,20 @@
           </div>
         </td>
       </tr>
+      <tr>
+        <th>Fecha Creacion</th>
+        <th><?php echo $articulo->FECHACREACION_ARTICULO?></th>
+        <td>&nbsp;</td>
+        <th>Fecha Modificacion</th>
+        <th><?php echo $articulo->FECHAMODIF_ARTICULO?></th>
+      </tr>
+      <tr>
+        <th>Cantidad vendida</th>
+        <th><?php echo $ventas?></th>
+        <td>&nbsp;</td>
+        <th>Ultima Fecha Facturada</th>
+        <th><?php echo $ultimaVenta?></th>
+      </tr>
     </table>
   </div>
   <p>&nbsp;</p>

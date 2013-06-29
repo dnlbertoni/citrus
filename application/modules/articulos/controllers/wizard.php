@@ -9,6 +9,7 @@ class Wizard extends MY_Controller{
   private $idEmpresa;
   private $Articulo;
   private $ruta;
+  private $Venta;
   private $Masivo =false; //variable usada para determinar si vuelvo o no a la pagina de arreglo masivo
   function  __construct() {
     parent::__construct();
@@ -19,6 +20,7 @@ class Wizard extends MY_Controller{
     $this->load->model('Subrubros_model','',TRUE);
     $this->load->model('Marcas_model','',TRUE);
     $this->load->model('Submarcas_model','',TRUE);
+    $this->load->model('Facmovim_model');
     //$this->output->enable_profiler(true);
   }
   function index($CB=false){
@@ -98,6 +100,8 @@ class Wizard extends MY_Controller{
     $data['tit']    = "Definicion del Rubro del Producto";
     $data['sugeridos']=$CodigoB;
     $data['todos']=$this->Empresas_model->getAllConRubrosExcluidos($this->idEmpresa);
+    $data['ventas']=count($this->Venta);
+    $data['ultimaVenta']=$this->Venta[0]->fecha;
     Template::set('articulo', $this->Articulo);
     Template::set('idMaster', 'rubroId');
     Template::set('idMov', 'subrubroId');
@@ -173,6 +177,8 @@ class Wizard extends MY_Controller{
     $marcas = $this->Marcas_model->toDropDown('id_marca', 'detalle_marca');
     array_push($marcas, array('O'=>'Otra Marca NUEVA'));
     $data['maestroSel'] = $marcas;
+    $data['ultimaVenta']=$this->Venta[0]->fecha;
+    $data['ventas']=count($this->Venta);
     Template::set('accionMov', 'articulos/submarcas/agregarDo/ajax');
     Template::set('maestro', 'marcas');
     Template::set('maestroAux', 'marca');
@@ -277,6 +283,7 @@ class Wizard extends MY_Controller{
   }
   function _getArticulo($CB){
     $arti = $this->Articulos_model->getByCodigobarra($CB);
+    $this->Venta = $this->Facmovim_model->getByCodigobarra($CB);
     if($arti){
       $articulo = $this->Articulos_model->getByIdFull($arti->ID_ARTICULO);
       $this->Articulo = $articulo;
