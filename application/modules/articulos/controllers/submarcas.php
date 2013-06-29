@@ -111,10 +111,15 @@ class Submarcas extends MY_Controller{
     $data['targetMarca'] = sprintf("'%sindex.php/articulos/submarcas/agregar/ajax'", base_url());
     $this->load->view('articulos/submarcas/listadoAjax', $data);
   }
-  function verArticulos($id){
-    $data['submarca']=$this->Submarcas_model->getNombre($id);
-    $sub=$this->Submarcas_model->getById($id);
-    $data['marca']=$this->Marcas_model->getNombre($sub->ID_MARCA);
+  function verArticulos($id=false){
+    if($id){
+      $data['submarca']=$this->Submarcas_model->getNombre($id);
+      $sub=$this->Submarcas_model->getById($id);
+      $data['marca']=$this->Marcas_model->getNombre($sub->ID_MARCA);
+    }else{
+      $data['submarca'] = 'Sin Submarca Marcas';
+      $data['marca']    = 'Sin MArca';
+    };
     $data['articulos']=$this->Submarcas_model->getArticulosFromSubmarca($id);
     $this->load->view('submarcas/listadoArticulos', $data);
   }
