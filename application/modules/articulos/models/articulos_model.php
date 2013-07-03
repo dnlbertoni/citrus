@@ -363,6 +363,7 @@ class Articulos_model extends MY_Model{
     $this->db->select('codigobarra_articulo as codigobarra');
     $this->db->select('descripcion_articulo as descripcion');
     $this->db->select('preciocosto_articulo as costo');
+    $this->db->select('markup_articulo as markup');
     $this->db->select('preciovta_articulo   as precio');
     $this->db->select('tbl_articulos.id_subrubro as id_subruro');
     $this->db->select('descripcion_subrubro as nombre_subrubro');

@@ -38,6 +38,7 @@ class Articulos extends MY_Controller{
     $datos['tareas'][] = array('articulos/submarcas/', 'Submarcas');
     $datos['tareas'][] = array('articulos/estadisticas', 'Estadisticas');
     $datos['tareas'][] = array('articulos/subirListaAS', 'Lista Precios Jhonson');
+    $datos['tareas'][] = array('articulos/subirListaLS', 'Lista Precios Sugeridos');
     Template::set($datos);
     Template::set_block('tareas','tareas'); // panel de tareas
 
@@ -382,6 +383,59 @@ class Articulos extends MY_Controller{
 	}
     Template::render();
   }
+  function graboDesdeCSV(){
+    $precio=$this->input->post('costo') * 1.7;
+    $this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'preciocosto_articulo', $this->input->post('costo'));
+    $this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'preciovta_articulo', $precio);
+    echo "Grabacion Ok";
+  }
+  /* la serenisima
+   * modificacion de lista de precios
+   */
+  function subirListaLS(){
+      $error = array('error' => '');
+      Template::set($error);
+    Template::render();
+  }
+  function subirListaLSDo(){
+    $config['upload_path'] = TMP;
+	$config['allowed_types'] = 'csv|txt';
+	$config['max_size']	= '20480';
+	$this->load->library('upload', $config);
+	if ( ! $this->upload->do_upload()){
+      $error = array('error' => $this->upload->display_errors());
+      Template::set($error);
+      Template::set_view('articulos/subirListaLS');
+	}else{
+      $archivo =  $this->upload->data();
+      $this->load->library('Getcsv');
+      $productosLS=$this->getcsv->set_file_path($archivo['full_path'], ";")->get_array();
+      $x=0;
+      foreach($productosLS as $prod){
+        if($this->getDatosArticuloCSV($prod['BARRAS'])){
+          $productos[$x]['BARRAS']=$prod['BARRAS'];
+          $productos[$x]['PRODUCTO']=$prod['PRODUCTO'];
+          $productos[$x]['COSTO']=  round((float)$prod['COSTO'], 2);
+          $productos[$x]['PRECIO']=  round((float)$prod['PRECIO'], 2);
+          $productos[$x]['markup']=  round((($productos[$x]['PRECIO']/$productos[$x]['COSTO'])-1)*100, 2);
+          $productos[$x]['detalle_db'] = $this->getDatosArticuloCSV($prod['BARRAS']);
+        }else{
+          $nuevos[$x]['BARRAS']=$prod['BARRAS'];
+          $nuevos[$x]['PRODUCTO']=$prod['PRODUCTO'];
+          $nuevos[$x]['COSTO']=  round((float)$prod['COSTO'], 2);
+          $nuevos[$x]['PRECIO']=  round((float)$prod['PRECIO'], 2);
+          $nuevos[$x]['markup']=  round((($nuevos[$x]['PRECIO']/$nuevos[$x]['COSTO'])-1)*100, 2);
+          }
+        $x++;
+      }
+      $data['productos'] = $productos;
+      $data['nuevos']    = $nuevos;
+      //$data['selSubrubros']=$this->Subrubros_model->toDropDown('id_subrubro','descripcion_subrubro');
+      Template::set($data);
+      Template::set_view('articulos/archivoLS');
+	}
+    Template::render();
+  }
   function getDatosArticuloCSV($CB){
     //$this->output->enable_profiler(false);
     $arti = $this->Articulos_model->getByCodigobarraCsv($CB);
@@ -389,16 +443,17 @@ class Articulos extends MY_Controller{
       $datos['descripcion']=$arti->descripcion;
       $datos['costo']=$arti->costo;
       $datos['precio']=$arti->precio;
+      $datos['markup']=$arti->markup;
       $datos['fechamodif']=$arti->fecha;
       return $datos;
     }else{
       return false;
     }
   }
-  function graboDesdeCSV(){
-    $precio=$this->input->post('costo') * 1.7;
+  function graboDesdeLSCSV(){
     $this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'preciocosto_articulo', $this->input->post('costo'));
-    $this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'preciovta_articulo', $precio);
+    $this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'preciovta_articulo', $this->input->post('precio'));
+    $this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'markup_articulo', $this->input->post('markup'));
     echo "Grabacion Ok";
   }
   function setRubro(){
