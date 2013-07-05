@@ -158,4 +158,4 @@
      Template::set($data);
      Template::render();
    }
- }
+}

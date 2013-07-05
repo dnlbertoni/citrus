@@ -448,7 +448,7 @@ class Topdf extends MY_Controller{
   }
   function ofertaEscrita(){
     foreach ($_POST as $key=>$valor ){
-      if(!preg_match('/^(fecha)|^(Imprimir)|^(copias)/',$key)){
+      if(!preg_match('/^(fecha)|^(Imprimir)|^(copias)|^(titulo)/',$key)){
         $lineas[]=$valor;
       };
     };
@@ -466,9 +466,12 @@ class Topdf extends MY_Controller{
       $this->fpdf->AddPage('L','A4');
       $articulo = $this->Articulos_model->getDatosBasicos($valor);
       $this->fpdf->Image('assets/img/logo.png',$x,$y,100);
-      $this->fpdf->SetFont('Times','' ,120);
+      $fontLineas = 240 /count($lineas);
+      $fontLinea  = 1200 / strlen($this->input->post('titulo'));
+      $font=($fontLineas > $fontLinea)?$fontLinea:$fontLineas;
+      $this->fpdf->SetFont('Times','' ,$font);
       $this->fpdf->SetXY($x+100,$y+25);
-      $this->fpdf->Cell(190,0,"OFERTA",0,0,'C');
+      $this->fpdf->Cell(190,0,$this->input->post('titulo'),0,0,'C');
       $y +=75;
       $fontLineas = 240 /count($lineas);
       foreach($lineas as $valor){
@@ -488,7 +491,7 @@ class Topdf extends MY_Controller{
       $copy++;
     }
     $file = TMP . "cartel.pdf";
-    $this->fpdf->Output($file,'F');
+    $this->fpdf->Output($file,'I');
     $cmd = sprintf("lp %s -d %s",$file,$this->Printer);
     shell_exec($cmd);
     $cmd = sprintf("rm -f  %s",$file);

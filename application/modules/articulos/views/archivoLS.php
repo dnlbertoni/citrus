@@ -2,6 +2,41 @@
   <h1>Importacion de Articulos y Precios de Costos y precios Sugeridos </h1>
   <h3>Precio de Costo SIN IVA - Precio de Venta FINAL - MARKUP sujeto a cada articulo</h3>
   <div id="productos">
+  <?php foreach($nuevos as $c):?>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th><?php echo $c['BARRAS'];?></th>
+            <th>Lista</th>
+            <th>En la Base</th>
+          </tr>
+        </thead>
+        <tr>
+          <th>Nombre</th>
+          <td id="detaleFILE_<?php echo $c['BARRAS'];?>"><?php echo $c['PRODUCTO'];?></td>
+        </tr>
+        <tr>
+          <th>Costo</th>
+          <td id="costo_<?php echo $c['BARRAS'];?>"><?php echo $c['COSTO'];?></td>
+        </tr>
+        <tr>
+          <th>Precio</th>
+          <td id="precio_<?php echo $c['BARRAS'];?>"><?php echo $c['PRECIO'];?></td>
+        </tr>
+        <tr>
+          <th>Markup</th>
+          <td id="markup_<?php echo $c['BARRAS'];?>"><?php echo $c['markup'];?></td>
+        </tr>
+      </table>
+      <div>
+        <span><?php echo anchor('articulos/insertoDesdeLSCSV/', 'Crear', 'id="'.$c['BARRAS'].'" class="botonInserto"')?></span>
+        <span id="graba_<?php echo $c['BARRAS'];?>"></span>
+      </div>
+    </div>
+  <?php endforeach;?>
+  </div>
+  <div id="productos">
   <?php foreach($productos as $c):?>
     <div>
       <table>
@@ -69,6 +104,29 @@ $(document).ready(function(){
     var markup = $(nombre).text();
     $.post( url,
             {codigobarra:CB, costo:costo, precio:precio, markup:markup},
+            function(data){
+              nombre="#graba_"+nom;
+              $(nombre).html(data);
+              nombre="#"+nom;
+              $(nombre).hide();
+            });
+  });
+  $(".botonInserto").button({icons:{primary:'ui-icon-info'}});
+  $(".botonInserto").click(function(e){
+    e.preventDefault();
+    var nom   = $(this).attr('id');
+    var url = $(this).attr('href');
+    nombre="#costo_"+nom;
+    var CB    = nom;
+    var costo = $(nombre).text();
+    nombre="#precio_"+nom;
+    var precio = $(nombre).text();
+    nombre="#markup_"+nom;
+    var markup = $(nombre).text();
+    nombre="#detalleFILE_"+nom;
+    var detalle = $(nombre).text();
+    $.post( url,
+            {codigobarra:CB, costo:costo, precio:precio, markup:markup, detalle:detalle},
             function(data){
               nombre="#graba_"+nom;
               $(nombre).html(data);
