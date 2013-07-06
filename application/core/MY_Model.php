@@ -135,7 +135,6 @@ class MY_Model extends CI_Model{
                   $this->db->update($this->getTable(), $data);
           }
   }
-
   /**
    * This method returns all the rows of this model
    * @param Array $where Array of field=>value
@@ -148,7 +147,6 @@ class MY_Model extends CI_Model{
           $query = $this->db->get_where($this->getTable(), $where);
           return $query;
   }
-
   /**
    * This method gets 1 row from a table and returns it.
    * @param Integer $id
@@ -164,7 +162,6 @@ class MY_Model extends CI_Model{
 		  return $this->db->get()->row();
 	  }
   }
-
   /**
    * This method logically deletes a row.
    * @param Integer $id
@@ -178,7 +175,6 @@ class MY_Model extends CI_Model{
                   return FALSE;
           }
   }
-
   public function toDropDown($campoId, $campoNombre){
           $this->db->select($campoId);
           $this->db->select($campoNombre);
@@ -239,9 +235,7 @@ class MY_Model extends CI_Model{
     $this->db->update($this->getTable());
     return true;
   }
-
 }
-
 /* End of file MY_Model.php*/
 /* Location: ./application/model/MY_Model.php */
 

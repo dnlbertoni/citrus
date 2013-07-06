@@ -31,7 +31,7 @@ class Articulos extends MY_Controller{
   }
   function index(){
     //panel de tareas
-    $datos['tareas'][] = array('articulos/precios/', 'Cambio Precios');
+    $datos['tareas'][] = array('articulos/ofertas/', 'Ofertas');
     $datos['tareas'][] = array('articulos/rubros/', 'Rubros');
     $datos['tareas'][] = array('articulos/subrubros/', 'Subrubros');
     $datos['tareas'][] = array('articulos/marcas/', 'Marcas');
