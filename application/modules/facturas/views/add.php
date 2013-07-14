@@ -148,22 +148,25 @@
       onClose: function(){$("#importe").focus();},
       changeMonth: true
     });
+  /*
     $('#addFac').submit(function(evnt){
-       evnt.preventDefault();
+       //evnt.preventDefault();
        var importe = Decimal($("#importe").val());
        var neto    = Decimal($("#neto").val());
        var ivamin  = Decimal($("#ivamin").val());
        var ivamax  = Decimal($("#ivamax").val());
        var ingbru  = Decimal($("#ingbru").val());
        var impint  = Decimal($("#impint").val());
-       var percep  = Decmial($("#percep").val());
-       if(importe === ( neto + ivamin + ivamax + ingbru + impint + percep ) ){
-         next;
-       }else{
+       var percep  = Decimal($("#percep").val());
+       alert("entra");
+       if(!(importe ==  neto + ivamin + ivamax + ingbru + impint + percep  ) ){
          return false;
          alert(neto+ivamin+ivamax+ingbru+impint+percep);
-       }
+       }else{
+        return true;
+       };
     });
+    */
     $('#neto').bind('blur', function(){
     total = parseFloat($('#importe').val());
     neto  = parseFloat($('#net').val());
