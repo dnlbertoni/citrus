@@ -196,6 +196,8 @@ body
 
 table {
 	margin:auto;
+	font-family: Arial, sans-serif;
+	font-size: 13pt;
 }
 th {
     background-color:#fed22f;

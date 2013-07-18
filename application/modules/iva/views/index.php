@@ -25,7 +25,7 @@
                 <?php echo anchor('iva/PeriodotoPdf/1/'.$p->periva,"Ver Libro", 'class="botVerLibro" target="_blank"');?>
             </td>
             <td>
-                <?php echo anchor('iva/PercepcionestoPdf/'.$p->periva,"Ver Libro", 'class="botVerPercep" target="_blank"');?>
+                <?php echo anchor('iva/PercepcionestoPdf/'.$p->periva,"Ver Percepciones", 'class="botVerPercep" target="_blank"');?>
             </td>
           </tr>
       <?php else:?>

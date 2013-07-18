@@ -37,7 +37,7 @@ class Iva extends MY_Controller{
     }
     $data['Libro'] = ($this->input->post('libro')==1)?'Ventas':'Compras';
     $data['Periodo'] = $this->input->post('periodo');
-    Assets::add_js('iva/cierre');
+    //Assets::add_js('iva/cierre');
     Template::set($data);
     Template::render();
   }
@@ -133,9 +133,37 @@ class Iva extends MY_Controller{
         $this->fpdf->Cell(10,5,'Percep.',      1,1,'C',true);
         $this->fpdf->SetFillColor(255,255,255);
         $this->fpdf->SetTextColor(0,0,0);
+
+                //cuerpo
+          $this->fpdf->Cell(15,5,$factura->fecha,       1,0,'C',false);
+          $this->fpdf->Cell(25,5,$factura->comprobante, 1,0,'L',false);
+          $this->fpdf->Cell(55,5,$factura->razonSocial, 1,0,'L',false);
+          $this->fpdf->Cell(15,5,$factura->Cuit,        1,0,'R',false);
+          $this->fpdf->Cell(15,5,money_format('%= (#8.2n',$factura->importe),     1,0,'R',false);
+          $this->fpdf->Cell(15,5,money_format('%= (#8.2n',$factura->neto),        1,0,'R',false);
+          $this->fpdf->Cell(10,5,money_format('%= (#4.2n',$factura->ivamin),      1,0,'R',false);
+          $this->fpdf->Cell(10,5,money_format('%= (#4.2n',$factura->ivamax),      1,0,'R',false);
+          $this->fpdf->Cell(10,5,money_format('%= (#4.2n',$factura->ingbru),      1,0,'R',false);
+          $this->fpdf->Cell(10,5,money_format('%= (#4.2n',$factura->impint),      1,0,'R',false);
+          $this->fpdf->Cell(10,5,money_format('%= (#4.2n',$factura->percep),      1,0,'R',false);
+          if($factura->suma==0){
+            $nota=true;
+            $this->fpdf->Cell(5,5,'*',0,1,'C',false);
+          }else{
+            $this->fpdf->Cell(5,5,' ',0,1,'C',false);
+          }
+          //sumo a los totales
+          $tot['imp']+=$factura->importe * $factura->suma;
+          $tot['net']+=$factura->neto * $factura->suma;
+          $tot['min']+=$factura->ivamin * $factura->suma;
+          $tot['max']+=$factura->ivamax * $factura->suma;
+          $tot['ing']+=$factura->ingbru * $factura->suma;
+          $tot['int']+=$factura->impint * $factura->suma;
+          $tot['per']+=$factura->percep * $factura->suma;
+
         $linea++;
       }else{
-        if($linea==49 && count($facturas)>($linea+($pagina*48))){
+        if($linea==48 && count($facturas)>($linea+($pagina*47))){
           $this->fpdf->SetFillColor(0,0,0);
           $this->fpdf->SetTextColor(255,255,255);
           $this->fpdf->Cell(110,5,'Subotales',       1,0,'L',true);

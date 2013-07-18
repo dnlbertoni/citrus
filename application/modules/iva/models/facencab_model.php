@@ -19,6 +19,14 @@ class Facencab_model extends MY_Model{
     return $q->result();
   }
   function ListadoFacturasPeriodoCerrar($libro, $periodo ){
+    $ano = intval($periodo / 100);
+    $mes = $periodo - ($ano *100);
+    if( $mes < 4 ){
+      $mes += 12;
+      $ano--;
+    }
+    $mes -= 3;
+    $perdes = ( $ano * 100 ) + $mes;
     $this->db->select('facencab.id, tipcom.abreviatura as tipcomp, facencab.letra, puesto, numero, cuenta.nombre as razonSocial, importe, ivapass, periva ');
     $this->db->select('date_format(fecha, "%d-%m-%Y") as fecha',false );
     $this->db->select('(ivamin+ivamax+percep) as ivatot', false);
@@ -32,6 +40,7 @@ class Facencab_model extends MY_Model{
     };
     $this->db->where('tipcom.libroiva',$libro);
     $this->db->where('date_format(fecha, "%Y%m") <= ', $periodo, false);
+    $this->db->where('date_format(fecha, "%Y%m") >= ', $perdes, false);
     $this->db->where('facencab.estado <>', 2);
     $this->db->order_by('facencab.fecha');
     $this->db->order_by('tipcom_id');
