@@ -125,7 +125,7 @@ class Articulos_model extends MY_Model{
       return false;
     }
   }
-  function searchGlobal($marca, $rubro){
+  function searchGlobal($marca=false, $rubro=false){
     $this->db->select($this->tabla->id . "     AS id");
     $this->db->select($this->tabla->nombre . " AS nombre");
     $this->db->select($this->tabla->precio . " AS precio");

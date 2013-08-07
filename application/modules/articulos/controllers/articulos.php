@@ -83,6 +83,15 @@ class Articulos extends MY_Controller{
     $data['total'] = count($articulos);
     $this->load->view('articulos/listadoAjax', $data);
   }
+  function busquedaGobalMarca(){
+    //$this->output->enable_profiler(TRUE);
+    $marca = ($this->input->post('marca')=='S')?false:$this->input->post('marca');
+    $articulos = $this->Articulos_model->searchGlobal($marca);
+    $data['vacio']      = (!$articulos)?true:false;
+    $data['articulos'] = $articulos;
+    $data['total'] = count($articulos);
+    $this->load->view('articulos/listadoAjax', $data);
+  }
   function buscoPorMarca(){
     $articulos = $this->Articulos_model->buscoPorMarca($this->input->post('submarca'));
     $data['vacio']      = (!$articulos)?true:false;

@@ -5,6 +5,7 @@ $urlConsultaPorRubros = sprintf("'%sindex.php/articulos/buscoPorRubro'", base_ur
 $urlConsultaPorMarcas = sprintf("'%sindex.php/articulos/buscoPorMarca'", base_url());
 $urlConsultaAvanzada = sprintf("'%sindex.php/articulos/busquedaAvanzada'", base_url());
 $urlConsultaGlobal   = sprintf("'%sindex.php/articulos/busquedaGlobal'", base_url());
+$urlConsultaMarca    = sprintf("'%sindex.php/articulos/busquedaGobalMarca'", base_url());
 $urlBuscoAjaxRubro   = sprintf("'%sindex.php/articulos/subrubros/searchAjax/%s'", base_url(),'resultadoAjaxRubros');
 $urlBuscoAjaxMarca   = sprintf("'%sindex.php/articulos/submarcas/searchAjax/%s'", base_url(),'resultadoAjaxMarcas');
 ?>
@@ -42,11 +43,10 @@ $urlBuscoAjaxMarca   = sprintf("'%sindex.php/articulos/submarcas/searchAjax/%s'"
 	<h2>Asistente Articulos</h2>
 	<?php echo anchor('articulos/wizard/masivo', 'Ingresar', 'class="boton"');?>
 </div>
-<div id="Global" class="box">
-	<h2>Global</h2>
-	Rubro <?php echo form_dropdown('rubro', $rubrosSel,'Seleccionar...','id="rubroGlob"');?>
-	Marca <?php echo form_dropdown('marca', $marcasSel,'Seleccionar...','id="marcaGlob"');?>
-	<div id="botGlobal" class="boton">Buscar</div>
+<div id="soloMarca" class="box">
+	<h2>Solo Marca</h2>
+	Marca <?php echo form_dropdown('marca', $marcasSel,'Seleccionar...','id="marcaGlobal"');?>
+	<div id="botGlobalMarca" class="boton">Buscar</div>
 </div>
 <div class="clear"></div>
 <div id="searchSubrubros"></div>
@@ -101,6 +101,11 @@ $(document).ready(function(){
 	  rubro = $("#rubroGlob option:selected").val();
 	  marca = $("#marcaGlob option:selected").val();
       $.post( <?= $urlConsultaGlobal?>, { rubro: rubro, marca:marca },
+			   function(data){ $("#datos").html(data); });
+    });
+    $("#botGlobalMarca").click(function(){
+      marca = $("#marcaGlobal option:selected").val();
+      $.post( <?= $urlConsultaMarca?>, { marca:marca },
 			   function(data){ $("#datos").html(data); });
     });
 });

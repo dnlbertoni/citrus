@@ -1,8 +1,12 @@
 /**
-* Version 3.5
-*
+* Version 3.5.1
 */
 
+/*****************************
+* actualizacion 07/08/2013
+* - Integracion de multimedia radio en el generador de presupuestos
+* - Busqueda solamente por la Marca sin tener en cuenta la submarca ni el rubro 
+ 
 
 caja y estadisticas de venta
 
