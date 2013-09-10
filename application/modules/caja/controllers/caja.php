@@ -9,6 +9,6 @@ class Caja extends MY_Controller{
     parent::__construct();
   }
   function index(){
-    
+    Template::render();
   }
 }
