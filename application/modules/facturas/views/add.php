@@ -1,4 +1,3 @@
-
 <div id="buscoCuenta"></div>
 <h1 class="<?= $claseTitulo?>"><?php echo $tipcom_nombre ?></h1>
 <?php $attrib = array('id'=>'addFac');?>

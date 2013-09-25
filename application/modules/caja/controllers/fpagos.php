@@ -17,14 +17,6 @@ class Fpagos extends MY_Controller{
     $this->load->model('Fpagos_model');
   }
   function index(){
-    $this->load->library('table');
-    $fpagos = $this->Fpagos_model->getAll();
-    foreach ($fpagos as $forma) {
-      $tit= array_keys($forma);
-    }
-    $this->table->set_heading($tit);
-    $tabla = $this->table->generate($fpagos);
-    Template::set('tabla', $tabla);
     Template::render();
   }
 }
