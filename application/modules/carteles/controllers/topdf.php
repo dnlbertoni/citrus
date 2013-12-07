@@ -90,15 +90,16 @@ class Topdf extends MY_Controller{
       $this->fpdf->SetFont('Times','' ,10);
       $this->fpdf->SetXY($x+1,$y+6);
       $this->fpdf->Image('assets/img/logo.png',$x+1,$y+18,15);
-      $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,0,20),0,0,'C');
+      $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,0,22),0,0,'L');
       $this->fpdf->SetXY($x+1,$y+10);
-      $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,20,20),0,0,'C');
+      $this->fpdf->Cell($ancho-2,0,substr($articulo->descripcion,22,22),0,0,'L');
       $this->fpdf->SetFont('Times','' ,36);
       $this->fpdf->SetXY($x+1,$y+22);
       $this->fpdf->Cell($ancho-2,0,"$".$articulo->precio,0,0,'R');
       $this->fpdf->SetFont('Times','' ,8);
       $this->fpdf->SetXY($x+1,$y+30);
-      $this->fpdf->Cell($ancho-2,0,$fecha->format('d/m/Y'),0,0,'R');
+      $this->fpdf->Cell($ancho/2,0,$articulo->codigobarra,0,0,'L');
+      $this->fpdf->Cell($ancho/2,0,$fecha->format('d/m/Y'),0,0,'R');
       $dato++;
       $col++;
       if($col>1){
@@ -117,14 +118,15 @@ class Topdf extends MY_Controller{
       $actualizoGrabar=true;
     }
     //echo $actualizo;
-    //$actualizo=true;
+    //$actualizoPrecios=true;
+    //$actualizoGrabar=true;
     if($actualizoPrecios && $actualizoGrabar){
       $file = TMP . "cartel.pdf";
-      $this->fpdf->Output($file,'F');
+      $this->fpdf->Output($file,'I');
       $cmd = sprintf("lp -o media=Custom.100x148mm %s -d %s",$file,$this->Printer);
       shell_exec($cmd);
       $cmd = sprintf("rm -f  %s",$file);
-      shell_exec($cmd);
+      //shell_exec($cmd);
     };
     redirect('carteles/','location',301);
   }

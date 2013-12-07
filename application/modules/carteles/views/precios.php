@@ -37,7 +37,7 @@
   </tr>
   <?php
   $renglon++;
-  if($renglon>89){
+  if($renglon>87){
     break;
     }
   ?>
