@@ -7,8 +7,10 @@
 class Caja extends MY_Controller{
   function __construct() {
     parent::__construct();
+    $this->load->module('layout');
   }
   function index(){
-    Template::render();
+    $this->layout->buffer('content', 'caja/index');
+    $this->layout->render();
   }
 }
