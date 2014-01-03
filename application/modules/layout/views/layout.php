@@ -6,20 +6,14 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 
 	<head>
-
 		<meta charset="utf-8">
-
 		<!-- Use the .htaccess and remove these lines to avoid edge case issues -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-		<title>FusionInvoice</title>
+		<title>Autoservico Santa Lucia</title>
 		<meta name="description" content="">
 		<meta name="author" content="William G. Rivera">
-
 		<meta name="viewport" content="width=device-width,initial-scale=1">
-
 		<link rel="stylesheet" href="<?php echo base_url(); ?>assets/default/css/style.css">
-
 		<script src="<?php echo base_url(); ?>assets/default/js/libs/modernizr-2.0.6.js"></script>
 		<script src="<?php echo base_url(); ?>assets/default/js/libs/jquery-1.7.1.min.js"></script>
         <script src="<?php echo base_url(); ?>assets/default/js/libs/jquery-ui-1.10.3.min.js"></script>
@@ -88,10 +82,10 @@
 
 					<ul class="nav">
 
-						<li><?php echo anchor('dashboard', 'Home'); ?></li>
+						<li><?php echo anchor('pos/', 'Home'); ?></li>
 
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'Clientes'; ?><b class="caret"></b></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'Clientes - Eliminar'; ?><b class="caret"></b></a>
 							<ul class="dropdown-menu">
 								<li><?php echo anchor('clients/form', 'Agregar Cliente'); ?></li>
 								<li><?php echo anchor('clients/index', 'Ver Clientes'); ?></li>
@@ -99,39 +93,79 @@
 						</li>
 
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'Objetivos'; ?><b class="caret"></b></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'Ventas'; ?><b class="caret"></b></a>
 							<ul class="dropdown-menu">
-								<li><a href="#" class="create-quote"><?php echo 'Nuevo Objetivo'; ?></a></li>
+								<li><?php echo anchor('ticket', 'Ticket'); ?></li>
+								<li><?php echo anchor('ticket', 'Cierre Z'); ?></li>
+                                <li class="divider"></li>
+                                <li><?php echo anchor('ticket', 'Factura  OFF LINE'); ?></li>
+								<li><?php echo anchor('ticket', 'NC OFF LINE'); ?></li>
+								<li><?php echo anchor('ticket', 'Cierre Z OFF LINE'); ?></li>
 								<li><?php echo anchor('quotes/index', 'Ver objetivos'); ?></li>
 							</ul>
 						</li>
 
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'Facturas'; ?><b class="caret"></b></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'Compras'; ?><b class="caret"></b></a>
 							<ul class="dropdown-menu">
-								<li><a href="#" class="create-invoice"><?php echo 'Nueva Factura'; ?></a></li>
-								<li><?php echo anchor('invoices/index', 'Ver Facturas'); ?></li>
-                                <li><?php echo anchor('invoices/recurring/index', 'Histiral Facturas'); ?></li>
+								<li><?php echo anchor('facturas/add/10', 'Nueva Factura'); ?></li>
+								<li><?php echo anchor('facturas/add/13', 'Nueva NC'); ?></li>
+								<li><?php echo anchor('cuenta/crear', 'Nueva Proveedor'); ?></li>
+								<li><?php echo anchor('facturas/buscar', 'Ver Facturas'); ?></li>
 							</ul>
+						</li>
+                        
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'I.V.A'; ?><b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><?php echo anchor('iva', 'Resumen'); ?></li>
+								<li><?php echo anchor('iva/cierre', 'Cierre Perido'); ?></li>
+								<li><?php echo anchor('iva/libro','Libro IVA'); ?></li>
+								<li><?php echo anchor('iva/ingbru','Percepciones'); ?></li>
+							</ul>
+						</li>
+						
+                        <li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'Articulos'; ?><b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><?php echo anchor('articulos/', 'Resumen'); ?></li>                              
+								<li><?php echo anchor('articulos/estadisticas', 'Estadisticas'); ?></li>                              
+                                <li class="divider"></li>                              
+								<li><?php echo anchor('articulos/rubros', 'Rubros'); ?></li>
+								<li><?php echo anchor('articulos/subrubros', 'Subrubros'); ?></li>
+                                <li class="divider"></li>                              
+								<li><?php echo anchor('articulos/marcas', 'Marcas'); ?></li>
+								<li><?php echo anchor('articulos/submarcas', 'Submarcas'); ?></li>							
+                                <li class="divider"></li>                              
+								<li><?php echo anchor('articulos/subirListaAS', 'Lista de Precio '); ?></li>
+								<li><?php echo anchor('articulos/subirListaLS', 'Lista de Precios Sugeridos'); ?></li>							
+                            </ul>
 						</li>
 
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'Pagos'; ?><b class="caret"></b></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'Carteleria'; ?><b class="caret"></b></a>
 							<ul class="dropdown-menu">
-								<li><?php echo anchor('payments/form', 'Nuevo Pago'); ?></li>
-								<li><?php echo anchor('payments/index', 'Ver Pagos'); ?></li>
+								<li><?php echo anchor('carteles/precios/1', 'Carteles Precios'); ?></li>
+								<li><?php echo anchor('carteles/precios/2', 'Carteles Vinos'); ?></li>
+								<li><?php echo anchor('carteles/navidad', 'Carteles Navidad'); ?></li>
+                                <li class="divider"></li>                              
+								<li><?php echo anchor('carteles/ofertas/3', 'Oferta 3xHoja'); ?></li>
+								<li><?php echo anchor('carteles/ofertas/1', 'Oferta 1xHoja'); ?></li>
+								<li><?php echo anchor('carteles/ofertaMultiple', 'Oferta Multiple'); ?></li>
+								<li><?php echo anchor('carteles/ofertaEscrita', 'Oferta Texto Escrito'); ?></li>
+                                <li class="divider"></li>                              
+								<li><?php echo anchor('carteles/listaDePrecios', 'Lista de Precios'); ?></li>
 							</ul>
 						</li>
-
+                        
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'Informes'; ?><b class="caret"></b></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo 'CtaCte'; ?><b class="caret"></b></a>
 							<ul class="dropdown-menu">
-								<li><?php echo anchor('reports/invoice_aging', 'Estadisitcas Factuas'); ?></li>
-								<li><?php echo anchor('reports/payment_history', 'Historial Pagos'); ?></li>
-								<li><?php echo anchor('reports/sales_by_client','Ventas por Clientes'); ?></li>
+								<li><?php echo anchor('reports/sales_by_client','Panel Informativo'); ?></li>
+								<li><?php echo anchor('reports/invoice_aging', 'Nuevo Cliente'); ?></li>
+								<li><?php echo anchor('reports/payment_history', 'Estadisticas'); ?></li>
 							</ul>
 						</li>
-
 					</ul>
 
 					<?php if (isset($filter_display) and $filter_display == TRUE) { ?>
@@ -142,8 +176,10 @@
 					<?php } ?>
 
 					<ul class="nav pull-right settings">
+                      <!--
                         <li><a href="#"><?php echo 'Bienvenido' . ' ' . $this->session->userdata('user_name'); ?></a></li>
                         <li class="divider-vertical"></li>
+                      -->
                         <li><a href="http://docs.fusioninvoice.com/1.3/" target="_blank" class="tip icon" data-original-title="Documentation" data-placement="bottom"><i class="icon-question-sign"></i></a></li>
 						<li class="divider-vertical"></li>
 						<li class="dropdown">
@@ -156,8 +192,10 @@
                                 <li><?php echo anchor('settings', 'Config. Sistema'); ?></li>
 							</ul>
 						</li>
+                        <!--
 						<li class="divider-vertical"></li>
 						<li><a href="<?php echo site_url('sessions/logout'); ?>" class="tip icon logout" data-original-title="<?php echo 'Salir'; ?>" data-placement="bottom"><i class="icon-off"></i></a></li>
+                        -->
 					</ul>
 
 				</div>
@@ -180,7 +218,7 @@
 
 		<div class="main-area">
 
-			<div id="modal-placeholder"></div>
+			<div id="ventanaAjax"></div>
 			
 			<?php echo $content; ?>
 

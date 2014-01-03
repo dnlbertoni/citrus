@@ -266,7 +266,7 @@ class Topdf extends MY_Controller{
   }
   function ofertaMultiple($tamano=1){
     foreach ($_POST as $key=>$valor ){
-      if(!preg_match('/^(fecha)|^(Imprimir)|^(precio)/',$key)){
+      if(!preg_match('/^(fecha)|^(Imprimir)|^(precio)|^(titulo)/',$key)){
         $codigos[]=$valor;
       };
     };
@@ -284,18 +284,21 @@ class Topdf extends MY_Controller{
       $this->fpdf->Cell(190,0,"OFERTA",0,0,'C');
       $i=0;
       $cantidad = 1;
+      $renglon=1;
       foreach($codigos as $valor){
         $articulo = $this->Articulos_model->getDatosBasicos($valor);
         $this->fpdf->SetXY($x,$y+60+$i);
         $this->fpdf->SetFont('Arial','' ,35);
-        $this->fpdf->Cell(290,0,strtoupper(substr($articulo->descripcion,0,20)),0,1,'C');
-        $i +=15;
+        $renglon *= -1;
+        $bajo=($renglon>0)?1:0;
+        $this->fpdf->Cell(140,0,strtoupper(substr($articulo->descripcion,0,20)),0,0,'L');
+        //$i +=15;
         if($cantidad<count($codigos)){
-          $this->fpdf->SetXY($x,$y+60+$i);
-          $this->fpdf->Cell(290,0,'+',0,1,'C');
+          //$this->fpdf->SetXY($x,$y+60+$i);
+          $this->fpdf->Cell(5,0,'+',0,$bajo,'C');
           $cantidad++;
         }
-        $i +=15;
+        //$i +=15;
       }
       $this->fpdf->SetFont('Times','' ,200);
       $this->fpdf->SetXY($x,$y+170);
@@ -330,11 +333,11 @@ class Topdf extends MY_Controller{
         }
     };
     $file = TMP . "cartel.pdf";
-    $this->fpdf->Output($file,'F');
+    $this->fpdf->Output($file,'I');
     $cmd = sprintf("lp %s -d %s",$file,$this->Printer);
-    shell_exec($cmd);
+    //shell_exec($cmd);
     $cmd = sprintf("rm -f  %s",$file);
-    shell_exec($cmd);
+    //shell_exec($cmd);
     redirect('carteles/', 'location',301);
   }
   function listaDePrecios(){

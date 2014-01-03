@@ -1,8 +1,23 @@
 <?php if(! $existe):?>
+<div id="error">
 <div class="ui-state-error ui-corner-all" >
   <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
   El articulo <?php echo $codigobarra ?> no esta cargado en el sistema
+</div>  
 </div>
+<script>
+  $('#error').dialog({
+      autoOpen:true,
+      resizable: false,
+      width:600,
+      modal: true,
+      buttons: {
+        "Por favor ingresar el Producto": function() {
+          $( this ).dialog( "close" );
+        }}      
+  });
+  $("#error").focus();
+</script>
 <?php endif;?>
 <?php if($valorCero):?>
 <div class="ui-state-error ui-corner-all" >

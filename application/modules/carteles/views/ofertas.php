@@ -9,6 +9,8 @@
  
  <?php echo form_open('carteles/buscoDetalles','id="codart"')?>
 <input type="hidden" name="pagina" value="<?php echo base_url(), 'index.php/carteles/buscoDetalles' ?>" id="pagina" />
+ <?php echo form_label('Titulo:','titulo');?> 
+ <?php echo form_input('titulo','OFERTA','id="titulo"');?>
  <?php echo form_label('Articulo:','codigobarra');?>
  <?php echo form_input('codigobarra','','id="codigobarra"');?>
  <?php echo form_submit('Agregar', 'Agregar');?>
@@ -24,6 +26,9 @@
 <table id="articulos" width="85%">
 </table>
 <table>
-<tr><td colspan="5"><?php echo form_submit('Imprimir','Imprimir')?></td></tr>
+<tr>
+  <td colspan="5"><?php echo form_submit('Imprimir','Imprimir')?>
+  </td>
+</tr>
 </table>
 <?php echo form_close()?>
