@@ -108,8 +108,7 @@ class Template {
 		Return:
 			void
 	 */
-	public function __construct() 
-	{	
+	public function __construct(){	
 		self::$ci =& get_instance();
 		
 		self::init();
@@ -126,8 +125,7 @@ class Template {
 		Return:	
 			void
 	 */
-	public static function init() 
-	{
+	public static function init(){
 		// If the application config file hasn't been loaded, do it now
 		if (!self::$ci->config->item('template.theme_paths'))
 		{ 
@@ -163,8 +161,7 @@ class Template {
 		Return:
 			void
 	 */
-	public static function render($layout=null) 
-	{
+	public static function render($layout=null){
 		$output = '';
 	
 		// We need to know which layout to render
@@ -240,8 +237,7 @@ class Template {
 		Return:
 			void
 	 */
-	public static function set_block($block_name='', $view_name='') 
-	{		
+	public static function set_block($block_name='', $view_name=''){		
 		if (!empty($block_name))
 		{
 			self::$blocks[$block_name] = $view_name;
@@ -272,8 +268,7 @@ class Template {
 		Return:
 			void
 	 */
-	public static function block($block_name='', $default_view='', $data=array(), $themed=false)
-	{		
+	public static function block($block_name='', $default_view='', $data=array(), $themed=false){		
 		if (empty($block_name)) 
 		{
 			log_message('debug', '[Template] No block name provided.');
@@ -320,8 +315,7 @@ class Template {
 		Parameters:
 			$path	- A new path where themes can be found.
 	 */
-	public static function add_theme_path($path=null) 
-	{
+	public static function add_theme_path($path=null){
 		if (empty($path) || !is_string($path))
 		{
 			return false;
@@ -362,8 +356,7 @@ class Template {
 		Return:
 			void
 	 */
-	public static function remove_theme_path($path=null) 
-	{
+	public static function remove_theme_path($path=null){
 		if (empty($path) || !is_string($path))
 		{
 			return;
@@ -389,8 +382,7 @@ class Template {
 		Return: 
 			void
 	 */
-	public static function set_theme($theme=null) 
-	{
+	public static function set_theme($theme=null){
 		if (empty($theme) || !is_string($theme))
 		{
 			return;
@@ -415,8 +407,7 @@ class Template {
 		Return:
 			The name of the active theme.
 	 */
-	public static function theme() 
-	{
+	public static function theme(){
 		return self::$active_theme;
 	}
 	
@@ -430,8 +421,7 @@ class Template {
 		Return:
 			The full url (including http://) to the resource.
 	 */
-	public static function theme_url($resource='') 
-	{
+	public static function theme_url($resource=''){
 		$url = base_url();
 		
 		// Add theme path
@@ -461,8 +451,7 @@ class Template {
 		Return:
 			void
 	 */
-	public static function set_view($view=null) 
-	{
+	public static function set_view($view=null){
 		if (empty($view) || !is_string($view))
 		{
 			return;
@@ -485,8 +474,7 @@ class Template {
 			$value		- The value to set it to.
 		@return void
 	 */
-	public static function set($var_name='', $value='') 
-	{		
+	public static function set($var_name='', $value=''){		
 		// Added by dkenzik
 	    // 20101001
 	    // Easier migration when $data is scaterred all over your project
@@ -526,8 +514,7 @@ class Template {
 		Return: 
 			The value of the class property or view data.
 	 */
-	public static function get($var_name=null) 
-	{
+	public static function get($var_name=null){
 		if (empty($var_name))
 		{
 			return false;
@@ -559,8 +546,7 @@ class Template {
 		Return:
 			void
 	 */
-	public function parse_views($parse) 
-	{
+	public function parse_views($parse){
 		self::parse_views($parse);
 	}
 	
@@ -582,8 +568,7 @@ class Template {
 		Return:
 			void
 	 */
-	public static function set_message($message='', $type='info') 
-	{
+	public static function set_message($message='', $type='info'){
 		if (!empty($message))
 		{
 			if (class_exists('CI_Session'))
@@ -608,8 +593,7 @@ class Template {
 		Return:
 			A string with the results of inserting the message into the message template.
 	 */
-	public static function message() 
-	{
+	public static function message(){
 		$message = '';		// The message body.
 		$type	 = '';		// The message type (used for class)
 	
@@ -668,8 +652,7 @@ class Template {
 			$url	- The url to redirect to. If not a full url, will wrap it
 						in site_url().
 	*/
-	public function redirect($url=null) 
-	{
+	public function redirect($url=null){
 		$url = strpos($url, 'http') == false ? site_url($url) : $url;
 		
 		echo "<script>window.location='$url'</script>";
@@ -691,8 +674,7 @@ class Template {
 			$is_themed	- Whether it should check in the theme folder first.
 			&$output	- A pointer to the variable to store the output of the loaded view into.
 	 */
-	public static function load_view($view=null, $data=null, $override='', $is_themed=true, &$output) 
-	{ 
+	public static function load_view($view=null, $data=null, $override='', $is_themed=true, &$output) { 
 		if (empty($view))	return '';
 		
 		// If no active theme is present, use the default theme.
@@ -756,8 +738,7 @@ class Template {
 		Return:
 			The content of the file, if found, else empty.
 	 */
-	private function find_file($view=null, $data=null) 
-	{
+	private function find_file($view=null, $data=null){
 		if (empty($view))
 		{
 			return false;
@@ -835,8 +816,7 @@ class Template {
 		$view	- the name of the view to render.
 		$data	- an array of data to pass to the view.
 */
-function theme_view($view=null, $data=null)
-{
+function theme_view($view=null, $data=null){
 	if (empty($view)) return '';
 	
 	$ci =& get_instance();
@@ -860,8 +840,7 @@ function theme_view($view=null, $data=null)
 	Return:
 		Either <b>class="current"</b> or an empty string.
 */
-function check_class($item='')
-{
+function check_class($item=''){
 	$ci =& get_instance();
 
 	if (strtolower($ci->router->fetch_class()) == strtolower($item))
@@ -886,8 +865,7 @@ function check_class($item='')
 	Return:
 		Either <b>class="current"</b> or an empty string.
 */
-function check_method($item='')
-{
+function check_method($item=''){
 	$ci =& get_instance();
 
 	if (strtolower($ci->router->fetch_method()) == strtolower($item))
@@ -906,8 +884,7 @@ function check_method($item='')
 	Will create a breadcrumb from either the uri->segments or
 	from a key/value paired array passed into it. 	
 */
-function breadcrumb($my_segments=null) 
-{
+function breadcrumb($my_segments=null){
 	$ci =& get_instance();
 	
 	if (!class_exists('CI_URI'))

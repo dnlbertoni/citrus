@@ -18,7 +18,6 @@ class Pos extends MY_Controller{
     Template::set_block('tareas','tareas'); // panel de tareas
   }
   function index(){
-    Assets::add_js('pos/index'); 
     Template::render();
   }
   function cierreJournal(){

@@ -21,3 +21,9 @@ $msj = '<div id="botBuscarFac" style="text-align:center">Buscar Comprobante<span
 echo anchor('facturas/buscar',$msj);
 ?>
 </div>
+
+<script>
+$(document).ready(function(){
+  $("#botBuscarFac").button();
+});
+</script>

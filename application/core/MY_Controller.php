@@ -37,5 +37,6 @@ class MY_Controller extends MX_Controller {
     $dataM['Modulos'] = $Modulos;
     Template::set($dataM);
     setlocale(LC_MONETARY, 'es_AR');
+    Template::set_theme('amelia/');
   }
 }

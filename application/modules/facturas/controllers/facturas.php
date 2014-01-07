@@ -12,7 +12,6 @@ class Facturas extends MY_Controller {
     Template::set_block('tareas','tareas'); // panel de tareas
   }
   function index(){
-    Assets::add_js('facturas/index');
     Template::render();
   }
   function add($tipcom=0,$cuenta_id=0){
