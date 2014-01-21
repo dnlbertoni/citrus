@@ -7,10 +7,10 @@
 class Caja extends MY_Controller{
   function __construct() {
     parent::__construct();
-    $this->load->module('layout');
+    Template::set_theme('moderno/');
+    
   }
   function index(){
-    $this->layout->buffer('content', 'caja/index');
-    $this->layout->render();
+    Template::render();
   }
 }
