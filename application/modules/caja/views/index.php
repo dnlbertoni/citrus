@@ -39,7 +39,10 @@
       </div>
       <div class="col-lg-4 col-md-4">
         <h3><i class="fa fa-folder-open"></i>Ajustesy Operaciones</h3>
-        <p>This template features many common pages that you might see on a business website. Pages include: about, contact, portfolio variations, blog, pricing, FAQ, 404, services, and general multi-purpose pages.</p>
+        <ul>
+            <li>Lista de Conceptos</li>
+            <li>Modificacion deconceptos</li>
+        </ul>
       </div>
     </div><!-- /.row -->
   </div><!-- /.container -->

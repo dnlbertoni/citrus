@@ -13,4 +13,5 @@ class Caja extends MY_Controller{
   function index(){
     Template::render();
   }
+  
 }
