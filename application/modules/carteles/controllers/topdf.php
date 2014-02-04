@@ -1,4 +1,5 @@
 <?php
+
 class Topdf extends MY_Controller{
   private $Printer = "laser03";
   function __construct(){
@@ -365,11 +366,13 @@ class Topdf extends MY_Controller{
       $articulo= $this->Articulos_model->getDatosBasicos($valor);
       $id=$articulo->id;
       $this->fpdf->SetFont('Times','' ,$fuente / 1.5 );
-      $this->fpdf->SetXY($x+10,$y);
+      $this->fpdf->SetXY($x,$y);
       $this->fpdf->Cell(50,0, $articulo->codigobarra ." - ",0,0,'R');
-      $this->fpdf->SetFont('Times','' ,$fuente);
+      $this->fpdf->SetFont('Times','' ,$fuente / 1.25);
       $this->fpdf->SetXY($x+60,$y);
       $this->fpdf->Cell($ancho,0,substr($articulo->descripcion,0,($ancho/$tamano) * 2),0,0,'L');
+      $this->fpdf->SetXY($x+60,$y);
+      $this->fpdf->Cell($ancho,0,$articulo->precio,0,0,'R');
       $row++;
       $margen = 20;
       if($row>(((290 - $margen)/$tamano)-1)){
@@ -502,5 +505,85 @@ class Topdf extends MY_Controller{
     $cmd = sprintf("rm -f  %s",$file);
     shell_exec($cmd);
     redirect('carteles/', 'location',301);
+  }
+  function listaPreciosFull($print=false){
+    $articulos = $this->Articulos_model->getListaFull();
+    $tamano=6;
+    $fuente = $tamano * 2.25;
+    $this->fpdf->Open();
+    $this->fpdf->SetMargins(5,5,5);
+    $this->fpdf->SetAutoPageBreak(false);
+    $this->fpdf->SetDrawColor(255,0,0);
+    $this->fpdf->SetFillColor(255,0,0);    
+    $this->fpdf->SetTopMargin(10);
+    $this->fpdf->AddPage();
+    $ancho=150;
+    $alto=$tamano *1.5 ;
+    $col=0;
+    $row=1;
+    $corteRubro=false;
+    $corteSubrubro=false;
+    foreach($articulos as $articulo){
+      /** 
+       * prepararo los parametros de orden
+       */
+      $x=$col * $ancho;
+      $y=$row * $alto ;
+      // inicio corte de control rubro
+      if($corteRubro!=$articulo->rubro){
+        $tituloRub=$articulo->rubro;
+        $corteRubro=$articulo->rubro;
+      }else{
+        $tituloRub = false;
+      }
+      // inicio corte de control subrubro
+      if($corteSubrubro!=$articulo->subrubro){
+        $tituloSub=$articulo->subrubro;
+        $corteSubrubro=$articulo->subrubro;
+      }else{
+        $tituloSub = false;
+      }
+      if($tituloSub){
+        $this->fpdf->setTextColor(255,255,255);
+        $this->fpdf->SetFont('Times','B' ,$fuente );
+        $this->fpdf->SetXY($x,$y);
+        $this->fpdf->Cell(290,$tamano, $articulo->rubro.' -> '.$tituloSub,1,0,'L',true);
+        $this->fpdf->setTextColor(0);
+        $row++;
+        $row++;
+        $y=$row * $alto;      
+      }
+      $this->fpdf->SetFont('Times','' ,$fuente / 1.5 );
+      $this->fpdf->SetXY($x,$y);
+      if(strlen(trim($articulo->codigobarra))==13){
+        $this->fpdf->EAN13($x,$y-($tamano/2),  substr(trim($articulo->codigobarra),0,12),$tamano);
+        $this->fpdf->SetXY($x,$y);
+      }else{
+        $this->fpdf->Cell(50,0, $articulo->codigobarra ." - ",0,0,'R');
+      }
+      $this->fpdf->SetFont('Times','' ,$fuente / 1.25);
+      $this->fpdf->SetXY($x+60,$y);
+      $this->fpdf->Cell($ancho,0,substr($articulo->descripcion,0,($ancho/$tamano) * 2),0,0,'L');
+      $this->fpdf->SetXY($x+60,$y);
+      $this->fpdf->Cell($ancho,0,$articulo->precio,0,0,'R');
+      $row++;
+      $margen = 20;
+      if($row>(((290)/$alto)-1)){
+        $row=1;
+        $this->fpdf->AddPage();
+      };
+    };
+    if($print){
+      $file = TMP . "cartel.pdf";
+      $this->fpdf->Output($file,'F');
+      $cmd = sprintf("lp %s -d %s",$file,$this->Printer);
+      shell_exec($cmd);
+      $cmd = sprintf("rm -f  %s",$file);
+      shell_exec($cmd);
+    }else{
+      $file ="listadeprecios_FULL.pdf";
+      $this->fpdf->Output($file,'D');
+    }
+    redirect('carteles/','location',301);
   }
 }

@@ -25,7 +25,7 @@
   <body>
     <!-- menu navegacion -->
     <?php echo Template::block('menu', 'menu')?>
-    <?php echo Template::yield();?>
+    <?php echo Template::yield();  ?>
 
     <div class="container">
 
