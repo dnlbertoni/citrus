@@ -2,20 +2,20 @@
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-            <span class="sr-only">Cambia la navegacion</span>
-            <span class="fa-wrench">Configuraciones</span>
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
           <!-- You'll want to use a responsive image option so this logo looks good on devices - I recommend using something like retina.js (do a quick Google search for it and you'll find it) -->
-          <a class="navbar-brand" href="index.html">Autoservicio Santa Lucia</a>
+          <a class="navbar-brand" href="index.html">Modern Business</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="about.html">About</a></li>
-            <li><a href="services.html"><span class="fa fa-wrench"></span></a></li>
+            <li><a href="services.html">Services</a></li>
             <li><a href="contact.php">Contact</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Portfolio <b class="caret"></b></a>
@@ -49,3 +49,5 @@
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container -->
     </nav>
+
+

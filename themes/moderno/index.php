@@ -9,6 +9,7 @@
     <title>Modern Business - Start Bootstrap Template</title>
 
     <!-- Bootstrap core CSS -->
+    <link href="/themes/moderno/screen.css" rel="stylesheet">
     <link href="/themes/moderno/css/bootstrap.css" rel="stylesheet">
 
     <!-- Add custom CSS here -->
@@ -17,7 +18,7 @@
     <?php echo Assets::css('modern-business') ?> 
     <?php //echo Assets::css('bootstrap') ?>        
     <?php echo Assets::js() ?>
-    <?php echo Assets::css() ?> 
+    <?php //echo Assets::css() ?> 
   </head>
 
   <body>
