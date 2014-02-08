@@ -9,13 +9,11 @@
     <title>Modern Business - Start Bootstrap Template</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="/themes/moderno/css/bootstrap.css" rel="stylesheet">
 
     <!-- Add custom CSS here -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <?php echo Assets::js('jquery') ?>
-    <?php echo Assets::js('bootstrap') ?>             
-    <?php echo Assets::css('bootstrap') ?>                 
+    <link href="/themes/moderno/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
     <?php echo Assets::css('modern-business') ?> 
     <?php //echo Assets::css('bootstrap') ?>        
     <?php echo Assets::js() ?>
@@ -25,7 +23,7 @@
   <body>
     <!-- menu navegacion -->
     <?php echo Template::block('menu', 'menu')?>
-    <?php echo Template::yield();  ?>
+    <?php echo Template::yield1();  ?>
 
     <div class="container">
 
@@ -42,9 +40,9 @@
     </div><!-- /.container -->
 
     <!-- JavaScript -->
-    <script src="js/jquery-1.10.2.js"></script>
-    <script src="js/bootstrap.js"></script>
-    <script src="js/modern-business.js"></script>
+    <script src="/themes/moderno/js/jquery.js"></script>
+    <script src="/themes/moderno/js/bootstrap.js"></script>
+    <script src="/themes/moderno/js/modern-business.js"></script>
 
   </body>
 </html>

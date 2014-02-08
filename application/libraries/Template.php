@@ -206,8 +206,7 @@ class Template {
 		Return:
 			a string containing the output of the render process.
 	 */
-	public static function yield() 
-	{ 	
+	public static function yield1(){ 	
 		$output = '';
 		
 		if (self::$debug) { echo 'Current View = '. self::$current_view; }

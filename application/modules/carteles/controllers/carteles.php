@@ -7,6 +7,7 @@
    function __construct(){
      parent::__construct();
      $this->load->model('Articulos_model','',true);
+     Template::set_theme('moderno/');
    }
    function index(){
 
@@ -47,7 +48,6 @@
      $Menu[7]['nombre'] = "Oferta Cualquier Cosa";
 
      $data['Menu'] = $Menu;
-     Assets::add_js('carteles/index');
      Template::set($data);
      Template::render();
    }
