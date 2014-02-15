@@ -39,3 +39,17 @@ class MY_Controller extends MX_Controller {
     setlocale(LC_MONETARY, 'es_AR');
   }
 }
+
+class Admin_Controller extends MY_Controller {
+  function __construct() {
+    parent::__construct();
+    $this->output->enable_profiler(ENVIRONMENT==='desarrollo');
+    /*
+     * defino los modulos que van en el menu
+     */
+    $barra=$this->Usermenu_model->getBarraMenu();
+    Template::set_theme('moderno/');
+    //Template::set("barra",$barra);
+    setlocale(LC_MONETARY, 'es_AR');
+  }
+}

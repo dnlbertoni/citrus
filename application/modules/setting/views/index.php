@@ -99,7 +99,7 @@
                                                       $clase   = "label label-danger";
                                                     }else{
                                                       $leyenda = "Solo Icono";
-                                                      $clase   = "label label-info";                                                            
+                                                      $clase   = "label label-warning";                                                            
                                                     }
                                                     break;
                                                 };?>
@@ -155,6 +155,7 @@
                                               <th>#</th>
                                               <th>Nombre Modulo</th>
                                               <th>Nombre</th>
+                                              <th>Nombre Clase</th>
                                               <th>Icono</th>
                                               <th>Link</th>
                                               <th>Destino</th>
@@ -168,14 +169,14 @@
                                               <td><?php echo $men->nombreModulo?></td>
                                               <td><?php echo $men->nombre?></td>
                                               <td><?php echo $men->clase?></td>
+                                              <td><span class="<?php echo $men->clase?>"></span></td>
                                               <td><?php echo $men->link?></td>
                                               <td><?php echo $men->target?></td>
-                                              <td><span class="<?php echo $men->clase?>"></span></td>
                                               <td>
                                                 <?php
-                                                    if(trim($mod->clase)==''){
+                                                    if(trim($men->clase)==''){
                                                       $leyenda = "Solo Texto";
-                                                      $clase   = "label label-default";
+                                                      $clase   = "label label-warning";
                                                     }else{
                                                       $leyenda = "Texto e Icono";
                                                       $clase   = "label label-success";                                                            

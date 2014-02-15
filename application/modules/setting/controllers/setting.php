@@ -7,10 +7,9 @@
  * @version 1
  * 
  */
-class Setting extends MY_Controller{
+class Setting extends Admin_Controller{
   function __construct() {
     parent::__construct();
-    Template::set_theme('moderno/');
     $this->load->model('Modulos_model');
     $this->load->model('Menues_model');
   }
