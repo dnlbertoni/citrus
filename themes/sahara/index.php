@@ -2,7 +2,7 @@
 <html>
 <head>
   <?php Assets::add_js('jquery-ui-1.8.9.min')?>
-  <?php Assets::add_js('jquery-1.7.1')?>
+  <?php Assets::add_js('jquery-1.7.1' )?>
   <?php echo Assets::css('jquery-ui')?>
   <?php echo Assets::js() ?>
   <?php echo Assets::css() ?>
@@ -22,7 +22,7 @@
           <?php echo anchor('ticket', 'Ticket', 'id="carrito"');?>
           <div id="admin">Configuracion</div>
           <div id="problema">Problema</div>
-
+	   <a id="radiooline" href="http://www.cadena3.com/multimedia.asp?programacion=CADENA%203" target="_blank">Radio</div>
         </div>
     </div>
     <div id="menu">
@@ -35,19 +35,21 @@
     <div id="content">
       <?php if(isset($tareas)):?>
       <div id="column1">
-        <?php echo Template::yield()?>
+        <?php echo Template::yield1()?>
       </div>
       <?php echo Template::block('tareas');?>
       <?php else:?>
-        <?php echo Template::yield()?>
+        <?php echo Template::yield1()?>
       <?php endif;?>
     </div>
     <div id="ventanaAjax"></div>
+    <div id="radioonline"></div>
     <div id="footer">
       <p>2010 &copy; 2013 | Autoservicio Santa Lucia | Author >> DnL | <?php echo anchor('version/', 'Version '. VERSION);?></p>
     </div>
   </div>
 </div>
+
 </body>
 </html>
 
@@ -57,6 +59,7 @@ $(document).ready(function(){
   $("#admin").button({icons:{primary:'ui-icon-wrench'}, text:false});
   $("#ayuda").button({icons :{primary:'ui-icon-help'}});
   $("#problema").button({icons :{primary:'ui-icon-alert'}, text:false});
+  $("#radiooline").button({icons :{primary:'ui-icon-signal-diag'}, text:false});
   $("#boxAyuda").css('float','right');
 
   alto   = $("#header").css('height');

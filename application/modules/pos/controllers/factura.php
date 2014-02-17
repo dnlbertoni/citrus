@@ -315,6 +315,13 @@ class Factura extends MY_Controller{
         'estado'    => $estado
     );
     $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
+     /**
+     * GRABO MOVIEIMTNO DE CAJA
+     */
+     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+    /**
+     * IMPRIMO MOVIMEINTO DE CTACTE
+     */
     if($DNF==1){
       $this->printCtaCte($cuenta, $puesto, $numero, $this->hasar->importe, $idFacencab);
     };
@@ -372,7 +379,17 @@ class Factura extends MY_Controller{
         'percep'    => 0,
         'estado'    => $estado
     );
+    /**
+     * GRABO COMPROBANTE FACTURA
+     */
     $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
+    /**
+     * GRABO MOVIEIMTNO DE CAJA
+     */
+     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+    /**
+     * IMPRIMO MOVIMEINTO DE CTACTE
+     */
     if($DNF==1){
       $this->printCtaCte($cuenta, $puesto, $numero, $this->hasar->importe, $idFacencab);
     };
@@ -437,7 +454,13 @@ class Factura extends MY_Controller{
     );
     $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
     $num        = $this->Numeradores_model->updateRemito($ptorem, $numero+1);
-    //$this->load->view('pos/carga');
+        /**
+     * GRABO MOVIEIMTNO DE CAJA
+     */
+     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+    /**
+     * IMPRIMO MOVIMEINTO DE CTACTE
+     */
     if($DNF==1){
       $this->printCtaCte($cuenta, $puesto, $numero, $importe * $negativo, $idFacencab);
     };
@@ -496,6 +519,13 @@ class Factura extends MY_Controller{
     );
     $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
     $num        = $this->Numeradores_model->updateRemito($ptorem, $numero+1);
+    /**
+     * GRABO MOVIEIMTNO DE CAJA
+     */
+     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+    /**
+     * IMPRIMO MOVIMEINTO DE CTACTE
+     */    
     if($DNF==1){
       $this->printCtaCteLaser($cuenta, $puesto, $numero, $importe * $negativo, $idFacencab,$items);
     }else{
@@ -741,5 +771,18 @@ class Factura extends MY_Controller{
     $cmd=sprintf("lp -o media=Custom.100x148mm %s -d %s", $nombre,PRREMITO);
     shell_exec($cmd);
     return $nombre;
+  }
+  private function _graboCaja( $idFacencab, $tipcomp, $estado, $importe){
+    $this->load->model('Tipcom_model');
+      $concepto=$this->Tipcom_model->getConceptoCaja($tipcom);
+      $datosCaja = array(
+        'caja_id' => 'NULL', 
+        'concepto_id' => $concepto,
+        'facencab_id' => $idFacencab, 
+        'fpago_id'    => $estado, 
+        'importe'     => $importe
+    );
+    $idCajmovim = $this->Cajamovim_model->add($datosCaja);
+    return $idCajmovim;
   }
 }

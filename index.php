@@ -31,7 +31,8 @@
 	switch (ENVIRONMENT)
 	{
 		case 'desarrollo':
-			error_reporting(E_ALL);
+			//error_reporting((E_ERROR |  E_WARNING | E_PARSE | E_NOTICE));
+			error_reporting((E_ERROR |  E_PARSE | E_NOTICE));
 		break;
 		case 'test':
 			error_reporting(E_ALL);
