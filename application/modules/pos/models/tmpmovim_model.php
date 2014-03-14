@@ -6,20 +6,20 @@ class Tmpmovim_model extends MY_Model{
     parent::__construct();
     $this->setTable('tmp_movimientos');
   }
-  function agregoAlComprobante($id, $codigobarra, $cantidad, $precio, $puesto, $cuenta){
+  function agregoAlComprobante($id, $codigobarra, $cantidad, $precio ){
     $this->db->select('id_tmpmov');
     $this->db->from($this->getTable());
-    $this->db->where('idencab_tmpmov', $id);
+    $this->db->where('tmpfacencab', $id);
     $this->db->where('codigobarra_tmpmov', $codigobarra);
     $q = $this->db->get();
     $articulos = $q->result();
     if($q->num_rows()== 0 || trim($codigobarra)=='1' || trim($codigobarra)=='2' ){
-      return $this->insertArticulo($id, $codigobarra, $cantidad, $precio, $puesto, $cuenta);
+      return $this->insertArticulo($id, $codigobarra, $cantidad, $precio);
     }else{
-      return $this->updateArticulo($id, $codigobarra, $cantidad, $puesto, $cuenta);
+      return $this->updateArticulo($id, $codigobarra, $cantidad);
     };
   }
-  function insertArticulo($id, $codigobarra, $cantidad, $precio, $puesto, $cuenta){
+  function insertArticulo($id, $codigobarra, $cantidad, $precio, $puesto, $cuenta, $fpagoid){
     $this->db->select('descripcion_articulo as nombre');
     $this->db->select('tasaiva_articulo as tasaiva');
     $this->db->from($this->tablaArticulos);
@@ -34,6 +34,7 @@ class Tmpmovim_model extends MY_Model{
     $this->db->set('tasaiva_tmpmov', $arti->tasaiva);
     $this->db->set('puesto_tmpmov', $puesto);
     $this->db->set('cuentaid_tmpmov', $cuenta);
+    $this->db->set('fpagoid_tmpmov', $fpagoid);
     $this->db->insert($this->tabla);
     return $this->db->insert_id(); 
   }
@@ -54,27 +55,14 @@ class Tmpmovim_model extends MY_Model{
     $this->db->delete($this->tabla);
     return $idencab;
   }
-  function getTotales($id,$puesto){
+  function getTotales($id){
     $this->db->select('SUM(cantidad_tmpmov*preciovta_tmpmov) AS Total',false);
     $this->db->select('COUNT(codigobarra_tmpmov) AS Bultos', false);
-    $this->db->from($this->tabla);
-    $this->db->where('idencab_tmpmov', $id);
-    $this->db->where('puesto_tmpmov', $puesto);
+    $this->db->from($this->getTable());
+    $this->db->where('tmpfacencab_id', $id);
     return $this->db->get()->row();
   }
-  function getCuenta($id,$puesto){
-    $this->db->select('cuentaid_tmpmov as cuenta');
-    $this->db->from($this->tabla);
-    $this->db->where('idencab_tmpmov', $id);
-    $this->db->where('puesto_tmpmov', $puesto);
-    $q = $this->db->get();
-    if($q->num_rows()>0){
-      return $q->row()->cuenta;
-    }else{
-      return false;
-    }
-  }
-  function getArticulos($id,$puesto){
+  function getArticulos($id){
     $this->db->select('codigobarra_tmpmov AS Codigobarra');
     $this->db->select('descripcion_tmpmov AS Nombre');
     $this->db->select('cantidad_tmpmov AS Cantidad');
@@ -82,10 +70,8 @@ class Tmpmovim_model extends MY_Model{
     $this->db->select('tasaiva_tmpmov AS Tasa');
     $this->db->select('(cantidad_tmpmov * preciovta_tmpmov ) AS Importe', false);
     $this->db->select('id_tmpmov As codmov');
-    $this->db->select('cuentaid_tmpmov as cuenta');
-    $this->db->from($this->tabla);
-    $this->db->where('idencab_tmpmov', $id);
-    $this->db->where('puesto_tmpmov', $puesto);
+    $this->db->from($this->getTable());
+    $this->db->where('tmpfacencab_id', $id);
     $this->db->order_by('id_tmpmov', 'DESC');
     $q = $this->db->get();
     if($q->num_rows()>0){
@@ -98,14 +84,6 @@ class Tmpmovim_model extends MY_Model{
     $this->db->where('idencab_tmpmov', $id);
     $this->db->where('puesto_tmpmov', $puesto);
     $this->db->delete($this->tabla);
-    return true;
-  }
-  function cambioCuenta($puesto, $id_tmpencab, $cuenta, $ctacte){
-    $this->db->set('cuentaid_tmpmov', $cuenta);
-    $this->db->set('ctacte_tmpmov', $ctacte);
-    $this->db->where('idencab_tmpmov', $id_tmpencab);
-    $this->db->where('puesto_tmpmov', $puesto);
-    $this->db->update($this->tabla);
     return true;
   }
   function itemsComprobante($puesto, $idencab, $negativo=false){
@@ -131,22 +109,5 @@ class Tmpmovim_model extends MY_Model{
     $this->db->where("puesto_tmpmov", $puesto);
     $this->db->where("idencab_tmpmov", $idencab);
     return $this->db->get()->row()->Total;
-  }
-  function getDatosUltimo($puesto){
-    $this->db->select_max('idencab_tmpmov');
-    $this->db->from($this->tabla);
-    $this->db->where('puesto_tmpmov', $puesto);
-    $q = $this->db->get();
-    if($q->num_rows()>0){
-      $idencab = $q->row()->idencab_tmpmov;
-      //$this->db->_reset_select();
-      $this->db->from($this->tabla);
-      $this->db->where('puesto_tmpmov', $puesto);
-      $this->db->where('idencab_tmpmov', $idencab);
-      $this->db->limit(1);
-      return $this->db->get()->row();
-    }else{
-      return false;
-    };
   }
 }

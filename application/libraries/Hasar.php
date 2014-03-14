@@ -56,7 +56,7 @@ class Hasar{
   }
   function setPuesto($num){
     $this->puestoVta          = $num;
-    $this->display = ($num==4)?1:0;
+    $this->display = ($num==4)?0:0;
   }
   function nombres($valor="estado"){
     $this->nFile=$valor;

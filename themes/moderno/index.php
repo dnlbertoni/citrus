@@ -16,7 +16,13 @@
     <link href="/themes/moderno/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
     <?php echo Assets::css('modern-business') ?> 
-    <?php //echo Assets::css('bootstrap') ?>        
+    <?php //echo Assets::css('bootstrap') ?>       
+
+    <!-- JavaScript -->
+    <script src="/themes/moderno/js/jquery.js"></script>
+    <script src="/themes/moderno/js/bootstrap.js"></script>
+    <script src="/themes/moderno/js/modern-business.js"></script>
+    
     <?php echo Assets::js() ?>
     <?php //echo Assets::css() ?> 
   </head>
@@ -33,17 +39,11 @@
       <footer>
         <div class="row">
           <div class="col-lg-12">
-            <p>Copyright &copy; Company 2013</p>
+            <p>Copyright &copy; Autoservicion Santa lucia 2010-2014</p>
           </div>
         </div>
       </footer>
 
     </div><!-- /.container -->
-
-    <!-- JavaScript -->
-    <script src="/themes/moderno/js/jquery.js"></script>
-    <script src="/themes/moderno/js/bootstrap.js"></script>
-    <script src="/themes/moderno/js/modern-business.js"></script>
-
   </body>
 </html>

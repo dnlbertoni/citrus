@@ -47,6 +47,10 @@
      $Menu[7]['link']   = "carteles/ofertaEscrita";
      $Menu[7]['nombre'] = "Oferta Cualquier Cosa";
 
+     $Menu[8]['boton']  = "bot_cuidados";
+     $Menu[8]['link']   = "carteles/precios/3";
+     $Menu[8]['nombre'] = "Cartel Grande";     
+     
      $data['Menu'] = $Menu;
      Template::set($data);
      Template::render();
@@ -68,7 +72,18 @@
      };
      $data['tamano'] = $tamano;
      $data['dias']   = $dias;
-     $data['accion'] = ($tamano==1)? 'carteles/topdf/cartelesPrecios' : 'carteles/topdf/cartelesVinos';
+     switch($tamano){
+       case 1:
+         $data['accion']='carteles/topdf/cartelesPrecios';
+         break;
+       case 2:
+         $data['accion']='carteles/topdf/cartelesVinos';
+         break;
+       case 3:
+         $data['accion']='carteles/topdf/cartelesGrandes';
+         break;
+     };
+
      $data['articulos'] = $Articulos;
      $data['total']=count($Articulos);
      Template::set($data);
