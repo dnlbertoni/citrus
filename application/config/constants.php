@@ -41,14 +41,26 @@ define('VERSION','3.5');
 switch($_SERVER['REMOTE_ADDR']){
   case '192.168.1.102':
     $puesto = 3;
+        $rutaUniversal='/var/www/fiscal';
+
     break;
   default:
     $puesto = 4;
+    break;
+}
+switch(ENVIRONMENT){
+  case 'activo':
+    $rutaUniversal='/var/www/fiscal';
+    break;
+  default:
+    $rutaUniversal='/home/citrusdesa.autoservsantaluciacom.ar/fiscal';
     break;
 }
 define('TMP', BASEPATH .'../assets/tmp/');
 define('PUESTO', $puesto);
 define('PRREMITO','laser03');
 define('PRCARTEL','laser03');
+define('ABSOLUT_PATH',$rutaUniversal);
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

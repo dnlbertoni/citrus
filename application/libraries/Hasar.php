@@ -46,7 +46,7 @@ class Hasar{
   function __construct(){  //metodo constructor
     $fs                    = chr(28);
     //$ruta_universal        =  "/var/www/beta/citrusDev/rsc/tmp/fiscal";  // codeigniter
-    $ruta_universal        = "/var/www/fiscal";  // debian
+    $ruta_universal        = ABSOLUT_PATH;  // debian
     $this->ruta            = $ruta_universal;
     $this->mandar          = "mandar";
     $this->recibir         = "recibir";

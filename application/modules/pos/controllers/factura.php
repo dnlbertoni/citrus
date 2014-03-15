@@ -318,7 +318,7 @@ class Factura extends MY_Controller{
      /**
      * GRABO MOVIEIMTNO DE CAJA
      */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+     $cajaOK=$this->_graboCaja($idFacencab, $tipcom_id ,$estado, $this->hasar->importe );
     /**
      * IMPRIMO MOVIMEINTO DE CTACTE
      */
@@ -386,7 +386,7 @@ class Factura extends MY_Controller{
     /**
      * GRABO MOVIEIMTNO DE CAJA
      */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+     $cajaOK=$this->_graboCaja($idFacencab, $tipcom_id ,$estado, $this->hasar->importe );
     /**
      * IMPRIMO MOVIMEINTO DE CTACTE
      */
@@ -457,7 +457,7 @@ class Factura extends MY_Controller{
         /**
      * GRABO MOVIEIMTNO DE CAJA
      */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+     $cajaOK=$this->_graboCaja($idFacencab, $tipcom_id ,$estado, $this->hasar->importe );
     /**
      * IMPRIMO MOVIMEINTO DE CTACTE
      */
@@ -522,7 +522,7 @@ class Factura extends MY_Controller{
     /**
      * GRABO MOVIEIMTNO DE CAJA
      */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+     $cajaOK=$this->_graboCaja($idFacencab, $tipcom_id ,$estado, $this->hasar->importe );
     /**
      * IMPRIMO MOVIMEINTO DE CTACTE
      */    
@@ -772,10 +772,10 @@ class Factura extends MY_Controller{
     shell_exec($cmd);
     return $nombre;
   }
-  private function _graboCaja( $idFacencab, $tipcomp, $estado, $importe){
+  private function _graboCaja( $idFacencab, $tipcom_id, $estado, $importe){
     $this->load->model('Tipcom_model');
-      $concepto=$this->Tipcom_model->getConceptoCaja($tipcom);
-      $datosCaja = array(
+    $concepto=$this->Tipcom_model->getConceptoCaja($tipcom_id);
+    $datosCaja = array(
         'caja_id' => 'NULL', 
         'concepto_id' => $concepto,
         'facencab_id' => $idFacencab, 
