@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Modern Business - Start Bootstrap Template</title>
+    <title>Sistema de Gestion de Autoservicio Santa Lucia</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/themes/moderno/screen.css" rel="stylesheet">
@@ -39,7 +39,7 @@
       <footer>
         <div class="row">
           <div class="col-lg-12">
-            <p>Copyright &copy; Autoservicion Santa lucia 2010-2014</p>
+            <p>Copyright &copy; Autoservicio Santa lucia 2010-2014</p>
           </div>
         </div>
       </footer>

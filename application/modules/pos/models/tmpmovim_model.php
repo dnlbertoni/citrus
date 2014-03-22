@@ -9,7 +9,7 @@ class Tmpmovim_model extends MY_Model{
   function agregoAlComprobante($id, $codigobarra, $cantidad, $precio ){
     $this->db->select('id_tmpmov');
     $this->db->from($this->getTable());
-    $this->db->where('tmpfacencab', $id);
+    $this->db->where('tmpfacencab_id', $id);
     $this->db->where('codigobarra_tmpmov', $codigobarra);
     $q = $this->db->get();
     $articulos = $q->result();
@@ -19,37 +19,33 @@ class Tmpmovim_model extends MY_Model{
       return $this->updateArticulo($id, $codigobarra, $cantidad);
     };
   }
-  function insertArticulo($id, $codigobarra, $cantidad, $precio, $puesto, $cuenta, $fpagoid){
+  function insertArticulo($id, $codigobarra, $cantidad, $precio ){
     $this->db->select('descripcion_articulo as nombre');
     $this->db->select('tasaiva_articulo as tasaiva');
     $this->db->from($this->tablaArticulos);
     $this->db->where('codigobarra_articulo', $codigobarra);
     $arti = $this->db->get()->row();
     //$this->db->_reset_select();
-    $this->db->set('idencab_tmpmov',$id);
+    $this->db->set('tmpfacencab_id',$id);
     $this->db->set('cantidad_tmpmov', $cantidad);
     $this->db->set('codigobarra_tmpmov', $codigobarra);
     $this->db->set('preciovta_tmpmov',$precio);
     $this->db->set('descripcion_tmpmov', $arti->nombre);
     $this->db->set('tasaiva_tmpmov', $arti->tasaiva);
-    $this->db->set('puesto_tmpmov', $puesto);
-    $this->db->set('cuentaid_tmpmov', $cuenta);
-    $this->db->set('fpagoid_tmpmov', $fpagoid);
     $this->db->insert($this->tabla);
     return $this->db->insert_id(); 
   }
-  function updateArticulo($id, $codigobarra, $cantidad, $puesto){
+  function updateArticulo($id, $codigobarra, $cantidad){
     $this->db->set('cantidad_tmpmov', 'cantidad_tmpmov + ' . $cantidad, false);
-    $this->db->where('idencab_tmpmov', $id);
+    $this->db->where('tmpfacencab_id', $id);
     $this->db->where('codigobarra_tmpmov', $codigobarra);
-    $this->db->where('puesto_tmpmov', $puesto);
     $this->db->update($this->tabla);
-    return true;
+    return $id;
   }
   function delArticulo($codmov){
     $this->db->from($this->tabla);
     $this->db->where('id_tmpmov', $codmov);
-    $idencab = $this->db->get()->row()->idencab_tmpmov;
+    $idencab = $this->db->get()->row()->tmpfacencab_id;
     //$this->db->_reset_select();
     $this->db->where('id_tmpmov', $codmov);
     $this->db->delete($this->tabla);
@@ -80,13 +76,12 @@ class Tmpmovim_model extends MY_Model{
       return false;
     }
   }
-  function vacio($id, $puesto){
-    $this->db->where('idencab_tmpmov', $id);
-    $this->db->where('puesto_tmpmov', $puesto);
-    $this->db->delete($this->tabla);
+  function vacio($id){
+    $this->db->where('tmpfacencab_id', $id);
+    $this->db->delete($this->getTable());
     return true;
   }
-  function itemsComprobante($puesto, $idencab, $negativo=false){
+  function itemsComprobante($idencab, $negativo=false){
     $this->db->select('descripcion_articulo as detalle');
     $this->db->select('cantidad_tmpmov      as cantidad');
     if($negativo)
@@ -98,16 +93,14 @@ class Tmpmovim_model extends MY_Model{
     $this->db->select('codigobarra_articulo as codigobarra');
     $this->db->from($this->tabla);
     $this->db->join($this->tablaArticulos, "codigobarra_articulo = codigobarra_tmpmov", "inner");
-    $this->db->where("puesto_tmpmov", $puesto);
-    $this->db->where("idencab_tmpmov", $idencab);
+    $this->db->where("tmpfacencab_id", $idencab);
     $this->db->where("codigobarra_articulo = codigobarra_tmpmov", "",false );
     return $this->db->get()->result();
   }
-  function totalComprobante($puesto, $idencab){
+  function totalComprobante($idencab){
     $this->db->select("SUM(cantidad_tmpmov * preciovta_tmpmov) as Total",false);
     $this->db->from($this->tabla);
-    $this->db->where("puesto_tmpmov", $puesto);
-    $this->db->where("idencab_tmpmov", $idencab);
+    $this->db->where("tmpfacencab_id", $idencab);
     return $this->db->get()->row()->Total;
   }
 }

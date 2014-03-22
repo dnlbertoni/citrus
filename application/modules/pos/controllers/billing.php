@@ -44,10 +44,19 @@ class Billing extends MY_Controller{
     $data['totales']     = $this->Tmpmovim_model->getTotales($numeroTemporal);
     $data['Articulos']   = $this->Tmpmovim_model->getArticulos($numeroTemporal);    
     $data['tmpfacencab_id']    = $numeroTemporal;
-    $data['fpagos']         = $this->Fpagos_model->getAll();
+    $data['fpagos']         = $this->Tmpfpagos_model->getPagosComprobante($numeroTemporal);
     $data['total'] = 0;
+    $data['paginaMuestroFpagos']  = "'". base_url()."index.php/pos/billing/muestroFpagos/".$numeroTemporal."'";
+    $data['paginaCambioComprob']  = "'". base_url()."pos/billing/cambioTipoComprobante/".$numeroTemporal."/'";
     Template::set($data);
     Template::render();
+  }
+  function muestroFpagos($tmpfacencab_id){
+    $this->output->enable_profiler(false);
+    $fpagos = $this->Tmpfpagos_model->getPagosComprobante($tmpfacencab_id);
+    $jsonString= json_encode($fpagos);
+    header('Content-Type: application/json');
+    echo $jsonString;    
   }
   function addArticulo(){
     $this->output->enable_profiler(false);
@@ -97,13 +106,15 @@ class Billing extends MY_Controller{
       $renglon = $this->Tmpmovim_model->agregoAlComprobante($tmpfacencab_id,$codigobarra, $cantidad, $precio);//agrego al comprobante
       $totales = $this->Tmpmovim_model->getTotales($tmpfacencab_id);//busco totales
       $resultado = $this->Tmpfacencab_model->updateTotales($tmpfacencab_id,$totales->Total);// actualizo totales
-      $json = array(  'codigoB'     => $codigobarra,
+      $json = array(  'id'          => $renglon,
+                      'codigoB'     => $codigobarra,
                       'descripcion' => $articulo->nombre, 
-                      'cantidad'    => $cantidad, 
-                      'precio'      => $precio, 
+                      'cantidad'    => sprintf("%5.2f",$cantidad), 
+                      'precio'      => sprintf("$%10.2f",$precio),
+                      'importe'     => sprintf("$%10.2f",$cantidad*$precio),
                       'error'       => false, 
                       'errorTipo'   => '',
-                      'Totales'     => $totales->Total, 
+                      'Totales'     => sprintf("$%10.2f",$totales->Total), 
                       'Bultos'      => $totales->Bultos
                     );
     }else{
@@ -122,54 +133,32 @@ class Billing extends MY_Controller{
     echo $jsonString;
     //$this->load->view('pos/billing/presupuestoDetalle', $data);
   }
-  function delArticulo(){
-    $id_tmpmov = $this->input->post('codmov');
-    $id_tmpencab = $this->Tmpmovim_model->delArticulo($id_tmpmov);
-    $puesto = $this->puesto;
-    $data['Articulos']    = $this->Tmpmovim_model->getArticulos($id_tmpencab,$puesto);
-    $data['valorCero']    = false;
-    $data['existe']       = true;
-    $data['puesto']       = $puesto;
-    $data['id_tmpencab']  = $id_tmpencab;
-    $fecha                = new DateTime();
-    $data['fechoy']       = $fecha->format('d/m/Y');
-    $data['totales']      = $this->Tmpmovim_model->getTotales($id_tmpencab, $puesto);
-    $data['Articulos']    = $this->Tmpmovim_model->getArticulos($id_tmpencab, $puesto);
-    $data['idCuenta']     = 1;
-    $data['tipcom_id']    = 1;
-    $data['nombreCuenta'] = $this->Cuenta_model->getNombre(1);
-    $data['condVtaId']    = 0;
-    $data['condVta']      = ($this->Cuenta_model->getCtacte(1)==1)?"Cta Cte":"Contado";
-    $data['fpagos']       = array(1=>'Efectivo',2=>'CtaCte');
-    $this->load->view('pos/factura/presupuestoDetalle', $data);
+  function delArticulo($id){
+    $tmpfacencab_id = $this->Tmpmovim_model->delArticulo($id);
+    $totales = $this->Tmpmovim_model->getTotales($tmpfacencab_id);//busco totales
+    $resultado = $this->Tmpfacencab_model->updateTotales($tmpfacencab_id,$totales->Total);// actualizo totales
+    Template::redirect('pos/billing/presupuesto');
   }
   function cancelo(){
-    $id_tmpencab = $this->input->post('id_tmpencab');
-    $puesto      = $this->input->post('puesto');
-    $this->Tmpmovim_model->vacio($id_tmpencab,$puesto);
-    $data['Articulos']    = $this->Tmpmovim_model->getArticulos($id_tmpencab,$puesto);
-    $data['valorCero']    = false;
-    $data['existe']       = true;
-    $data['puesto']       = $puesto;
-    $data['id_tmpencab']  = $id_tmpencab;
-    $fecha                = new DateTime();
-    $data['fechoy']       = $fecha->format('d/m/Y');
-    $data['totales']      = $this->Tmpmovim_model->getTotales($id_tmpencab, $puesto);
-    $data['Articulos']    = $this->Tmpmovim_model->getArticulos($id_tmpencab, $puesto);
-    $data['idCuenta']     = 1;
-    $data['tipcom_id']    = 1;
-    $data['nombreCuenta'] = $this->Cuenta_model->getNombre(1);
-    $data['condVtaId']    = 0;
-    $data['condVta']      = ($this->Condiciones_model->getCtacte(1)==1)?"Cta Cte":"Contado";
-    $this->load->view('pos/factura/presupuestoDetalle', $data);
+    $id = $this->input->post('tmpfacencab_id');
+    $this->Tmpfpagos_model->vacio($id);
+    $this->Tmpmovim_model->vacio($id);
+    $this->Tmpfacencab_model->vacio($id);
   }
-  function cambioCuenta(){
-    $puesto=$this->input->post('puesto');
-    $id_tmpencab=$this->input->post('id_tmpencab');
-    $cuenta=$this->input->post('cuenta');
-    $cliente = $this->Cuenta_model->getByIdComprobante($cuenta);
-    $this->Tmpmovim_model->cambioCuenta($puesto, $id_tmpencab, $cuenta, $cliente->ctacte);
-    //Template::render();
+  function cambioCuenta($tmpfacencab_id, $cuenta_id){
+    $cliente = $this->Cuenta_model->getByIdComprobante($cuenta_id);
+    $this->Tmpfacencab_model->cambioCuenta($tmpfacencab_id, $cuenta_id);
+    /* si es ctecte asumir ctacte com oforma de pago */
+    if($cliente->ctacte==1){
+      $this->Tmpfpagos_model->cambiarFpFull($tmpfacencab_id,9);
+    }else{
+      $this->Tmpfpagos_model->cambiarFpFull($tmpfacencab_id,1);
+    }
+    Template::redirect('pos/billing/presupuesto');
+  }
+  public function cambioTipoComprobante($id,$tipcom_id){
+    $this->Tmpfacencab_model->cambioComprobante($id,$tipcom_id);
+    Template::redirect('pos/billing/presupuesto');    
   }
   function cambioCondicion(){
     $puesto=$this->input->post('puesto');

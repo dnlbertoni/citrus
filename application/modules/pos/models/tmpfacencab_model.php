@@ -17,6 +17,11 @@ class Tmpfacencab_model extends MY_Model{
     $q = $this->db->insert_id();
     return $q;
   }
+  function vacio($id){
+    $this->db->where('id', $id);
+    $this->db->delete($this->getTable());
+    return true;
+  }  
   function getDatosUltimo($puesto){
     $this->db->select_max('id');
     $this->db->from($this->getTable());
@@ -37,6 +42,7 @@ class Tmpfacencab_model extends MY_Model{
   function getComprobante($id){
     $this->db->select('puesto');
     $this->db->select('numero');
+    $this->db->select('tipcom_id');
     $this->db->select('cuenta_id');
     $this->db->select('cuenta.nombre as cuenta_nombre',false);
     $this->db->from($this->getTable());
@@ -47,30 +53,48 @@ class Tmpfacencab_model extends MY_Model{
   function updateTotales($id, $importe){
     $this->db->select('importe');
     $this->db->from($this->getTable());
-    $this->db->where('tmpfacencab_id', $id);
+    $this->db->where('id', $id);
     $importeAnterior = $this->db->get()->row()->importe;
     $this->db->_reset_select();  
-    
-    $importeDiferencia = $importe - $importeAnterior;
-    
     $this->db->set('importe', $importe);
-    $this->db->where('tmpfacencab_id', $id);
+    $this->db->where('id', $id);
     $this->db->update($this->getTable());
     $this->db->_reset_select();
-    // busco todas  las formas de pago vigentes
+    
+// busco todas  las formas de pago vigentes para ese comprobante
     $this->db->from('tmp_fpagos');
-    $fpagos = $this->db->get()->result();
     $this->db->where('tmpfacencab_id', $id);
+    $fpagos = $this->db->get()->result();
     $this->db->_reset_select();
+
+    $importeDiferencia = $importe - $importeAnterior;
+    
     foreach ($fpagos as $fp){
-      $nuevo[$fp->id] = ( ( $fp->monto / $importeAnterior ) * $importeDiferencia ) + $fp->monto;
+      if($fp->monto==0){
+        $calculo = $importeDiferencia; 
+      }else{
+       $calculo = ( ( $fp->monto / $importeAnterior ) * $importeDiferencia ) + $fp->monto;        
+      }
+      $nuevo[$fp->id] = $calculo;
     }
     /* actualizo fpagos */
-    foreach ($nuevo as $$n) {
-      $this->db->set('importe', $importe);
-      $this->db->update($this->getTable());
-      $this->db->where('id', $n->id);
+    foreach ($nuevo as $key=>$value) {
+      $this->db->set('monto', $value);
+      $this->db->update('tmp_fpagos');
+      $this->db->where('id', $key);
       $this->db->_reset_select();      
     }
   }
+  function cambioCuenta($id, $cuenta_id){
+    $this->db->set('cuenta_id', $cuenta_id);
+    $this->db->where('id', $id);
+    $this->db->update($this->getTable());
+    return $id;
+  }
+  function cambioComprobante($id, $tipcom_id){
+    $this->db->set('tipcom_id', $tipcom_id);
+    $this->db->where('id', $id);
+    $this->db->update($this->getTable());
+    return $id;
+  }  
 }

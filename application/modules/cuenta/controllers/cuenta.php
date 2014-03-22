@@ -145,7 +145,10 @@ class Cuenta extends MY_Controller{
     $data['cuentas'] = $cuentas;
     $data['target']    = $this->input->post('destino');
     $data['targetCuenta'] = sprintf("'%sindex.php/cuenta/agregar/ajax'", base_url());
-    $this->load->view('cuenta/listadoAjax', $data);
+    //$this->load->view('cuenta/listadoAjax', $data);
+    $jsonString= json_encode($data);
+    header('Content-Type: application/json');
+    echo $jsonString;      
   }
   function buscoNombreAjax(){
     $valor = $this->input->post('nombreTXT');
@@ -215,7 +218,10 @@ class Cuenta extends MY_Controller{
         $data['directo'] = false;
         $data['cuentas'] = $this->Cuenta_model->ListadoFiltradoNombre($cuenta,$filtro);
       };
-      $this->load->view('resultCuentaX', $data);
+      //$this->load->view('resultCuentaX', $data);
+      $jsonString= json_encode($data);
+      header('Content-Type: application/json');
+      echo $jsonString;
     };
   }
 }

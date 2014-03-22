@@ -1,12 +1,16 @@
 <div class="section">
   <div class="container">
-    <div class="row">
+    <div class="row-fluid">
       <div class="col-lg-4 col-md-4">
         <?php echo form_open('pos/billing/addArticulo', 'id="addCart"');?>
-        <input type="hidden" name="tmpfacencab_id" value="<?php echo $tmpfacencab_id ?>" id="id_tmpencab" />
-        Articulo <?php echo form_input('codigobarra','','id="codigobarra"');?>
-        <span style="font-size: 8px;">(cant)*(articulo) | (cant)*(precio)*(articulo)</span>
+        <input type="hidden" name="tmpfacencab_id" value="<?php echo $tmpfacencab_id ?>" id="tmpfacencab_id" />
+        Articulo <?php echo form_input('codigobarra','','id="codigobarra" data-toggle="tooltip" data-placement="top" title="articulo | (cant)*(articulo) | (cant)*(precio)*(articulo)"');?>
         <?php echo form_close();?>
+        <input type="hidden" id="paginaPrecio" value="<?php echo base_url(),'index.php/articulos/precioAjax'?>" />
+        <input type="hidden" id="paginaCliente" value="<?php echo base_url(),'index.php/cuenta/searchCuentaX/1'?>" />
+        <input type="hidden" id="paginaCancelo" value="<?php echo base_url(),'index.php/pos/billing/cancelo'?>" />
+        <input type="hidden" id="paginaTicket" value="<?php echo base_url(),'index.php/pos/billing/printTicket/',$tmpfacencab_id?>" />
+        <input type="hidden" id="paginaIndex" value="<?php echo base_url(),'index.php/pos/billing/presupuesto'?>" />         
       </div>
       <div class="col-lg-8 col-md-8">
         <div class="btn-toolbar" role="toolbar">
@@ -24,111 +28,128 @@
         </div>
       </div>
     </div><!-- /.row -->
-<!-- ver com oeliminar -->
-<input type="hidden" id="paginaPrecio" value="<?php echo base_url(),'index.php/articulos/precioAjax'?>" />
-<input type="hidden" id="paginaBorroArticulo" value="<?php echo base_url(),'index.php/pos/factura/delArticulo'?>" />
-<input type="hidden" id="paginaCliente" value="<?php echo base_url(),'index.php/cuenta/searchCuentaX/1'?>" />
-<input type="hidden" id="paginaCancelo" value="<?php echo base_url(),'index.php/pos/factura/cancelo'?>" />
-<input type="hidden" id="paginaTicket" value="<?php echo base_url(),'index.php/pos/factura/printTicket/',$tmpfacencab_id?>" />
-<input type="hidden" id="paginaIndex" value="<?php echo base_url(),'index.php/pos/factura/presupuesto'?>" />        
-<div class="row">
-  &nbsp;
-<div id="loading">
-  <?php echo Assets::image('loading.gif',array('alt'=>"Loading..."));?>
-</div>  
-</div>
-<div class="row text-center"><!-- fila de comprobante -->
-        <div class="col-lg-3 col-md-3">
-          <div class="panel panel-info">
-            <div class="panel-heading"><?php echo $fechoy;?>&nbsp;<span id="clock"></span></div>
-            <div class="panel-body">
-              <ul class="list-group">
-                <li class="list-group-item"><span id="tipcom_nom">Ticket</span></li>
-                <li class="list-group-item">Nro:<?php printf("%04.0f - %08.0f", $presuEncab->puesto, $presuEncab->numero); ?></li>
-              </ul>
+    <div class="span12">&nbsp;</div>
+  <div class="row text-center"><!-- fila de comprobante -->
+     <div class="col-lg-2 col-md-2">
+            <div class="panel <?php echo ($presuEncab->tipcom_id==1)?'panel-info':'panel-danger';?>">
+              <div class="panel-heading"><span id="tipcom_nom"><?php echo ($presuEncab->tipcom_id==1)?'Ticket':'Remito';?></span></div>
+              <div class="panel-body">
+                <ul class="list-group">
+                  <li class="list-group-item"><?php printf("%04.0f", $presuEncab->puesto)?></li>
+                  <li class="list-group-item"><?php printf("%08.0f",$presuEncab->numero); ?></li>
+                </ul>
+              </div>
+              <div class=" panel-footer"><?php echo $fechoy;?> <span id="clock"></span></div>
             </div>
           </div>
-        </div>
-        <div class="col-lg-3 col-md-3">
-          <div class="panel panel-success">
-            <div class="panel-heading">Cliente</div>
-            <div class="panel-body">
-              <ul class="list-group">
-                <li class=" list-group-item" ><span id="idCuenta"><?php echo sprintf("( %04u )",$presuEncab->cuenta_id)?></span>&nbsp;<span id="nombreCuenta"><?php echo $presuEncab->cuenta_nombre?></span></li>
-              </ul>
-            </div>
-            <div class="panel-footer ">
-              <p id="bultos">Total Bultos <?php echo intval($totales->Bultos) ?></p>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-2">
-          <div class="panel panel-warning">
-            <div class=" panel-heading">Forma de Pago</div>
-            <div class=" panel-body">
-              <table class="table">
-                <tbody>
-                  <?php foreach( $fpagos as $fp):?>
-                  <tr>
-                    <td><?php echo $fp->nombre?></td>
-                  </tr>
-                  <?php endforeach;?>
-                </tbody>
-              </table>
+          <div class="col-lg-3 col-md-3">
+            <div class="panel panel-success">
+              <div class="panel-heading">Cliente</div>
+              <div class="panel-body">
+                <ul class="list-group">
+                  <li class=" list-group-item" ><span id="idCuenta"><?php echo sprintf("( %04u )",$presuEncab->cuenta_id)?></span>&nbsp;<span id="nombreCuenta"><?php echo $presuEncab->cuenta_nombre?></span></li>
+                </ul>
+              </div>
+              <div class="panel-footer ">
+                <p id="bultos">Total Bultos <?php echo intval($totales->Bultos) ?></p>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col-lg-4 col-md-4">
-          <div class="panel panel-warning">
-            <div class=" panel-heading">Importe</div>
-            <div class=" panel-body">
-              <ul class=" list-group">
-                <li class=" list-group-item text-danger" style="font-size:56px;" id="importe"><?php printf("$%01.2f", floatval($totales->Total));?></li>
-              </ul>
+          <div class="col-lg-3 col-md-3">
+            <div class="panel panel-warning">
+              <div class=" panel-heading">Forma de Pago</div>
+              <div class=" panel-body">
+                <div  id="fpagosList">
+                </div>
+              </div>
             </div>
+          </div>
+          <div class="col-lg-4 col-md-4">
+            <div class="panel panel-warning">
+              <div class=" panel-heading">Importe</div>
+              <div class=" panel-body">
+                <ul class=" list-group">
+                  <li class=" list-group-item text-danger" style="font-size:56px; background-color: #fed22f" id="importe"><?php printf("$%01.2f", floatval($totales->Total));?></li>
+                </ul>
+              </div>
 
+            </div>
+          </div>      
+        </div><!-- /.row -->
+        <div class="row">
+          <div class="col-log-12 col-md-12">
+            <table class="table" id="brief">
+              <thead>
+                <tr>
+                  <th width="50%">Descripcion</th>
+                  <th width="5%">Cantidad</th>
+                  <th width="10%">Precio</th>
+                  <th colspan="2">Importe</th>
+                </tr>              
+              </thead>
+              <tbody>
+                <?php foreach($Articulos as $articulo):?>
+                <tr >
+                  <td><?php echo $articulo->Nombre?></td>
+                  <td><?php echo $articulo->Cantidad ?></td>
+                  <td align="right"><?php printf("$%01.2f", $articulo->Precio );?></td>
+                  <td align="right"><?php printf("$%01.2f", $articulo->Importe )?></td>
+                  <td>
+                    <?php echo anchor('pos/billing/delArticulo/'.$articulo->codmov, '<span class="fa fa-minus-circle"></span>','class="btn btn-circle btn-danger botdel"')?>
+                  </td>
+                </tr>
+                <?php $total += $articulo->Importe;?>
+                <?php endforeach;?>              
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="4" align="right">Total</th>
+                  <th align="right" colspan="2" id="importe2"><?php printf("$%01.2f", $total);?></th>
+                </tr>              
+              </tfoot>
+            </table>        
           </div>
-        </div>      
-      </div><!-- /.row -->
-      <div class="row">
-        <div class="col-log-12 col-md-12">
-          <table class="table" id="brief">
-            <thead>
-              <tr>
-                <th width="50%">Descripcion</th>
-                <th width="5%">Cantidad</th>
-                <th width="10%">Precio</th>
-                <th colspan="2">Importe</th>
-              </tr>              
-            </thead>
-            <tbody>
-              <?php foreach($Articulos as $articulo):?>
-              <tr>
-                <td><?php echo $articulo->Nombre?></td>
-                <td><?php echo $articulo->Cantidad ?></td>
-                <td align="right"><?php printf("$%01.2f", $articulo->Precio );?></td>
-                <td align="right"><?php printf("$%01.2f", $articulo->Importe )?></td>
-                <td>
-                  <div id="<?php echo $articulo->codmov?>"class="botdel">Quitar Articulo</div>
-                </td>
-              </tr>
-              <?php $total += $articulo->Importe;?>
-              <?php endforeach;?>              
-            </tbody>
-            <tfoot>
-              <tr>
-                <th colspan="4" align="right">Total</th>
-                <th align="right" colspan="2"><?php printf("$%01.2f", $total);?></th>
-              </tr>              
-            </tfoot>
-          </table>        
-        </div>
-  </div> <!-- /.row-->
+    </div> <!-- /.row-->
   </div><!-- /.container -->
 </div><!-- /.section -->
 
-<div id="cliente"></div>
-<div id="cuentaAjax"></div>
+<div class="modal fade" id="cliente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Busco Cliente</h4>
+        </div>
+        <div class="modal-body">
+          <?php echo form_open('cuenta/searchCuentaXDo', 'id="consultaCuenta"')?>
+          <?php echo form_input('cuentaTXT','','id="cuentaTXT"')?>
+          <input type="hidden" id="filtro" value="1" />
+          <?php echo form_submit('Consultar', 'Consultar');?>
+          <?php echo form_close()?>
+          <div id="datosCliente">
+            <table class="table" id="datosClientes">
+              <thead>
+                <tr>
+                  <th>Codigo</th>
+                  <th>Nombre</th>
+                  <th>CUIT</th>
+                  <th>Cond. Vta</th>
+                  <th>&nbsp;</th>
+                </tr>              
+              </thead>
+              <tbody>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+  </div>  
+</div><!-- /.modal -->
+
 <div id="precio"></div>
 <div id="imprimo"></div>
 
@@ -136,6 +157,7 @@
 
 $(document).ready(function(){
   setInterval('updateClock()', 1000);  
+  muestroFpagos();
   $("#loading").css('text-align', 'center');
   $("#loading").hide();
   $("#cuentaAjax").hide();
@@ -161,11 +183,8 @@ $(document).ready(function(){
         case 'f8':
           CambioCondicion();
           break;
-        case 'f9':
-          ImprimoDescuento();
-          break;
         case 'f10':
-          ImprimoRemito();
+          CambioComprobante();
           break;
         case 'f12':
           Imprimo();
@@ -199,6 +218,10 @@ $(document).ready(function(){
   $("#F10").click(function(){ImprimoRemito();});
   $("#F12").button();
   $("#F12").click(function(){ImprimoTicket();});
+  $("#addCart").submit(function(e){
+    e.preventDefault();
+  });
+  $("#brief > tbody > tr").first().addClass('info');
 });
 
 function AgregoArticulo(e){
@@ -212,10 +235,12 @@ function AgregoArticulo(e){
               if(data.error){
                 MuestroError(data.codigoB, data.errorTipo);
               }else{
-                AgregoRenglon(data.descripcion, data.cantidad, data.precio);
+                AgregoRenglon(data.id,data.descripcion, data.cantidad, data.precio, data.importe);
                 $("#bultos").html(data.Bultos);
                 $("#importe").html(data.Totales);
-              }
+                $("#importe2").html(data.Totales);
+              };
+              muestroFpagos();
               $("#codigobarra").addClass('focus');
               $("#codigobarra").val('');
               $("#codigobarra").focus();
@@ -226,8 +251,22 @@ function AgregoArticulo(e){
 function MuestroError(CB, error){
   alert( CB + " " + error);
 }
-function AgregoRenglon(descripcion, cantidad, precio){
-  linea = "<tr><td>"+descripcion+"</td><td>"+cantidad+"</td><td>"+precio+"</td><td>"+(cantidad*precio)+"</td></tr>";
+function AgregoRenglon(id, descripcion, cantidad, precio, importe){
+  $("#brief > tbody > tr").first().removeClass('info')
+  url = <?php echo "'".base_url()."pos/billing/delArticulo/'";?>;
+  boton = '<a href="'+url+id+'" class="btn btn-circle btn-danger botdel"><span class="fa fa-minus-circle"></span></a>'
+  linea  = "<tr class=' info'>";
+  linea += "<td>";
+  linea += descripcion;
+  linea += "</td><td>";
+  linea += cantidad;
+  linea += "</td><td align='right'>";
+  linea += precio;
+  linea += "</td><td align='right'>";
+  linea += importe;
+  linea += "</td>";
+  linea += "<td>"+boton+"</td>";
+  linea += "</tr>";
   $("#brief > tbody").prepend(linea);
 }
 function ConsultoPrecio(e){
@@ -256,120 +295,39 @@ function ConsultoPrecio(e){
            );
 }
 function CanceloComprobante(){
-    $("#cuenta").val(1);
-    puesto       = $("#puesto").val();
-    id_temporal = $("#id_tmpencab").val();
+    id_temporal = $("#tmpfacencab_id").val();
     pagina       = $("#paginaCancelo").val();
-    $.ajax({
-            url: pagina,
-            contentType: "application/x-www-form-urlencoded",
-            global: false,
-            type: "POST",
-            data: ({puesto : puesto,
-                    id_tmpencab : id_temporal
-                  }),
-            dataType: "html",
-            async:true,
-            beforeSend: function(){$("#loading").fadeIn();},
-            success: function(msg){
-               $("#brief").html(msg);
-               $("#codigobarra").val('');
-               $("#codigobarra").focus();
-               $("#loading").fadeOut(200);
-            }
-    }).responseText;
+    $.post( pagina, {tmpfacencab_id : id_temporal }, function(){
+         location.reload();
+       });
 }
 function CambioCliente(){
-  $("#codigobarra").removeClass('focus');
-  var dialogOpts = {
-        modal: true,
-        bgiframe: true,
-        autoOpen: false,
-        hide: "explode",
-        height: 300,
-        width: 500,
-        title: "Consulta de Clientes",
-        draggable: true,
-        resizeable: true,
-        close: function(){
-          valor  = $("#cuentaAjax > .codigo").html();
-          nombre = $("#cuentaAjax > .nombre").html();
-          ctacte = $("#cuentaAjax > .ctacte").html();
-          ctacteId = (ctacte === "CtaCte" )?1:0;
-          tipcom = $("#cuentaAjax > .tipcom").html();
-          $("#idCuenta").html(valor);
-          $("#cuentaAjax").html(valor);
-          $("#cuenta").val(valor);
-          $("#nombreCuenta").html(nombre);
-          $("#condVta").html(ctacte);
-          $("#condVtaId").val(ctacteId);
-          $("#tipcom_id").val(tipcom);
-          $("#tipcom_nom").html("Factura");
-          claseCondVta = (ctacte=="CtaCte")?"ui-state-error":"ui-state-default";
-          $("#condVta").removeAttr('class');
-          $("#condVta").addClass(claseCondVta);
+    $("#cliente").modal({keyboard: true});
+    $("#cliente").modal('show');
+    $("#cliente").on('shown.bs.modal', function(){
+      $("#cuentaTXT").focus();
+    });
+    $("#cliente").on('hide.bs.modal', function(){
+      $("#cuentaTXT").val('');
+      $("#datosClientes > tbody").html('');
+    });  
+    $("#cuentaTXT").bind('keyup',function(e){
+      var code = e.keyCode;
+      if( ( code<90 && code>57 )  || code===13 || code===8 ){
+        envioForm();
+      };
+   });
+   $("#consultaCuenta").submit(function(e){
+      e.preventDefault();
+      envioForm();
+   });    
+}
+function CambioComprobante(){
+  tipo = ($("#tipcom_nom").html()=='Ticket')?6:1;
+  url = <?php echo $paginaCambioComprob;?> + tipo;
+  window.location.replace(url);  
+}
 
-          $("#cliente").dialog('destroy');
-          $("#codigobarra").addClass('focus');
-          $("#codigobarra").val('');
-          $("#codigobarra").focus();
-        }
-     };
-  $("#cliente").dialog(dialogOpts);   //end dialog
-  $("#cliente").load($("#paginaCliente").val(), [], function(){
-                 $("#cliente").dialog("moveToTop");
-                 $("#cliente").dialog("open");
-              }
-           );
-}
-function CambioCondicion(){
-  valor = $("#condVta").html();
-  if(valor == "Contado"){
-    $("#condVta").html('CtaCte');
-    $("#condVta").removeClass('ui-state-default');
-    $("#condVta").addClass('ui-state-error');
-    $("#condVtaId").val(1);
-  }else{
-    $("#condVta").html('Contado');
-    $("#condVta").removeClass('ui-state-error');
-    $("#condVta").addClass('ui-state-default');
-    $("#condVtaId").val(0);
-  }
-}
-function ImprimoRemito(){
-  tipo =   parseInt($("#tipcom_id").val());
-  if(tipo == 6){
-	$("#tipcom_nom").removeClass('ui-state-default');
-	if($("#idCuenta").val()==1){
-	  $("#tipcom_id").val('1');
-	  $("#tipcom_nom").html('Ticket');
-	}else{
-	  $("#tipcom_id").val('2');
-	  $("#tipcom_nom").html('Factura');
-	}
-  }else{
-    $("#tipcom_id").val('6');
-    $("#tipcom_nom").html('Remito');
-    $("#tipcom_nom").addClass('ui-state-default');
-  }
-}
-function ImprimoDescuento(){
-  tipo =   parseInt($("#tipcom_id").val());
-  if(tipo == 9){
-	$("#tipcom_nom").removeClass('ui-state-default');
-	if($("#idCuenta").val()==1){
-	  $("#tipcom_id").val('1');
-	  $("#tipcom_nom").html('Ticket');
-	}else{
-	  $("#tipcom_id").val('2');
-	  $("#tipcom_nom").html('Factura');
-	}
-  }else{
-    $("#tipcom_id").val('9');
-    $("#tipcom_nom").html('Descuento CTACTE');
-    $("#tipcom_nom").addClass('ui-state-default');
-  }
-}
 function ImprimoTicket(){
   var url = $("#paginaTicket").val() + '/' + $("#tipcom_id").val() + '/' + $("#condVtaId").val();
   var dialogOpts = {
@@ -438,5 +396,64 @@ function delArt(codmov){
            $("#loading").fadeOut(100);
         }
   }).responseText;
+}
+/* funciones de muestra del comprobante */
+function muestroFpagos(){
+ $("#fpagosList").html('');
+ $.getJSON(<?php echo $paginaMuestroFpagos;?>,function(data){
+   $.each(data,function(key, dato){
+     if(dato.fpagos_id==1){
+       label='alert alert-success';
+     }else{
+       if(dato.fpagos_id==9){
+        label='alert alert-danger';
+      }else{
+        label='alert alert-warning';
+      }
+     }
+     linea = "<div class='"+label+"'>"+dato.pagoNombre+" " + dato.monto+"</div>";
+     $("#fpagosList").append(linea);
+   });
+ });
+}
+function envioForm(){
+  cuenta  = $("#cuentaTXT").val().trim();
+  filtro = $("#filtro").val();
+  pagina       = $("#consultaCuenta").attr('action');
+  if(cuenta.length > 0){
+    $.ajax({
+            url: pagina,
+            contentType: "application/x-www-form-urlencoded",
+            global: false,
+            type: "POST",
+            data: ({cuentaTXT : cuenta,
+                    filtro    : filtro
+                  }),
+            dataType: "json",
+            async:true,
+            success: function(msg){
+              muestroClientes(msg.cuentas);
+            }
+    }).responseText;
+  }
+}
+function muestroClientes(data){
+  $("#datosClientes > tbody").html('');
+  $.each(data, function(key, cuenta){
+    url = <?php echo "'".base_url()."pos/billing/cambioCuenta/$tmpfacencab_id/'"?>;
+    linea  = "<tr><td>"+cuenta.id+"</td>";
+    linea += "<td>"+cuenta.nombre+"</td>";
+    linea += "<td>"+cuenta.cuit+"</td>";
+    if(cuenta.ctacte==1){
+      clase = 'btn btn-success';
+      label = 'Ctacte';
+    }else{
+      clase = 'btn btn-danger';         
+      label = 'Contado';
+    }
+    linea += "<td><a href='"+url+cuenta.id+"' class='"+clase+" btnCli' id='btn_"+cuenta.id+"'><span class='fa fa-check-circle-o'></span> "+label+"</a></td>";   
+    linea += "</tr>";
+    $("#datosClientes > tbody").append(linea);
+  })
 }
 </script>

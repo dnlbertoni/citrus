@@ -1797,6 +1797,15 @@ table th[class*="col-"] {
   background-color: #faf2cc;
 }
 
+.table-hover > tbody > tr > td.info:hover,
+.table-hover > tbody > tr > th.info:hover,
+.table-hover > tbody > tr.info:hover > td,
+.table-hover > tbody > tr.info:hover > th {
+  color: #ffffff;
+  background-color: #39b3d7;
+  border-color: #269abc;
+}
+
 @media (max-width: 767px) {
   .table-responsive {
     width: 100%;
@@ -4796,12 +4805,13 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 
 .navbar-inverse {
-  background-color: #222222;
-  border-color: #080808;
+  background-color: #f0ad4e;
+  border-color: #000000;
 }
 
 .navbar-inverse .navbar-brand {
-  color: #999999;
+  font-weight: bolder;
+  color: #468847;
 }
 
 .navbar-inverse .navbar-brand:hover,
@@ -4811,11 +4821,12 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 
 .navbar-inverse .navbar-text {
-  color: #999999;
+  color: #468847;
 }
 
 .navbar-inverse .navbar-nav > li > a {
-  color: #999999;
+  font-weight: bolder;
+  color: #468847;
 }
 
 .navbar-inverse .navbar-nav > li > a:hover,
