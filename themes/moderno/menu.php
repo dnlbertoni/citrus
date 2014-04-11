@@ -15,7 +15,7 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><?php echo anchor('pos/billing/presupuesto','<span class="fa fa-shopping-cart"></span>')?></li>
-            <li><a href="services.html"><span class="fa fa-wrench"></span></a></li>
+            <li><?php echo anchor('setting/','<span class="fa fa-wrench"></span>')?></li>
             <li><a href="contact.php">Contact</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Portfolio <b class="caret"></b></a>
