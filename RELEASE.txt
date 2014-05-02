@@ -1,35 +1,4 @@
 /**
-* Version 3.5.1
+* Version 4.1
 */
 
-/*****************************
-* actualizacion 07/08/2013
-* - Integracion de multimedia radio en el generador de presupuestos
-* - Busqueda solamente por la Marca sin tener en cuenta la submarca ni el rubro 
- 
-
-caja y estadisticas de venta
-
-
-/**
-* ultima actualizacion: /03/2013
-* mejoramiento del modulo de ctacte
-* se puede quitar de la cuenta
-**/
-
-/**
-* ultima actualizacion: 15/03/2013
-* Unificacion para la libreria template
-**/
-
-/**
-* ultima actualizacion: 15/01/2012
-* se modifico el modulo de ctacte para hacerlo mas integral a la informacion
-**/
-
-
-/**
-* ultima actualizacion: 12/10/2011
-* se modifico el codigo de factura.php para que se puede elegir por que via imprimir
-* esta seteado por codigo en una variable no es modificable por el usuario
-**/
