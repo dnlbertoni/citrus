@@ -148,6 +148,31 @@
 	},
 	"file_history":
 	[
+		"/C/Users/dnl/AppData/Local/Temp/scp01068/etc/apache2/sites-enabled/ebox-mywebsql2.autoservsantalucia.com.ar.conf",
+		"/C/Users/dnl/AppData/Local/Temp/scp02202/etc/apache2/sites-enabled/ebox-desa2.autoservsantalucia.com.ar.conf",
+		"/C/Users/dnl/AppData/Local/Temp/scp55322/etc/apache2/sites-available/ebox-mywebsql2.autoservsantalucia.com.ar.conf",
+		"/C/Users/dnl/AppData/Local/Temp/scp19272/etc/apache2/conf-enabled/phpmyadmin.conf",
+		"/C/Users/dnl/AppData/Local/Temp/scp21668/etc/phpmyadmin/config.inc.php",
+		"/C/Users/dnl/AppData/Local/Temp/scp22769/etc/apache2/conf-available/phpmyadmin.conf",
+		"/C/Users/dnl/AppData/Local/Temp/scp06198/usr/share/phpmyadmin/setup/lib/common.inc.php",
+		"/C/Users/dnl/AppData/Local/Temp/scp08527/usr/share/phpmyadmin/config.sample.inc.php",
+		"/C/Users/dnl/AppData/Local/Temp/scp06965/usr/share/phpmyadmin/setup/config.php",
+		"/C/Users/dnl/AppData/Local/Temp/scp07522/usr/share/phpmyadmin/setup/index.php",
+		"/C/Users/dnl/AppData/Local/Temp/scp07147/usr/share/phpmyadmin/setup/lib/ConfigGenerator.class.php",
+		"/C/Users/dnl/AppData/Local/Temp/scp05086/usr/share/phpmyadmin/setup/validate.php",
+		"/C/Users/dnl/AppData/Local/Temp/scp06739/etc/mysql/my.cnf",
+		"/C/Users/dnl/AppData/Local/Temp/scp13590/etc/mysql/my.cnf",
+		"/C/Users/dnl/AppData/Local/Temp/scp25549/srv/www/mywebsql2.autoservsantalucia.com.ar/.htaccess",
+		"/C/Users/dnl/AppData/Local/Temp/scp11413/var/www/fiscal/3/log/x00026450.txt",
+		"/C/Users/dnl/Desktop/mywebsql/status.php",
+		"/C/Users/dnl/AppData/Local/Temp/scp27504/etc/apache2/sites-available/ebox-desa2.autoservsantalucia.com.ar.conf",
+		"/C/Users/dnl/AppData/Local/Temp/scp28037/var/log/apache2/desa2.autoservsantalucia.com.ar-access.log",
+		"/C/Users/dnl/AppData/Local/Temp/scp26459/etc/apache2/apache2.conf",
+		"/C/Users/dnl/AppData/Local/Temp/scp26826/etc/apache2/ports.conf",
+		"/C/Users/dnl/Desktop/mywebsql/.htaccess",
+		"/C/Users/dnl/Desktop/jhonson.csv",
+		"/E/soft/games/Disney.Universe-RELOADED/rld-duni.iso",
+		"/F/soft/games/Counter Strike Condition Zero CD1.iso",
 		"/C/Users/dnl/Desktop/tbl_articulos.csv",
 		"/Z/application/modules/articulos/controllers/articulos.php",
 		"/C/Users/dnl/AppData/Local/Temp/scp14266/var/www/application/modules/articulos/views/archivoLS.php",
@@ -210,6 +235,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			",",
+			".",
 			","
 		],
 		"highlight": true,
@@ -218,6 +245,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			".",
+			",",
 			";"
 		],
 		"reverse": false,
