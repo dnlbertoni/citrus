@@ -24,4 +24,5 @@ class Setting extends Admin_Controller{
     Template::set('menuTable', $menues);
     Template::render();
   }
+    /** @TODO definir el modulo y el menu dependiendo si es desarrollo o produccino */
 }
