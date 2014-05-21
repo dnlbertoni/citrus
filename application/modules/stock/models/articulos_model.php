@@ -32,7 +32,15 @@ class Articulos_model extends My_Model {
 		$this->db->order_by('idsubrubro', 'asc');
 		return $this->db->get()->result();
 	}
-
+    function getDatosInventario($CB){
+        $this->db->select('id_articulo');
+        $this->db->select('descripcion_articulo as nombre');
+        $this->db->select('codigobarra_articulo as codigobarra');
+        $this->db->select('cantxbulto_articulo as cantidadBulto');
+        $this->db->from($this->getTable());
+        $this->db->where('codigobarra_articulo', $CB);
+        return $this->db->get()->row();
+    }
 }
 
 /* End of file articulos_model.php */

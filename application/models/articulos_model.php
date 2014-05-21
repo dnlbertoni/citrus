@@ -14,5 +14,4 @@ class Articulos_model extends MY_Model{
     $this->db->where('id_articulo', $id);
     return $this->db->get()->row();
   }
-  
 }
