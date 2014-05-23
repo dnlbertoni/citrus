@@ -12,7 +12,8 @@ class Inventario extends MY_Controller{
         Template::set_theme('citrus/'); // TODO sacar e unificar
         $this->load->model('Articulos_model');
         $this->load->model('Stkinvmae_model');
-    }
+        $this->load->model('Stkinvmovim_model');
+        $this->load->model('Subrubros_model');    }
     function index(){
         $last=$this->Stkinvmae_model->getUltimo();
         $estado = "No existen inventarios Realizados aun";
@@ -52,6 +53,7 @@ class Inventario extends MY_Controller{
         Template::redirect('stock/inventario/');
     }
     function conteo($deposito, $inventario){
+        $articulos=$this->Stkinvmovim_model->getFromDeposito($deposito, $inventario);
         switch ($deposito){
             case 'dpc1':
                 $depositoNombre="Primer Sector del Deposito Principal";
@@ -66,20 +68,62 @@ class Inventario extends MY_Controller{
                 $depositoNombre="Salon de ventas y gondolas";
                 break;
         }
+        Template::set('articulos', $articulos);
+        Template::set('unidadesDefault', ($deposito=='salon')?1:0);
+        Template::set('bultosDefault', ($deposito=='salon')?0:1);
         Template::set('paginaAjaxDatosArticulo','"'. base_url().'index.php/stock/inventario/datosArticulo"');
+        Template::set('depositoId', $deposito);
+        Template::set('inventarioId', $inventario);
         Template::set('depositoNombre', $depositoNombre);
         Template::render();
     }
     function agregoAlConteo(){
-        $CB         = $this->input->post('CB');
-        $cantidad   = $this->input->post('cantidad');
-        $inventario = $this->input->post('inventario');
-        $deposito   = $this->input->post('deposito');
+        $this->output->enable_profiler(false);
+        $CB              = $this->input->post('CB');
+        $cantidad        = $this->input->post('cantidad');
+        $unidades        = $this->input->post('unidades');
+        $cantidadBultos  = $this->input->post('cantidadBultos');
+        $cantidadXbultos = $this->input->post('cantidadXbultos');
+        $inventario      = $this->input->post('inventario');
+        $deposito        = $this->input->post('deposito');
+        $articulo        = $this->Articulos_model->getArticulo($CB);
+        $renglonId       = $this->Stkinvmovim_model->agregarAlConteo($articulo->id,$CB, $articulo->detalle, $cantidad, $unidades,$cantidadBultos, $cantidadXbultos, $deposito, $inventario);
+        /* modifico la cantidad por bultos si el conteo es en los depositos */
+        if($deposito != 'salon' && $cantidadXbultos > 3){
+            $this->Subrubros_model->actualizoCantidadBultos($articulo->idsubrubro,$cantidadXbultos );
+            $this->Articulos_model->actualizoCantidadBultos($articulo->id, $cantidadXbultos);
+        };
+        $hoy = new DateTime();
+        $resultado = array(
+            'id' => $renglonId,
+            'nombre' => $articulo->detalle,
+            'codigobarra' => $CB,
+            'unidades'    => $unidades,
+            'cantbultos' =>$cantidadBultos,
+            'cantxbultos' => $cantidadXbultos,
+            'cantidad'    => $cantidad,
+            'fecha' => $hoy->format('d/m/Y H:i:s')
+        );
+        echo json_encode($resultado);
+    }
+    function sacarDelConteo($id){
+        $this->output->enable_profiler(false);
+        $this->Stkinvmovim_model->borrar($id);
+        echo json_encode(array('mensaje'=>'OK'));
     }
     function datosArticulo($CB){
         $this->output->enable_profiler(false);
         $articulo=$this->Articulos_model->getDatosInventario($CB);
-        $datos=array('nombre'=>$articulo->nombre);
+        $datos=array('nombre'=>$articulo->nombre,
+                    'bultos' => ($articulo->cantidadBultoSub > 0)?$articulo->cantidadBultoSub:$articulo->cantidadBulto
+        );
         echo json_encode($datos);
+    }
+    function modificarConteo($tipo, $variable, $id){
+        $this->output->enable_profiler(false);
+        $cantidad=($variable =="plus")?1:-1;
+        $campo=($tipo=="box")?"cant_bultos":"unidades_sueltas";
+        $articulo = $this->Stkinvmovim_model->modificaCantidad($id, $campo, $cantidad);
+        echo json_encode(array('numero'=>$articulo->{$campo}, "total"=>$articulo->cantidad));
     }
 }

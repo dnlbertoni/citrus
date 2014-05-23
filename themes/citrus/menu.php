@@ -17,7 +17,7 @@
             <li><?php echo anchor('pos/factura/presupuesto','<span class="fa fa-shopping-cart"></span>')?></li>
             <li><?php echo anchor('setting/','<span class="fa fa-wrench"></span>')?></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Puesto Venta <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-money"></span> Puesto Venta <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="portfolio-1-col.html">1 Column Portfolio</a></li>
                 <li><a href="portfolio-2-col.html">2 Column Portfolio</a></li>
@@ -27,7 +27,7 @@
               </ul>
             </li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">I.V.A.<b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-legal"></span> I.V.A.<b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="blog-home-1.html">Blog Home 1</a></li>
                 <li><a href="blog-home-2.html">Blog Home 2</a></li>
@@ -35,7 +35,7 @@
               </ul>
             </li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Stock <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-truck"></span> Stock <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="full-width.html">Articulos</a></li>
                 <li><a href="sidebar.html">Rubros/Subrubros</a></li>
@@ -50,7 +50,7 @@
               </ul>
             </li>
               <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cta.Cte. <b class="caret"></b></a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-suitcase"></span> Cta.Cte. <b class="caret"></b></a>
                   <ul class="dropdown-menu">
                       <li><a href="full-width.html">Full Width Page</a></li>
                       <li><a href="sidebar.html">Sidebar Page</a></li>

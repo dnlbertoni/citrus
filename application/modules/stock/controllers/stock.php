@@ -2,18 +2,14 @@
 
 class Stock extends MY_Controller {
 
-	public function __construct()
-	{
+	public function __construct(){
 		parent::__construct();
-    	Template::set_theme('moderno/');
+    	Template::set_theme('citrus/');
 		$this->load->model('Articulos_model');
 	}
-
-	public function index()
-	{
+	public function index(){
 		Template::render();
 	}
-
 	public function imprimirListado(){
 		$articulos=$this->Articulos_model->getArticulos();
 		$this->output->enable_profiler(true);
