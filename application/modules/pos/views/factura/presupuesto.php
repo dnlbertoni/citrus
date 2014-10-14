@@ -92,7 +92,12 @@ $(document).ready(function(){
    });
   // fin de chequeo de teclas de funciones
   //inicio de envio de datos al comprobante
-  $("#addCart").submit(function(e){AgregoArticulo(e);} );
+  $("#addCart").submit(function (e) {
+    //valido el codigo de barra
+
+    codigobarra = $("#codigobarra").val();
+    AgregoArticulo(e);
+  });
   //fin de envio de datos al comprobante
   //activo botones
   $("#F1").button();

@@ -81,6 +81,24 @@ class Ctacte extends MY_Controller{
     Template::set($data);
     Template::render();
   }
+
+  function liquidacion ($id = FALSE)
+  {
+    $fechoy = getdate ();
+    $id     = ($id) ? $id : $this->input->post ('cuenta');
+    if (!$id) {
+      Template::redirect ('ctacte/');
+    };
+    $data['liquidados'] = $this->Ctacte_movim_model->getLiquidacion ($id);
+    $data['periodos']   = $this->Ctacte_liq_model->getPeriodos ($id);
+    $data['promedio']   = $this->Ctacte_liq_model->promedio ($id);
+    $data['cliente']    = $this->Cuenta_model->getNombre ($id);
+    $data['periodo']    = $fechoy['year'] . '-' . $fechoy['mon'];
+    $data['ocultos']    = array ( 'cuenta' => $id );
+    $data['idCuenta']   = $id;
+    Template::set ($data);
+    Template::render ();
+  }
   function cobrar($idLiq){
     $liq   = $this->Ctacte_liq_model->getById($idLiq);
     $data['nombreCuenta'] = $this->Cuenta_model->getNombre($liq->id_cuenta);

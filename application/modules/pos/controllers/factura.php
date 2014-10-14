@@ -119,6 +119,9 @@ class Factura extends MY_Controller{
       $data['condVta']     = ($this->Cuenta_model->getCtacte( $data['Articulos'][0]->cuenta)==1)?"Cta Cte":"Contado";
     };
     $data['codigobarra']  =$codigobarra;
+    if (!$data['existe']) {
+      $this->Articulos_model->agregoLog ($codigobarra, 'pos/factura/presupuesto');
+    }
     $this->load->view('pos/factura/presupuestoDetalle', $data);
   }
   function delArticulo(){
@@ -551,6 +554,13 @@ class Factura extends MY_Controller{
     );
     $this->Ctactemovim_model->graboComprobante($datosEncab);
     $num = $this->Numeradores_model->updateCompCtaCte($ptorem, $numero+1);
+  }
+
+  function desdeRemito ($id)
+  {
+    $data['fac']     = $this->Facencab_model->getDetalle ($id);
+    $data['art']     = $this->Facmovim_model->getDetalle ($id);
+    $data['idMovim'] = $id;
   }
   function _imprimeTicket($puesto, $idencab, $items, $total){
     $this->load->library("hasar");

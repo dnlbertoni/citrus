@@ -168,7 +168,21 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-
+<div class="modal fade modal-lg " role="dialog" id="ventanaError" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header dialog-header-error">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Error</h4>
+      </div>
+      <div class="modal-body text-center">
+        <p>El articulo no se encuentra en la base de datos</p>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <script>
     $(document).ready(function(){
@@ -188,7 +202,7 @@
                }
            };
        });
-        $("#cantidadBultosModal").bind('keydown',function(e){
+      $("#cantidadBultosModal").bind('keydown', function (e) {
             var code = e.keyCode;
             if($("#cantidadBultosModal").hasClass('focus')){
                 if($("#cantidadBultosModal").val().trim().length > 0){
@@ -205,7 +219,7 @@
                 }
             };
         });
-        $("#cantidadXbultosModal").bind('keydown',function(e){
+      $("#cantidadXbultosModal").bind('keydown', function (e) {
             var code = e.keyCode;
             if($("#cantidadXbultosModal").hasClass('focus')){
                 if($("#cantidadXbultosModal").val().trim().length > 0){
@@ -217,7 +231,7 @@
                 }
             };
         });
-        $("#unidadesModal").bind('keydown', function(e){
+      $("#unidadesModal").bind('keydown', function (e) {
             var code = e.keyCode;
             if($("#unidadesModal").hasClass('focus')){
                 if($("#unidadesModal").val().trim().length > 0){
@@ -242,14 +256,22 @@
           DatosDelArticulo(valor);
        });
        $("#ventanaCantidades").on('shown.bs.modal', function(e){
+         <?php if($depositoId!="salon"):?>
            $(this).find('input:text:visible:first').focus();
            $(this).find('input:text:visible:first').addClass('focus');
+         <?php else :?>
+         $("#unidadesModal").focus();
+         $("#unidadesModal").addClass('focus');
+         <?php endif;?>
        });
         $("#ventanaCantidades").on('hidden.bs.modal', function(e){
             $("#codigobarra").val('');
             $("#unidades").val('');
             $("#cantidadBultos").val('');
             $("#cantidadXBultos").val('');
+          $("#unidadesModal").val('');
+          $("#cantidadBultosModal").val('');
+          $("#cantidadXBultosModal").val('');
             $("#codigobarra").addClass('focus');
             $("#codigobarra").focus();
         });
@@ -303,18 +325,22 @@
         }
     }
     function PreguntoCantidadBultos(e){
-        $("#codigobarra").removeClass('focus');
-        valor=$("#codigobarra").val();
-        DatosDelArticulo(valor);
-        $("#ventanaCantidades").modal('show');
+      $("#codigobarra").removeClass('focus');
+      valor = $("#codigobarra").val();
+      DatosDelArticulo(valor);
     }
     function DatosDelArticulo(codigo){
         url=<?php echo $paginaAjaxDatosArticulo?> + '/' + codigo;
         $.getJSON(url, function(data){
+          if (data.existe) {
             $("#nombreArticulo").text(data.nombre);
             $("#nombreArticuloModal").text(data.nombre);
             $("#cantidadXbultosModal").val(data.bultos);
             $("#cantidadXbultos").val(data.bultos);
+            $("#ventanaCantidades").modal('show');
+          } else {
+            $("#ventanaError").modal('show');
+          }
         });
     }
     function envioArticuloAlConteo(){

@@ -42,7 +42,6 @@ switch($_SERVER['REMOTE_ADDR']){
   case '192.168.1.102':
     $puesto = 3;
         $rutaUniversal='/var/www/fiscal';
-
     break;
   default:
     $puesto = 4;
@@ -61,6 +60,7 @@ define('PUESTO', $puesto);
 define('PRREMITO','laser03');
 define('PRCARTEL','laser03');
 define('ABSOLUT_PATH',$rutaUniversal);
-
+define('ACTIVO', 1);
+define('SUSPENDIDO', 0);
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

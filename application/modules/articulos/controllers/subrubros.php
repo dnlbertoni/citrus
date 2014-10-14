@@ -12,9 +12,11 @@ class Subrubros extends MY_Controller{
     $datos['tareas'][] = array('articulos/subrubros/', 'Subrubros');
     $datos['tareas'][] = array('articulos/marcas/', 'Marcas');
     $datos['tareas'][] = array('articulos/submarcas/', 'Submarcas');
+    /*
     Template::set($datos);
-    Template::set_block('tareas', 'tareas'); // panel de tareas
 
+    Template::set_block('tareas', 'tareas'); // panel de tareas
+*/
     $subrubros = $this->Subrubros_model->getAllConArticulos();
     $data['subrubros'] = $subrubros;
     Assets::add_js('ui-tableFilter');

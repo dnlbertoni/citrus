@@ -49,14 +49,13 @@ Promedio Mensual $<?php echo sprintf("%05.2F",$promedio)?>
             <td><?php echo $hist->importe?></td>
             <td><?php echo sprintf("%3.2f ",$hist->importe/30)?></td>
             <td><?php echo sprintf("%3.2f ",$hist->importe/$promedio*100)?>%</td>
-            <td><?php echo
-anchor('ctacte/pdf/liquidacion/'.$hist->id,'Reimprimir','class="botLiq"')?></td>
+          <td><?php echo anchor ('ctacte/liquidacion/' . $hist->id, 'Ver', 'class="botView"') ?></td>
+          <td><?php echo anchor ('ctacte/pdf/liquidacion/' . $hist->id, 'Reimprimir', 'class="botLiq"') ?></td>
             <td>
                 <?php if($hist->estado=="C"):?>
                     Cobrado
                 <?php else:?>
-                    <?php echo
-anchor('ctacte/cobrar/'.$hist->id,'Cobrar', 'class="botCob"')?>
+                  <?php echo anchor ('ctacte/cobrar/' . $hist->id, 'Cobrar', 'class="botCob"') ?>
                 <?php endif;?>
             </td>
         </tr>

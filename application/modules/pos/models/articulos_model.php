@@ -19,4 +19,14 @@ class Articulos_model extends MY_Model{
       return false;
     }
   }
+
+  public function agregoLog ($codigobarra, $modulo)
+  {
+    $this->db->set ('codigobarra', $codigobarra);
+    $this->db->set ('modulo', $modulo);
+    $this->db->set ('fecha', 'NOW()', FALSE);
+    $this->db->set ('estado', SUSPENDIDO);
+    $this->db->insert ('stk_articulos_tmp');
+    return $this->db->insert_id ();
+  }
 }

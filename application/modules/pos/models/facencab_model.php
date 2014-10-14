@@ -68,4 +68,11 @@ class Facencab_model extends MY_Model{
     return $this->db->get()->row()->numero;
   }
 
+  function getDetalle ($idencab)
+  {
+    $this->db->where ('id', $idencab);
+    $this->db->from ($this->getTable ());
+    $datos = $this->db->get ()->result ();
+    return $datos;
+  }
 }

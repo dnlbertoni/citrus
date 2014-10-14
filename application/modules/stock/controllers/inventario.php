@@ -5,8 +5,8 @@
  * Date: 18/05/14
  * Time: 18:07
  */
-
-class Inventario extends MY_Controller{
+class Inventario extends Admin_Controller
+{
     function __construct(){
         parent::__construct();
         Template::set_theme('citrus/'); // TODO sacar e unificar

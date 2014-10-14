@@ -15,7 +15,7 @@ class Billing extends MY_Controller{
     $this->load->model('Facencab_model', '',true);
     $this->load->model('Fpagos_model');
     //$this->load->model('cuenta/Cuenta_model','',true);
-    Template::set_theme('moderno/');    
+    Template::set_theme ('citrus/');
   }
   function presupuesto(){
     //busco datos del previo
@@ -124,7 +124,12 @@ class Billing extends MY_Controller{
                       'errorTipo'   => $errorTipo
                     );
     };
-
+    /*
+     * grabo en la tabla temporal de articulos sin grabar
+     */
+    if (!$existe) {
+      $this->Articulos_model->agregoLog ($codigobarra, 'pos/factura/presupuesto');
+    }
     /*
      * exporto los datos del comprobante
      */
@@ -768,7 +773,7 @@ class Billing extends MY_Controller{
       $this->fpdf->SetXY(0,$linea+22);
       $this->fpdf->Cell(0,5,"Firma del Cliente",0,1,'C');
     };
-    $nombre = "/var/www/fiscal/".PUESTO . "/pdf/ticket.pdf";
+    $nombre = ABSOLUT_PATH . PUESTO . "/pdf/ticket.pdf";
     $this->fpdf->Output($nombre, 'F');
     $cmd=sprintf("lp -o media=Custom.100x148mm %s -d %s", $nombre,PRREMITO);
     shell_exec($cmd);

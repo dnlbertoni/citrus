@@ -15,8 +15,7 @@
     <!-- Add custom CSS here -->
     <link href="/themes/citrus/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
-    <?php echo Assets::css('modern-business') ?> 
-    <?php //echo Assets::css('bootstrap') ?>       
+    <?php //echo Assets::css('bootstrap') ?>
 
     <!-- JavaScript -->
     <script src="/themes/citrus/js/jquery2.js"></script>
@@ -29,7 +28,7 @@
 
   <body>
     <!-- menu navegacion -->
-    <?php echo Template::block('menu', 'menu')?>
+    <?php echo Template::block ('menu', 'barra') ?>
 
 
     <div class="container">

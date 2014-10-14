@@ -1,7 +1,7 @@
 *
 {
-	margin: 0em;
-	padding: 0em;
+    margin: 0;
+    padding: 0;
 }
 
 a
@@ -67,7 +67,7 @@ body
 #menu ul
 {
 	list-style: none;
-	padding: 0em;
+    padding: 0;
 }
 
 #menu li
@@ -194,6 +194,25 @@ body
 	text-decoration: none;
 }
 
+#columnFull {
+    width: 895px;
+    float: right;
+    position: relative;
+}
+
+#columnFull p {
+    text-align: justify;
+    margin-bottom: 2.0em;
+    color: #4F4F2B;
+}
+
+#columnFull h3 {
+    font-size: 1.2em;
+    border-bottom: dashed 1px #CECF8F;
+    margin-bottom: 1.0em;
+}
+
+
 table {
 	margin:auto;
 	font-family: Arial, sans-serif;
@@ -237,7 +256,7 @@ input{
   border-style: solid;
 }
 input button{
-  border-width: 0px;
+    border-width: 0;
   border-color: #000;
   border-style: none;
 }

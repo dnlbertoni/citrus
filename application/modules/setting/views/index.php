@@ -40,7 +40,7 @@
               <!-- /.panel de parametros -->
               <div class="panel panel-default">
                   <div class="panel-heading">
-                      <i class="fa fa-bar-chart-o fa-fw"></i> Modulos
+                    <i class="fa fa-cubes fa-fw"></i> Modulos
                       <div class="pull-right">
                           <div class="btn-group">
                               <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -48,13 +48,10 @@
                                   <span class="caret"></span>
                               </button>
                               <ul class="dropdown-menu pull-right" role="menu">
-                                  <li><a href="#">Agregar</a>
-                                  </li>
-                                  <li><a href="#">Asignar a Roles</a>
-                                  </li>
-                                  <li class="divider"></li>
-                                  <li><a href="#">Relacionar con Menues</a>
-                                  </li>
+                                <li><?php echo anchor ('setting/addModulo', 'Nuevo Modulo', 'data-toggle="modal" data-target="#remoteModal"'); ?></a></li>
+                                <li>Asignar Roles</li>
+                                <li class="divider"></li>
+                                <li><a href="#">Relacionar con Menues</a></li>
                               </ul>
                           </div>
                       </div>
@@ -62,7 +59,7 @@
                   <!-- /.panel-heading -->
                   <div class="panel-body">
                       <div class="row">
-                          <div class="col-lg-6">
+                        <div class="col-lg-12">
                               <div class="table-responsive">
                                   <table class="table table-bordered table-hover table-striped">
                                       <thead>
@@ -72,6 +69,7 @@
                                               <th>Nombre Clase</th>
                                               <th>Icono</th>
                                               <th>Tipo</th>
+                                            <th>&nbsp;</th>
                                           </tr>
                                       </thead>
                                       <tbody>
@@ -80,10 +78,10 @@
                                               <td><?php echo $mod->id?></td>
                                               <td><?php echo $mod->nombre?></td>
                                               <td><?php echo $mod->clase?></td>
-                                              <td><span class="<?php echo $mod->clase?>"></span></td>
-                                              <td>
+                                            <td class="text-center"><span class="<?php echo $mod->clase ?>"></span></td>
+                                            <td class="text-center">
                                                 <?php
-                                                switch ($mod->texto){
+                                                switch ( $mod->modo_texto ) {
                                                   case 1:
                                                     if(trim($mod->clase)==''){
                                                       $leyenda = "Solo Texto";
@@ -105,27 +103,27 @@
                                                 };?>
                                                 <span class="<?php echo $clase?>"><?php echo $leyenda?></span>
                                               </td>
+                                            <td>
+                                              <?php echo anchor ('setting/editModulo/' . $mod->id, '<span class="fa fa-edit fa-fw"></span>', 'class="btn btn-primary btn-xs" data-toggle="modal"
+                                                        data-target="#remoteModal"');?>
+                                            </td>
                                           </tr>
                                         <?php endforeach;?>
                                       </tbody>
                                   </table>
                               </div>
-                              <!-- /.table-responsive -->
-                          </div>
-                          <!-- /.col-lg-6 (nested) -->
-                          <div class="col-lg-4">
-                              no se que va
-                          </div>
-                          <!-- /.col-lg-4 (nested) -->
+                          <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.col-lg-12 (nested) -->
                       </div>
-                      <!-- /.row -->
+                    <!-- /.row -->
                   </div>
-                  <!-- /.panel-body -->
+                <!-- /.panel-body -->
               </div>
-              <!-- /.panel de modulos -->
+            <!-- /.panel de modulos -->
               <div class="panel panel-default">
                   <div class="panel-heading">
-                      <i class="fa fa-bar-chart-o fa-fw"></i> Menues
+                    <i class="fa fa-cube fa-fw"></i> Menues
                       <div class="pull-right">
                           <div class="btn-group">
                               <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -133,7 +131,7 @@
                                   <span class="caret"></span>
                               </button>
                               <ul class="dropdown-menu pull-right" role="menu">
-                                  <li><a href="#">Agregar</a>
+                                <li><?php echo anchor ('setting/addMenu', 'Nuevo menu', 'data-toggle="modal" data-target="#remoteModal"'); ?></li>
                                   </li>
                                   <li><a href="#">Asignar a Roles</a>
                                   </li>
@@ -147,7 +145,7 @@
                   <!-- /.panel-heading -->
                   <div class="panel-body">
                       <div class="row">
-                          <div class="col-lg-6">
+                        <div class="col-lg-12">
                               <div class="table-responsive">
                                   <table class="table table-bordered table-hover table-striped">
                                       <thead>
@@ -155,11 +153,10 @@
                                               <th>#</th>
                                               <th>Nombre Modulo</th>
                                               <th>Nombre</th>
-                                              <th>Nombre Clase</th>
                                               <th>Icono</th>
                                               <th>Link</th>
-                                              <th>Destino</th>
                                               <th>Tipo</th>
+                                            <th>&nbsp;</th>
                                           </tr>
                                       </thead>
                                       <tbody>
@@ -168,10 +165,8 @@
                                               <td><?php echo $men->id?></td>
                                               <td><?php echo $men->nombreModulo?></td>
                                               <td><?php echo $men->nombre?></td>
-                                              <td><?php echo $men->clase?></td>
                                               <td><span class="<?php echo $men->clase?>"></span></td>
                                               <td><?php echo $men->link?></td>
-                                              <td><?php echo $men->target?></td>
                                               <td>
                                                 <?php
                                                     if(trim($men->clase)==''){
@@ -184,6 +179,8 @@
                                                 ;?>
                                                 <span class="<?php echo $clase?>"><?php echo $leyenda?></span>
                                               </td>
+                                            <td><?php echo anchor ('setting/editMenu/' . $men->id, '<span class="fa fa-edit fa-fw"></span>', 'class="btn btn-primary btn-xs" data-toggle="modal"
+                                                        data-target="#remoteModal"');?></td>
                                           </tr>
                                         <?php endforeach;?>
                                       </tbody>
@@ -191,11 +188,7 @@
                               </div>
                               <!-- /.table-responsive -->
                           </div>
-                          <!-- /.col-lg-6 (nested) -->
-                          <div class="col-lg-4">
-                              no se que va
-                          </div>
-                          <!-- /.col-lg-4 (nested) -->
+                        <!-- /.col-lg-12 (nested) -->
                       </div>
                       <!-- /.row -->
                   </div>
@@ -391,3 +384,19 @@
 
 </div>
 <!-- /#wrapper -->
+  <!-- Modal Remoto -->
+  <div class="modal fade" id="remoteModal" tabindex="-1" role="dialog" aria-labelledby="remoteModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+// Empty modal content when modal is closed
+      $('#remoteModal').on('hidden.bs.modal', function () {
+        $(this).removeData('bs.modal');
+      });
+    });
+  </script>

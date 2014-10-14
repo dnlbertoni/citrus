@@ -39,7 +39,9 @@
       </div>
       <?php echo Template::block('tareas');?>
       <?php else:?>
-        <?php echo Template::yield1()?>
+        <div id="columnFull">
+          <?php echo Template::yield1 () ?>
+        </div>
       <?php endif;?>
     </div>
     <div id="ventanaAjax"></div>

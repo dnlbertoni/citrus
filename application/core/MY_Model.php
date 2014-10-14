@@ -14,6 +14,7 @@ class MY_Model extends CI_Model{
   // The main table name
   private $_table;
   private $_primaryKey;
+  private $_modelo = array ();
   public function __construct() {
      parent::__construct();
   }
@@ -24,15 +25,17 @@ class MY_Model extends CI_Model{
    */
   public function setTable($tabla) {
 	  $this->_table = $tabla;
-	  $campos = $this->getCampos($tabla);
+    $campos = $this->getCampos ();
 	  foreach($campos as $camp){
 		  if($camp->primary_key == 1){
 			  $this->_primaryKey = $camp->name;
 		  }
 	  }
   }
-  public function getCampos($tabla){
-	  return $this->db->field_data($tabla);
+
+  public function getCampos ()
+  {
+    return $this->db->field_data ($this->_table);
   }
   public function getTable() {
           return $this->_table;
@@ -41,10 +44,56 @@ class MY_Model extends CI_Model{
 	  return $this->_primaryKey;
   }
 
+  public function setModelo ($modelo)
+  {
+    if (is_array ($modelo)) {
+      $this->_modelo = $modelo;
+    } else {
+      return "no es una matriz";
+    }
+  }
+
+  public function getModelo ()
+  {
+    return $this->_modelo;
+  }
+
+  public function getInicial ()
+  {
+    $campos    = $this->getCampos ();
+    $resultado = array ();
+    foreach ($campos as $campo) {
+      $value = '';
+      switch ( $campo->type ) {
+        case 'boolean':
+        case 'bool':
+          $value = (bool) $value;
+          break;
+
+        case 'integer':
+        case 'int':
+          $value = (int) $value;
+          break;
+
+        case 'float':
+          $value = (float) $value;
+          break;
+
+        case 'string':
+          $value = (string) $value;
+          break;
+
+        default:
+          break;
+      }
+      $resultado[$campo->name] = $value;
+    };
+    return (object) $resultado;
+  }
   // Log as Error each time nonexisting method called.
   public function __call($name, $arguments) {
           $args = implode(',',$arguments);
-          log_message('error', $name.'('.$args.') Not exists.');
+    log_message ('error', $name . '(' . $args . ') No EXISTE.');
           return FALSE;
   }
 
@@ -202,8 +251,13 @@ class MY_Model extends CI_Model{
           }
           return $datos;
   }
-  public function getAll($orden=FALSE, $limite=false){
+
+  public function getAll ($estado = 'ALL', $orden = FALSE, $limite = FALSE)
+  {
     $this->db->from($this->getTable());
+    if ($estado != 'ALL') {
+      $this->db->where ('estado', $estado);
+    };
     if($orden)
 	  $this->db->order_by($orden);
     if($limite){
@@ -237,5 +291,5 @@ class MY_Model extends CI_Model{
   }
 }
 /* End of file MY_Model.php*/
-/* Location: ./application/model/MY_Model.php */
+/* Location: ./application/core/MY_Model.php */
 

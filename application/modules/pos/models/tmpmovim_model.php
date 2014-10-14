@@ -1,10 +1,10 @@
 <?php
 class Tmpmovim_model extends MY_Model{
-  var $tabla = "tmp_movimientos";
+  var $tabla = "tmp_movim";
   var $tablaArticulos = "tbl_articulos";
   function  __construct() {
     parent::__construct();
-    $this->setTable('tmp_movimientos');
+    $this->setTable ('tmp_movim');
   }
   function agregoAlComprobante($id, $codigobarra, $cantidad, $precio ){
     $this->db->select('id_tmpmov');

@@ -1,10 +1,13 @@
 <div class="section">
   <div class="container">
-    <div class="row-fluid">
+    <div class="row">
       <div class="col-lg-4 col-md-4">
         <?php echo form_open('pos/billing/addArticulo', 'id="addCart"');?>
-        <input type="hidden" name="tmpfacencab_id" value="<?php echo $tmpfacencab_id ?>" id="tmpfacencab_id" />
-        Articulo <?php echo form_input('codigobarra','','id="codigobarra" data-toggle="tooltip" data-placement="top" title="articulo | (cant)*(articulo) | (cant)*(precio)*(articulo)"');?>
+        <div class="form-group">
+          <input type="hidden" name="tmpfacencab_id" value="<?php echo $tmpfacencab_id ?>" id="tmpfacencab_id"/>
+          <?php echo form_label ('Articulo', 'codigobarra'); ?>
+          <?php echo form_input ('codigobarra', '', 'id="codigobarra" data-toggle="tooltip" data-placement="top" title="articulo | (cant)*(articulo) | (cant)*(precio)*(articulo)" class="form-control"'); ?>
+        </div>
         <?php echo form_close();?>
         <input type="hidden" id="paginaPrecio" value="<?php echo base_url(),'index.php/articulos/precioAjax'?>" />
         <input type="hidden" id="paginaCliente" value="<?php echo base_url(),'index.php/cuenta/searchCuentaX/1'?>" />
@@ -28,8 +31,7 @@
         </div>
       </div>
     </div><!-- /.row -->
-    <div class="span12">&nbsp;</div>
-  <div class="row text-center"><!-- fila de comprobante -->
+    <div class="row text-center"><!-- fila de comprobante -->
      <div class="col-lg-2 col-md-2">
             <div class="panel <?php echo ($presuEncab->tipcom_id==1)?'panel-info':'panel-danger';?>">
               <div class="panel-heading"><span id="tipcom_nom"><?php echo ($presuEncab->tipcom_id==1)?'Ticket':'Remito';?></span></div>
@@ -78,36 +80,40 @@
         </div><!-- /.row -->
         <div class="row">
           <div class="col-log-12 col-md-12">
-            <table class="table" id="brief">
-              <thead>
-                <tr>
-                  <th width="50%">Descripcion</th>
-                  <th width="5%">Cantidad</th>
-                  <th width="10%">Precio</th>
-                  <th colspan="2">Importe</th>
-                </tr>              
-              </thead>
-              <tbody>
-                <?php foreach($Articulos as $articulo):?>
-                <tr >
-                  <td><?php echo $articulo->Nombre?></td>
-                  <td><?php echo $articulo->Cantidad ?></td>
-                  <td align="right"><?php printf("$%01.2f", $articulo->Precio );?></td>
-                  <td align="right"><?php printf("$%01.2f", $articulo->Importe )?></td>
-                  <td>
-                    <?php echo anchor('pos/billing/delArticulo/'.$articulo->codmov, '<span class="fa fa-minus-circle"></span>','class="btn btn-circle btn-danger botdel"')?>
-                  </td>
-                </tr>
-                <?php $total += $articulo->Importe;?>
-                <?php endforeach;?>              
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th colspan="4" align="right">Total</th>
-                  <th align="right" colspan="2" id="importe2"><?php printf("$%01.2f", $total);?></th>
-                </tr>              
-              </tfoot>
-            </table>        
+            <div class="panel panel-primary">
+              <div class="panel-heading text-center"><h4>Detalle de la Compra</h4></div>
+              <div class="panel-body">
+                <table class="table" id="brief">
+                  <thead>
+                  <tr>
+                    <th width="50%">Descripcion</th>
+                    <th width="5%">Cantidad</th>
+                    <th width="10%">Precio</th>
+                    <th colspan="2">Importe</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <?php foreach ($Articulos as $articulo): ?>
+                    <tr id="<?php echo $articulo->codmov; ?>">
+                      <td><?php echo $articulo->Nombre ?></td>
+                      <td><?php echo $articulo->Cantidad ?></td>
+                      <td class="text-right"><?php printf ("$%01.2f", $articulo->Precio); ?></td>
+                      <td class="text-right"><?php printf ("$%01.2f", $articulo->Importe) ?></td>
+                      <td>
+                        <button type="button" class="btn btn-circle btn-xs btn-danger botdel">
+                          <span class="fa fa-minus-circle"></span><?php echo anchor ('pos/billing/delArticulo/', ' ') ?>
+                        </button>
+                      </td>
+                    </tr>
+                    <?php $total += $articulo->Importe; ?>
+                  <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+              <div class="panel-footer">
+                Total <span id="importe2"><?php printf ("$%01.2f", $total); ?></span>
+              </div>
+            </div>
           </div>
     </div> <!-- /.row-->
   </div><!-- /.container -->
@@ -150,11 +156,26 @@
   </div>  
 </div><!-- /.modal -->
 
+<div class="modal fade" id="imprimo" tabindex="-1" role="dialog" aria-labelledby="imprimo" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Impresion de comprobante...</h4>
+      </div>
+      <div class="modal-body">
+        <div class="fa fa-spinner fa-spin"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div><!-- /.modal impresion-->
+
 <div id="precio"></div>
-<div id="imprimo"></div>
 
 <script>
-
 $(document).ready(function(){
   setInterval('updateClock()', 1000);  
   muestroFpagos();
@@ -223,7 +244,6 @@ $(document).ready(function(){
   });
   $("#brief > tbody > tr").first().addClass('info');
 });
-
 function AgregoArticulo(e){
     e.preventDefault();
     pagina = $("#addCart").attr('action');
@@ -327,8 +347,7 @@ function CambioComprobante(){
   url = <?php echo $paginaCambioComprob;?> + tipo;
   window.location.replace(url);  
 }
-
-function ImprimoTicket(){
+function ImprimoTicketVie() {
   var url = $("#paginaTicket").val() + '/' + $("#tipcom_id").val() + '/' + $("#condVtaId").val();
   var dialogOpts = {
         modal: true,
@@ -350,6 +369,9 @@ function ImprimoTicket(){
                  $("#imprimo").dialog("moveToTop");
                  $("#imprimo").dialog("open");
               });
+}
+function Imprimo() {
+  $("#imprimo").modal('show');
 }
 function getSpecialKey(code){
   if(code > 111 && code < 124){

@@ -40,13 +40,12 @@
 if($_SERVER['REMOTE_ADDR']==="192.168.1.102"){
   $route['default_controller'] = "pos/factura/presupuesto";
 }else{
-  $route['default_controller'] = "facturas";
+  $route['default_controller'] = "dashboard";
 }
 //$route['default_controller'] = "facturas";
 $route['404_override'] = '';
 $route['ticket'] = 'pos/factura/presupuesto';
 $route['wizard'] = 'articulos/wizard/index';
-
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
