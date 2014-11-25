@@ -9,4 +9,5 @@ class Modulos_model extends MY_Model{
     parent::__construct();
     $this->setTable ('cfg_modulos');
   }
+
 }

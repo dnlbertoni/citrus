@@ -1,5 +1,12 @@
 <?php
-class Billing extends MY_Controller{
+
+/**
+ * Class Billing
+ *
+ * @property Tmpfacencab_model
+ */
+class Billing extends Admin_Controller
+{
   var $puesto;
   var $PrinterRemito;
   function  __construct() {
@@ -14,8 +21,6 @@ class Billing extends MY_Controller{
     $this->load->model('Cuenta_model','',true);
     $this->load->model('Facencab_model', '',true);
     $this->load->model('Fpagos_model');
-    //$this->load->model('cuenta/Cuenta_model','',true);
-    Template::set_theme ('citrus/');
   }
   function presupuesto(){
     //busco datos del previo
@@ -48,6 +53,8 @@ class Billing extends MY_Controller{
     $data['total'] = 0;
     $data['paginaMuestroFpagos']  = "'". base_url()."index.php/pos/billing/muestroFpagos/".$numeroTemporal."'";
     $data['paginaCambioComprob']  = "'". base_url()."pos/billing/cambioTipoComprobante/".$numeroTemporal."/'";
+    $data['mediosDePagos'] = $this->Fpagos_model->getAll ();
+    $data['tiposMdP'] = array ( 'EFECTIVO' => array ( 'label' => 'success', 'icon' => 'fa-money' ), 'CTACTE' => array ( 'label' => 'primary', 'icon' => 'fa-users' ), 'DEBITO' => array ( 'label' => 'primary', 'icon' => 'fa-credit-card' ), 'TARJETA' => array ( 'label' => 'warning', 'icon' => 'fa-credit-card' ), 'CHEQUE' => array ( 'label' => 'danger', 'icon' => 'fa-suitcase' ) );
     Template::set($data);
     Template::render();
   }
@@ -56,9 +63,10 @@ class Billing extends MY_Controller{
     $fpagos = $this->Tmpfpagos_model->getPagosComprobante($tmpfacencab_id);
     $jsonString= json_encode($fpagos);
     header('Content-Type: application/json');
-    echo $jsonString;    
+    echo $jsonString;
   }
-  function addArticulo(){
+
+  function addArticuloOLD (){
     $this->output->enable_profiler(false);
     $codigobarra = $this->input->post('codigobarra');
     $tmpfacencab_id = $this->input->post('tmpfacencab_id');
@@ -86,9 +94,19 @@ class Billing extends MY_Controller{
     * busco el articulo y la info que necesito *
     *******************************************/
     $articulo = $this->Articulos_model->getDatosPresupuesto($codigobarra);
-
-    $existe   = (count($articulo)<1 && trim($codigobarra)!="")? false : true ;
-    $errorTipo = ($existe)?'El articulo NO EXISTE en la base de datos':'';
+    /*
+    if($articulo){
+      $existe   = (count($articulo)<1 && trim($codigobarra)!="")? false : true ;
+      $errorTipo = ($existe)?'El articulo NO EXISTE en la base de datos':'';
+    }else {
+      $existe = FALSE;
+      $errorTipo = 'El articulo NO EXISTE en la base de datos';
+    }
+    */
+    if (!$articulo) {
+      $existe    = FALSE;
+      $errorTipo = 'El articulo NO EXISTE en la base de datos';
+    }
     if( $tmp_precio > 0 ){
       $precio=$tmp_precio;
     }else{
@@ -96,7 +114,7 @@ class Billing extends MY_Controller{
          $precio=floatval($articulo->precio);
       }else{
          $precio=0;
-         $errortipo="El articulo no POSEE PRECIO";
+        $errorTipo = "El articulo no POSEE PRECIO";
       };
     };
     /************************************
@@ -138,10 +156,55 @@ class Billing extends MY_Controller{
     echo $jsonString;
     //$this->load->view('pos/billing/presupuestoDetalle', $data);
   }
+
+  function addArticulo ()
+  {
+    $this->output->enable_profiler (FALSE);
+    $codigobarra    = $this->input->post ('codigobarra');
+    $tmpfacencab_id = $this->input->post ('tmpfacencab_id');
+    $precio         = ($this->input->post ('precio')) ? $this->input->post ('precio') : 0;
+    $cantidad       = ($this->input->post ('cantidad')) ? $this->input->post ('cantidad') : 1;
+    $error          = TRUE;
+
+    // busco articulo y traigo datos, precio y estado
+    $articulo = $this->Articulos_model->getDatosPresupuesto ($codigobarra);
+    if (!$articulo) { //verifico que el articulo exista
+      $error     = TRUE;
+      $errorTipo = 'El articulo NO EXISTE en la base de datos';
+    } else {
+      if (floatval ($articulo->precio) == 0) { //verifico que el articulo tenga precio superior a 0
+        $error     = TRUE;
+        $errorTipo = "El articulo no POSEE PRECIO";
+      } else {
+        if ($articulo->estado === SUSPENDIDO) { //verifico que el articulo no este suspendido
+          $error     = TRUE;
+          $errorTipo = "El articulo esta SUSPENDIDO";
+        } else {
+          $articulo->precio = ($precio != 0) ? $precio : $articulo->precio;
+          $error            = FALSE;
+          $errorTipo        = '';
+        };
+      };
+    };
+    if (!$error) { // si no existen errores continuo con el proceso
+      $renglon   = $this->Tmpmovim_model->agregoAlComprobante ($tmpfacencab_id, $codigobarra, $cantidad, $precio);//agrego al comprobante
+      $totales   = $this->Tmpmovim_model->getTotales ($tmpfacencab_id);//busco totales
+      $resultado = $this->Tmpfacencab_model->updateTotales ($tmpfacencab_id, $totales->Total);// actualizo totales
+      $json      = array ( 'id' => $renglon, 'codigoB' => $codigobarra, 'descripcion' => $articulo->nombre, 'cantidad' => sprintf ("%5.2f", $cantidad), 'precio' => sprintf ("$%10.2f", $articulo->precio), 'importe' => sprintf ("$%10.2f", $cantidad * $articulo->precio), 'error' => $error, 'errorTipo' => $errorTipo, 'Totales' => sprintf ("$%10.2f", $totales->Total), 'Bultos' => $totales->Bultos, 'Formas' => $resultado );
+
+    } else {
+      $this->Articulos_model->agregoLog ($codigobarra, 'pos/billing/addArticulo', $errorTipo);
+      $detalle = (isset($articulo->nombre)) ? $articulo->nombre : '';
+      $json    = array ( 'codigoB' => $codigobarra, 'descripcion' => $detalle, 'error' => $error, 'errorTipo' => $errorTipo, );
+    }
+    $jsonString = json_encode ($json);
+    header ('Content-Type: application/json');
+    echo $jsonString;
+  }
   function delArticulo($id){
     $tmpfacencab_id = $this->Tmpmovim_model->delArticulo($id);
-    $totales = $this->Tmpmovim_model->getTotales($tmpfacencab_id);//busco totales
-    $resultado = $this->Tmpfacencab_model->updateTotales($tmpfacencab_id,$totales->Total);// actualizo totales
+    //$totales = $this->Tmpmovim_model->getTotales($tmpfacencab_id);//busco totales
+    //$resultado = $this->Tmpfacencab_model->updateTotales($tmpfacencab_id,$totales->Total);// actualizo totales
     Template::redirect('pos/billing/presupuesto');
   }
   function cancelo(){

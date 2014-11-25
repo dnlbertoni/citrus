@@ -9,7 +9,7 @@ class Inventario extends Admin_Controller
 {
     function __construct(){
         parent::__construct();
-        Template::set_theme('citrus/'); // TODO sacar e unificar
+        //Template::set_theme('citrus/'); // TODO sacar e unificar
         $this->load->model('Articulos_model');
         $this->load->model('Stkinvmae_model');
         $this->load->model('Stkinvmovim_model');

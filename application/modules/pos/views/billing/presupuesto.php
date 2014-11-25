@@ -1,24 +1,31 @@
-<div class="section">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-4 col-md-4">
-        <?php echo form_open('pos/billing/addArticulo', 'id="addCart"');?>
-        <div class="form-group">
-          <input type="hidden" name="tmpfacencab_id" value="<?php echo $tmpfacencab_id ?>" id="tmpfacencab_id"/>
-          <?php echo form_label ('Articulo', 'codigobarra'); ?>
+<div class="row ">
+  <div class="panel panel-primary">
+    <div class="panel-body">
+      <div class="col-lg-4 col-md-4 col-xs-4">
+        <!--
+            <div class="alert alert-info"><?php echo $fechoy ?> <span id="clock"></span></div>
+            -->
+        <?php echo form_open ('pos/billing/addArticulo', 'id="addCart"'); ?>
+        <input type="hidden" name="tmpfacencab_id" value="<?php echo $tmpfacencab_id ?>" id="tmpfacencab_id"/>
+
+        <div class="col-xs-4">
+          <?php echo form_label ('Articulo', 'codigobarra', ' class="control-label"'); ?>
+        </div>
+        <div class="col-xs-8 right">
           <?php echo form_input ('codigobarra', '', 'id="codigobarra" data-toggle="tooltip" data-placement="top" title="articulo | (cant)*(articulo) | (cant)*(precio)*(articulo)" class="form-control"'); ?>
         </div>
-        <?php echo form_close();?>
-        <input type="hidden" id="paginaPrecio" value="<?php echo base_url(),'index.php/articulos/precioAjax'?>" />
-        <input type="hidden" id="paginaCliente" value="<?php echo base_url(),'index.php/cuenta/searchCuentaX/1'?>" />
-        <input type="hidden" id="paginaCancelo" value="<?php echo base_url(),'index.php/pos/billing/cancelo'?>" />
-        <input type="hidden" id="paginaTicket" value="<?php echo base_url(),'index.php/pos/billing/printTicket/',$tmpfacencab_id?>" />
-        <input type="hidden" id="paginaIndex" value="<?php echo base_url(),'index.php/pos/billing/presupuesto'?>" />         
-      </div>
-      <div class="col-lg-8 col-md-8">
+        <?php echo form_close (); ?>
+        <input type="hidden" id="paginaPrecio" value="<?php echo base_url (), 'index.php/articulos/precioAjax' ?>"/>
+        <input type="hidden" id="paginaCliente" value="<?php echo base_url (), 'index.php/cuenta/searchCuentaX/1' ?>"/>
+        <input type="hidden" id="paginaCancelo" value="<?php echo base_url (), 'index.php/pos/billing/cancelo' ?>"/>
+        <input type="hidden" id="paginaTicket"
+               value="<?php echo base_url (), 'index.php/pos/billing/printTicket/', $tmpfacencab_id ?>"/>
+        <input type="hidden" id="paginaIndex" value="<?php echo base_url (), 'index.php/pos/billing/presupuesto' ?>"/>
+          </div>
+      <div class="col-lg-8 col-md-8 col-xs-8">
         <div class="btn-toolbar" role="toolbar">
           <div class="btn-group">
-              <button class="btn btn-danger" id="F1"><span class="badge pull-left"> F1 </span>&nbsp;Cancelar</button>            
+            <button class="btn btn-danger" id="F1"><span class="badge pull-left"> F1 </span>&nbsp;Cancelar</button>
           </div>
           <div class="btn-group">
             <button class="btn btn-info" id="F6"><span class="badge pull-left"> F6 </span>&nbsp;Cliente</button>
@@ -26,62 +33,74 @@
           </div>
           <div class="btn-group">
             <button class="btn btn-success" id="F10"><span class="badge pull-left"> F10 </span>&nbsp;Vale</button>
-            <button class="btn btn-success" id="F12"><span class="badge pull-left"> F12 </span>&nbsp;Impresion</button>            
+            <button class="btn btn-success" id="F12"><span class="badge pull-left"> F12 </span>&nbsp;Impresion</button>
+          </div>
+        </div>
           </div>
         </div>
       </div>
     </div><!-- /.row -->
-    <div class="row text-center"><!-- fila de comprobante -->
-     <div class="col-lg-2 col-md-2">
-            <div class="panel <?php echo ($presuEncab->tipcom_id==1)?'panel-info':'panel-danger';?>">
-              <div class="panel-heading"><span id="tipcom_nom"><?php echo ($presuEncab->tipcom_id==1)?'Ticket':'Remito';?></span></div>
+<div class="row"><!-- fila de comprobante -->
+  <div class="col-lg-2 col-md-2 col-xs-2">
+    <div class="panel <?php echo ($presuEncab->tipcom_id == 1) ? 'panel-info' : 'panel-danger'; ?>">
+      <div class="panel-heading"><h4>
+          <span id="tipcom_nom"><?php echo ($presuEncab->tipcom_id == 1) ? 'Ticket' : 'Remito'; ?></span>
+          <span><?php printf ("%04.0f", $presuEncab->puesto) ?></span>
+        </h4>
+      </div>
               <div class="panel-body">
                 <ul class="list-group">
-                  <li class="list-group-item"><?php printf("%04.0f", $presuEncab->puesto)?></li>
-                  <li class="list-group-item"><?php printf("%08.0f",$presuEncab->numero); ?></li>
+                  <li class="list-group-item"><?php printf ("%08.0f", $presuEncab->numero) ?></li>
                 </ul>
               </div>
-              <div class=" panel-footer"><?php echo $fechoy;?> <span id="clock"></span></div>
+      <div class="panel-footer">
+        Bultos <span id="bultos" class="text-right"></span>
             </div>
           </div>
-          <div class="col-lg-3 col-md-3">
+  </div>
+  <div class="col-lg-3 col-md-3 col-xs-3">
             <div class="panel panel-success">
-              <div class="panel-heading">Cliente</div>
+              <div class="panel-heading">
+                <h4 style="text-align: center">
+                  <span id="idCuenta"><?php echo sprintf (" %04u ", $presuEncab->cuenta_id) ?></span>
+                </h4>
+              </div>
               <div class="panel-body">
                 <ul class="list-group">
-                  <li class=" list-group-item" ><span id="idCuenta"><?php echo sprintf("( %04u )",$presuEncab->cuenta_id)?></span>&nbsp;<span id="nombreCuenta"><?php echo $presuEncab->cuenta_nombre?></span></li>
-                </ul>
-              </div>
-              <div class="panel-footer ">
-                <p id="bultos">Total Bultos <?php echo intval($totales->Bultos) ?></p>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-3">
-            <div class="panel panel-warning">
-              <div class=" panel-heading">Forma de Pago</div>
-              <div class=" panel-body">
-                <div  id="fpagosList">
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-4">
-            <div class="panel panel-warning">
-              <div class=" panel-heading">Importe</div>
-              <div class=" panel-body">
-                <ul class=" list-group">
-                  <li class=" list-group-item text-danger" style="font-size:56px; background-color: #fed22f" id="importe"><?php printf("$%01.2f", floatval($totales->Total));?></li>
+                  <li class=" list-group-item">
+                    <span id="nombreCuenta"><?php echo $presuEncab->cuenta_nombre ?></span>
+                  </li>
                 </ul>
               </div>
 
             </div>
+          </div>
+  <div class="col-lg-3 col-md-3 col-xs-3">
+            <div class="panel panel-warning">
+              <div class=" panel-heading"><h4 class="text-center">Forma de Pago</h4></div>
+              <div class=" panel-body">
+                <div class="list-group" id="fpagosList">
+                </div>
+              </div>
+            </div>
+          </div>
+  <div class="col-lg-4 col-md-4 col-xs-4">
+    <div class="panel panel-primary">
+      <div class=" panel-heading">
+        <h4 class="text-center">Total </h4></div>
+              <div class=" panel-body">
+                <div>
+                  <div class="alert alert-info text-right " style="font-size:48px;font-weight: bolder " id="importe">
+                    <?php printf ("$%01.2f", floatval ($totales->Total)); ?>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>      
         </div><!-- /.row -->
-        <div class="row">
+<div class="row">
           <div class="col-log-12 col-md-12">
             <div class="panel panel-primary">
-              <div class="panel-heading text-center"><h4>Detalle de la Compra</h4></div>
               <div class="panel-body">
                 <table class="table" id="brief">
                   <thead>
@@ -93,31 +112,29 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <?php foreach ($Articulos as $articulo): ?>
-                    <tr id="<?php echo $articulo->codmov; ?>">
-                      <td><?php echo $articulo->Nombre ?></td>
-                      <td><?php echo $articulo->Cantidad ?></td>
-                      <td class="text-right"><?php printf ("$%01.2f", $articulo->Precio); ?></td>
-                      <td class="text-right"><?php printf ("$%01.2f", $articulo->Importe) ?></td>
-                      <td>
-                        <button type="button" class="btn btn-circle btn-xs btn-danger botdel">
-                          <span class="fa fa-minus-circle"></span><?php echo anchor ('pos/billing/delArticulo/', ' ') ?>
-                        </button>
-                      </td>
-                    </tr>
-                    <?php $total += $articulo->Importe; ?>
-                  <?php endforeach; ?>
+                  <?php if ($Articulos && count ($Articulos) > 0): ?>
+                    <?php foreach ($Articulos as $articulo): ?>
+                      <tr id="<?php echo $articulo->codmov; ?>">
+                        <td><strong><?php echo $articulo->Nombre ?></strong></td>
+                        <td><?php echo $articulo->Cantidad ?></td>
+                        <td class="text-right"><?php printf ("$%01.2f", $articulo->Precio); ?></td>
+                        <td class="text-right"><?php printf ("$%01.2f", $articulo->Importe) ?></td>
+                        <td>
+                          <?php echo anchor ('pos/billing/delArticulo/' . $articulo->codmov, '<button type="button" class="btn btn-circle btn-xs btn-danger botdel"><span class="fa fa-minus-circle"></span></button> ') ?>
+                        </td>
+                      </tr>
+                      <?php $total += $articulo->Importe; ?>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
                   </tbody>
                 </table>
               </div>
-              <div class="panel-footer">
-                Total <span id="importe2"><?php printf ("$%01.2f", $total); ?></span>
+              <div class="panel-footer text-right">
+                <h3>Total <span id="importe2"><?php printf ("$%01.2f", $total); ?></span></h3>
               </div>
             </div>
           </div>
     </div> <!-- /.row-->
-  </div><!-- /.container -->
-</div><!-- /.section -->
 
 <div class="modal fade" id="cliente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm">
@@ -155,6 +172,37 @@
       </div>
   </div>  
 </div><!-- /.modal -->
+<!-- modal de formas de pago -->
+<div class="modal fade" id="fpago" tabindex="-1" role="dialog" aria-labelledby="myFpagos" aria-hidden="true">
+<div class="modal-dialog modal-sm">
+  <?php echo form_open ('pos/billing/fpagosDo', 'id="consultaFpagos"') ?>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">Medios de Pago</h4>
+    </div>
+    <div class="modal-body">
+      <div id="datosFpagos">
+        <?php echo form_input ('monto', 0, 'montoTXT') ?>
+        <?php foreach ($mediosDePagos as $mp): ?>
+          <?php
+          $label = $tiposMdP[$mp->tipo]['label'];
+          $icon  = $tiposMdP[$mp->tipo]['icon'];
+          ?>
+          <button type="button" class="btn btn-<?php echo $label ?>"><span
+              class="fa <?php echo $icon ?>"></span> <?php echo $mp->nombre ?></button>
+        <?php endforeach; ?>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="btn-fpagosSave"><span class="fa fa-save"></span> Grabar
+        </button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+  <?php echo form_close () ?>
+</div>
+<!-- /.modal -->
 
 <div class="modal fade" id="imprimo" tabindex="-1" role="dialog" aria-labelledby="imprimo" aria-hidden="true">
   <div class="modal-dialog modal-sm">
@@ -183,7 +231,7 @@ $(document).ready(function(){
   $("#loading").hide();
   $("#cuentaAjax").hide();
   $("#codigobarra").addClass('focus');
-  $("#codigobarra").focus();;
+  $("#codigobarra").focus();
   //chequeo las teclas de funciones
   $(document).bind('keydown',function(e){
     var code = e.keyCode;
@@ -211,7 +259,7 @@ $(document).ready(function(){
           Imprimo();
           break;
       }
-    };
+    }
   });
   $("#codigobarra").bind('keydown',function(e){
     var code = e.keyCode;
@@ -219,14 +267,14 @@ $(document).ready(function(){
       if($("#codigobarra").val().trim().length === 0){
         if( code === 13 ){
               ConsultoPrecio(e);
-        };
+        }
       }else{
         if( code === 13 ){
           AgregoArticulo(e);
         }
       }
-    };
-   });
+    }
+  });
   // fin de chequeo de teclas de funciones
   //activo botones
   $("#F1").button();
@@ -243,6 +291,10 @@ $(document).ready(function(){
     e.preventDefault();
   });
   $("#brief > tbody > tr").first().addClass('info');
+  $("#btn-fpagosPlus").button();
+  $("#btn-fpagosPlus").click(function () {
+    $("#nuevoFpago").show();
+  });
 });
 function AgregoArticulo(e){
     e.preventDefault();
@@ -253,13 +305,13 @@ function AgregoArticulo(e){
             datos,
             function(data){
               if(data.error){
-                MuestroError(data.codigoB, data.errorTipo);
+                MuestroError(data.codigoB, data.errorTipo, data.descripcion);
               }else{
                 AgregoRenglon(data.id,data.descripcion, data.cantidad, data.precio, data.importe);
                 $("#bultos").html(data.Bultos);
                 $("#importe").html(data.Totales);
                 $("#importe2").html(data.Totales);
-              };
+              }
               muestroFpagos();
               $("#codigobarra").addClass('focus');
               $("#codigobarra").val('');
@@ -268,17 +320,17 @@ function AgregoArticulo(e){
             }
     );
   }
-function MuestroError(CB, error){
-  alert( CB + " " + error);
+function MuestroError(CB, error, descripcion) {
+  alert(CB + " " + descripcion + " " + error);
 }
 function AgregoRenglon(id, descripcion, cantidad, precio, importe){
-  $("#brief > tbody > tr").first().removeClass('info')
+  $("#brief > tbody > tr").first().removeClass('alert-warning');
   url = <?php echo "'".base_url()."pos/billing/delArticulo/'";?>;
-  boton = '<a href="'+url+id+'" class="btn btn-circle btn-danger botdel"><span class="fa fa-minus-circle"></span></a>'
-  linea  = "<tr class=' info'>";
-  linea += "<td>";
+  boton = '<a href="' + url + id + '" class="btn btn-circle btn-xs btn-danger botdel"><span class="fa fa-minus-circle"></span></a>';
+  linea = "<tr class='alert alert-warning'>";
+  linea += "<td><strong>";
   linea += descripcion;
-  linea += "</td><td>";
+  linea += "</strong></td><td>";
   linea += cantidad;
   linea += "</td><td align='right'>";
   linea += precio;
@@ -334,13 +386,17 @@ function CambioCliente(){
     $("#cuentaTXT").bind('keyup',function(e){
       var code = e.keyCode;
       if( ( code<90 && code>57 )  || code===13 || code===8 ){
-        envioForm();
-      };
-   });
+        envioFormCliente();
+      }
+    });
    $("#consultaCuenta").submit(function(e){
       e.preventDefault();
-      envioForm();
+     envioFormCliente();
    });    
+}
+function CambioCondicion() {
+  $("#fpago").modal({keyboard: true});
+  $("#fpago").modal('show');
 }
 function CambioComprobante(){
   tipo = ($("#tipcom_nom").html()=='Ticket')?6:1;
@@ -398,7 +454,12 @@ function updateClock(){
     //currentHours = ( currentHours == 0 ) ? 12 : currentHours;
     // Compose the string for display
     var currentTimeString = currentHours + ":" + currentMinutes + ":" + currentSeconds + " " + timeOfDay;
-    $("#clock").html(currentTimeString);  
+  total = 0;
+  $("#brief > tbody > tr").each(function () {
+    total++;
+  });
+  $("#bultos").html(total);
+  $("#clock").html(currentTimeString); 
  }
 function delArt(codmov){
   pagina = $("#paginaBorroArticulo").val();
@@ -425,20 +486,40 @@ function muestroFpagos(){
  $.getJSON(<?php echo $paginaMuestroFpagos;?>,function(data){
    $.each(data,function(key, dato){
      if(dato.fpagos_id==1){
-       label='alert alert-success';
+       label = 'list-group-item-success';
      }else{
        if(dato.fpagos_id==9){
-        label='alert alert-danger';
+         label = 'list-group-item-danger';
       }else{
-        label='alert alert-warning';
+         label = 'list-group-item-warning';
       }
      }
-     linea = "<div class='"+label+"'>"+dato.pagoNombre+" " + dato.monto+"</div>";
+     linea = " <div class='list-group-item " + label + "'>" + dato.pagoNombre + " " + dato.monto + "</div>";
      $("#fpagosList").append(linea);
    });
  });
 }
-function envioForm(){
+function getFpagos() {
+  $("#getFpagos").html('');
+  $.getJSON(<?php echo $paginaMuestroFpagos;?>, function (data) {
+    $.each(data, function (key, dato) {
+      if (dato.fpagos_id == 1) {
+        label = 'alert alert-success';
+      } else {
+        if (dato.fpagos_id == 9) {
+          label = 'alert alert-danger';
+        } else {
+          label = 'alert alert-warning';
+        }
+      }
+      linea = "<tr class='" + label + "'><td>" + dato.pagoNombre + "</td><td></td><td>";
+      linea += "<input value='" + dato.monto + "'/>";
+      linea += "</td></tr>";
+      $("#getFpagos").append(linea);
+    });
+  });
+}
+function envioFormCliente() {
   cuenta  = $("#cuentaTXT").val().trim();
   filtro = $("#filtro").val();
   pagina       = $("#consultaCuenta").attr('action');
@@ -467,10 +548,10 @@ function muestroClientes(data){
     linea += "<td>"+cuenta.nombre+"</td>";
     linea += "<td>"+cuenta.cuit+"</td>";
     if(cuenta.ctacte==1){
-      clase = 'btn btn-success';
+      clase = 'btn btn-danger';
       label = 'Ctacte';
     }else{
-      clase = 'btn btn-danger';         
+      clase = 'btn btn-success';
       label = 'Contado';
     }
     linea += "<td><a href='"+url+cuenta.id+"' class='"+clase+" btnCli' id='btn_"+cuenta.id+"'><span class='fa fa-check-circle-o'></span> "+label+"</a></td>";   
