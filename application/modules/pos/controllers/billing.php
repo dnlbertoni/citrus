@@ -1,5 +1,7 @@
 <?php
-class Billing extends MY_Controller{
+
+class Billing extends Admin_Controller
+{
   var $puesto;
   var $PrinterRemito;
   function  __construct() {
@@ -14,8 +16,6 @@ class Billing extends MY_Controller{
     $this->load->model('Cuenta_model','',true);
     $this->load->model('Facencab_model', '',true);
     $this->load->model('Fpagos_model');
-    //$this->load->model('cuenta/Cuenta_model','',true);
-    Template::set_theme ('citrus/');
   }
   function presupuesto(){
     //busco datos del previo
@@ -48,6 +48,8 @@ class Billing extends MY_Controller{
     $data['total'] = 0;
     $data['paginaMuestroFpagos']  = "'". base_url()."index.php/pos/billing/muestroFpagos/".$numeroTemporal."'";
     $data['paginaCambioComprob']  = "'". base_url()."pos/billing/cambioTipoComprobante/".$numeroTemporal."/'";
+    $data['mediosDePagos'] = $this->Fpagos_model->getAll ();
+    $data['tiposMdP'] = array ( 'EFECTIVO' => array ( 'label' => 'success', 'icon' => 'fa-money' ), 'CTACTE' => array ( 'label' => 'primary', 'icon' => 'fa-users' ), 'DEBITO' => array ( 'label' => 'primary', 'icon' => 'fa-credit-card' ), 'TARJETA' => array ( 'label' => 'warning', 'icon' => 'fa-credit-card' ), 'CHEQUE' => array ( 'label' => 'danger', 'icon' => 'fa-suitcase' ) );
     Template::set($data);
     Template::render();
   }
