@@ -114,7 +114,7 @@ $autoload['language'] = array();
 |
 */
 
-$autoload['model'] = array('Usermenu_model');
+$autoload['model'] = array ( 'Usermenu_model', 'Printers' );
 
 
 /* End of file autoload.php */

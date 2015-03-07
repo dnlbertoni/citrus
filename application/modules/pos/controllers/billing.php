@@ -3,7 +3,8 @@
 /**
  * Class Billing
  *
- * @property Tmpfacencab_model
+ * @property Tmpfacencab_model $tmpfacencab_model
+ * @property Tmpmovim_model    $tmpmovim_model
  */
 class Billing extends Admin_Controller
 {
@@ -162,7 +163,7 @@ class Billing extends Admin_Controller
     $this->output->enable_profiler (FALSE);
     $codigobarra    = $this->input->post ('codigobarra');
     $tmpfacencab_id = $this->input->post ('tmpfacencab_id');
-    $precio         = ($this->input->post ('precio')) ? $this->input->post ('precio') : 0;
+    $precio = ($this->input->post ('precio')) ? $this->input->post ('precio') : FALSE;
     $cantidad       = ($this->input->post ('cantidad')) ? $this->input->post ('cantidad') : 1;
     $error          = TRUE;
 
@@ -172,30 +173,32 @@ class Billing extends Admin_Controller
       $error     = TRUE;
       $errorTipo = 'El articulo NO EXISTE en la base de datos';
     } else {
-      if (floatval ($articulo->precio) == 0) { //verifico que el articulo tenga precio superior a 0
+      if ($articulo->precio == 0) { //verifico que el articulo tenga precio superior a 0
         $error     = TRUE;
         $errorTipo = "El articulo no POSEE PRECIO";
       } else {
         if ($articulo->estado === SUSPENDIDO) { //verifico que el articulo no este suspendido
           $error     = TRUE;
           $errorTipo = "El articulo esta SUSPENDIDO";
-        } else {
-          $articulo->precio = ($precio != 0) ? $precio : $articulo->precio;
+        } else { // el articulo tiene un precio aceptable
+          $articulo->precio = (!$precio) ? $articulo->precio : $precio;
           $error            = FALSE;
           $errorTipo        = '';
         };
       };
     };
     if (!$error) { // si no existen errores continuo con el proceso
-      $renglon   = $this->Tmpmovim_model->agregoAlComprobante ($tmpfacencab_id, $codigobarra, $cantidad, $precio);//agrego al comprobante
-      $totales   = $this->Tmpmovim_model->getTotales ($tmpfacencab_id);//busco totales
-      $resultado = $this->Tmpfacencab_model->updateTotales ($tmpfacencab_id, $totales->Total);// actualizo totales
-      $json      = array ( 'id' => $renglon, 'codigoB' => $codigobarra, 'descripcion' => $articulo->nombre, 'cantidad' => sprintf ("%5.2f", $cantidad), 'precio' => sprintf ("$%10.2f", $articulo->precio), 'importe' => sprintf ("$%10.2f", $cantidad * $articulo->precio), 'error' => $error, 'errorTipo' => $errorTipo, 'Totales' => sprintf ("$%10.2f", $totales->Total), 'Bultos' => $totales->Bultos, 'Formas' => $resultado );
+      $renglon = $this->Tmpmovim_model->agregoAlComprobante ($tmpfacencab_id, $codigobarra, $cantidad, $articulo->precio);//agrego al comprobante
+      //var_dump($renglon);
+      $renglonFinal = $this->Tmpmovim_model->getRenglon ($renglon);
+      $totales      = $this->Tmpmovim_model->getTotales ($tmpfacencab_id);//busco totales
+      $resultado    = $this->Tmpfacencab_model->updateTotales ($tmpfacencab_id, $totales->Total);// actualizo totales
+      $json         = array ( 'id' => $renglon, 'codigoB' => $codigobarra, 'descripcion' => $renglonFinal->nombre, 'cantidad' => sprintf ("%5.2f", $renglonFinal->cantidad), 'precio' => sprintf ("$%10.2f", $renglonFinal->precio), 'importe' => sprintf ("$%10.2f", $renglonFinal->cantidad * $renglonFinal->precio), 'error' => $error, 'errorTipo' => $errorTipo, 'Totales' => sprintf ("$%10.2f", $totales->Total), 'Bultos' => $totales->Bultos, 'Formas' => $resultado );
 
     } else {
       $this->Articulos_model->agregoLog ($codigobarra, 'pos/billing/addArticulo', $errorTipo);
       $detalle = (isset($articulo->nombre)) ? $articulo->nombre : '';
-      $json    = array ( 'codigoB' => $codigobarra, 'descripcion' => $detalle, 'error' => $error, 'errorTipo' => $errorTipo, );
+      $json = array ( 'codigoB' => $codigobarra, 'descripcion' => $detalle, 'error' => $error, 'errorTipo' => $errorTipo, 'precioViejo' => $precio );
     }
     $jsonString = json_encode ($json);
     header ('Content-Type: application/json');
@@ -388,7 +391,7 @@ class Billing extends Admin_Controller
      /**
      * GRABO MOVIEIMTNO DE CAJA
      */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+    $cajaOK = $this->_graboCaja ($idFacencab, $tipcom_id, $estado, $this->hasar->importe);
     /**
      * IMPRIMO MOVIMEINTO DE CTACTE
      */
@@ -456,7 +459,7 @@ class Billing extends Admin_Controller
     /**
      * GRABO MOVIEIMTNO DE CAJA
      */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+    $cajaOK = $this->_graboCaja ($idFacencab, $tipcom_id, $estado, $this->hasar->importe);
     /**
      * IMPRIMO MOVIMEINTO DE CTACTE
      */
@@ -527,7 +530,7 @@ class Billing extends Admin_Controller
         /**
      * GRABO MOVIEIMTNO DE CAJA
      */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+    $cajaOK = $this->_graboCaja ($idFacencab, $tipcom_id, $estado, $this->hasar->importe);
     /**
      * IMPRIMO MOVIMEINTO DE CTACTE
      */
@@ -592,7 +595,7 @@ class Billing extends Admin_Controller
     /**
      * GRABO MOVIEIMTNO DE CAJA
      */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcomp ,$estado, $this->hasar->importe );
+    $cajaOK = $this->_graboCaja ($idFacencab, $tipcom_id, $estado, $this->hasar->importe);
     /**
      * IMPRIMO MOVIMEINTO DE CTACTE
      */    

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es-AR">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content="DnL">
 
     <title>Sistema de Gestion de Autoservicio Santa Lucia</title>
 
@@ -38,7 +38,7 @@
       <footer>
         <div class="row">
           <div class="col-lg-12">
-            <p>Copyright &copy; Autoservicio Santa lucia 2010-2014</p>
+            <p>Copyright &copy; Autoservicio Santa lucia 2010-2015</p>
           </div>
         </div>
       </footer>

@@ -6,6 +6,18 @@ class Tmpmovim_model extends MY_Model{
     parent::__construct();
     $this->setTable ('tmp_movim');
   }
+
+  function getRenglon ($idRenglon)
+  {
+    $this->db->select ('descripcion_tmpmov as nombre');
+    $this->db->select ('cantidad_tmpmov    as cantidad');
+    $this->db->select ('preciovta_tmpmov   as precio');
+    $this->db->select ('tasaiva_tmpmov     as iva');
+    $this->db->select ('codigobarra_tmpmov as codigobarra');
+    $this->db->from ($this->tabla);
+    $this->db->where ("id_tmpmov", $idRenglon);
+    return $this->db->get ()->row ();
+  }
   function agregoAlComprobante($id, $codigobarra, $cantidad, $precio ){
     $this->db->select('id_tmpmov');
     $this->db->from($this->getTable());
@@ -40,7 +52,12 @@ class Tmpmovim_model extends MY_Model{
     $this->db->where('tmpfacencab_id', $id);
     $this->db->where('codigobarra_tmpmov', $codigobarra);
     $this->db->update($this->tabla);
-    return $id;
+    $this->db->_reset_select ();
+    $this->db->select ('id_tmpmov as idRenglon');
+    $this->db->from ($this->getTable ());
+    $this->db->where ('tmpfacencab_id', $id);
+    $this->db->where ('codigobarra_tmpmov', $codigobarra);
+    return $this->db->get ()->row ('idRenglon');
   }
   function delArticulo($codmov){
     $this->db->from($this->tabla);

@@ -114,11 +114,13 @@
                   <tbody>
                   <?php if ($Articulos && count ($Articulos) > 0): ?>
                     <?php foreach ($Articulos as $articulo): ?>
-                      <tr id="<?php echo $articulo->codmov; ?>">
+                      <tr id="art_<?php echo $articulo->codmov; ?>">
                         <td><strong><?php echo $articulo->Nombre ?></strong></td>
-                        <td><?php echo $articulo->Cantidad ?></td>
-                        <td class="text-right"><?php printf ("$%01.2f", $articulo->Precio); ?></td>
-                        <td class="text-right"><?php printf ("$%01.2f", $articulo->Importe) ?></td>
+                        <td id="cant_<?php echo $articulo->codmov; ?>"><?php echo $articulo->Cantidad ?></td>
+                        <td class="text-right"
+                            id="pre_<?php echo $articulo->codmov; ?>"><?php printf ("$%01.2f", $articulo->Precio); ?></td>
+                        <td class="text-right"
+                            id="imp_<?php echo $articulo->codmov; ?>"><?php printf ("$%01.2f", $articulo->Importe) ?></td>
                         <td>
                           <?php echo anchor ('pos/billing/delArticulo/' . $articulo->codmov, '<button type="button" class="btn btn-circle btn-xs btn-danger botdel"><span class="fa fa-minus-circle"></span></button> ') ?>
                         </td>
@@ -202,9 +204,10 @@
   </div>
   <?php echo form_close () ?>
 </div>
-<!-- /.modal -->
+</div><!-- /.modal -->
 
-<div class="modal fade" id="imprimo" tabindex="-1" role="dialog" aria-labelledby="imprimo" aria-hidden="true">
+<div class="modal fade" id="cartelImpresion" tabindex="-1" role="dialog" aria-labelledby="cartelPrint"
+     aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
@@ -212,7 +215,12 @@
         <h4 class="modal-title">Impresion de comprobante...</h4>
       </div>
       <div class="modal-body">
-        <div class="fa fa-spinner fa-spin"></div>
+        <div align="center">
+          <p>Se esta impriendo el comprobante</p>
+          <i class="fa fa-spinner fa-spin fa-4x"></i>
+
+          <p>esta panatalla estara presente mientras se imprime</p>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -263,6 +271,7 @@ $(document).ready(function(){
   });
   $("#codigobarra").bind('keydown',function(e){
     var code = e.keyCode;
+
     if($("#codigobarra").hasClass('focus')){
       if($("#codigobarra").val().trim().length === 0){
         if( code === 13 ){
@@ -276,6 +285,11 @@ $(document).ready(function(){
     }
   });
   // fin de chequeo de teclas de funciones
+  // ejecuto el formulario con el lector de codigo de barras
+  $("#addCart").submit(function () {
+    e.preventDefault();
+    AgregoArticulo();
+  });
   //activo botones
   $("#F1").button();
   $("#F1").click(function(){CanceloComprobante();});
@@ -298,48 +312,59 @@ $(document).ready(function(){
 });
 function AgregoArticulo(e){
     e.preventDefault();
+  datos = validoDatosArticulo();
     pagina = $("#addCart").attr('action');
-    datos  = $('#addCart').serialize();
+  if (datos != false) {
     $.post(
-            pagina,
-            datos,
-            function(data){
-              if(data.error){
-                MuestroError(data.codigoB, data.errorTipo, data.descripcion);
-              }else{
-                AgregoRenglon(data.id,data.descripcion, data.cantidad, data.precio, data.importe);
-                $("#bultos").html(data.Bultos);
-                $("#importe").html(data.Totales);
-                $("#importe2").html(data.Totales);
-              }
-              muestroFpagos();
-              $("#codigobarra").addClass('focus');
-              $("#codigobarra").val('');
-              $("#codigobarra").focus();
-              $("#loading").fadeOut(100);
-            }
+      pagina,
+      datos,
+      function (data) {
+        if (data.error) {
+          MuestroError(data.codigoB, data.errorTipo, data.descripcion);
+        } else {
+          AgregoRenglon(data.id, data.descripcion, data.cantidad, data.precio, data.importe);
+          $("#bultos").html(data.Bultos);
+          $("#importe").html(data.Totales);
+          $("#importe2").html(data.Totales);
+        }
+        muestroFpagos();
+        $("#codigobarra").addClass('focus');
+        $("#codigobarra").val('');
+        $("#codigobarra").focus();
+        $("#loading").fadeOut(100);
+      }
     );
+  } else {
+    alert('Hubo un ERROR en la estructora de envio de datos');
   }
+}
 function MuestroError(CB, error, descripcion) {
   alert(CB + " " + descripcion + " " + error);
 }
 function AgregoRenglon(id, descripcion, cantidad, precio, importe){
   $("#brief > tbody > tr").first().removeClass('alert-warning');
-  url = <?php echo "'".base_url()."pos/billing/delArticulo/'";?>;
-  boton = '<a href="' + url + id + '" class="btn btn-circle btn-xs btn-danger botdel"><span class="fa fa-minus-circle"></span></a>';
-  linea = "<tr class='alert alert-warning'>";
-  linea += "<td><strong>";
-  linea += descripcion;
-  linea += "</strong></td><td>";
-  linea += cantidad;
-  linea += "</td><td align='right'>";
-  linea += precio;
-  linea += "</td><td align='right'>";
-  linea += importe;
-  linea += "</td>";
-  linea += "<td>"+boton+"</td>";
-  linea += "</tr>";
-  $("#brief > tbody").prepend(linea);
+  // busco si ya no hay un articulo similar
+  nombreAux = '#art_' + id;
+  if ($(nombreAux).length) {
+    $(nombreAux).addClass('alert-warning');
+    cantAux = '#cant_' + id;
+    preAux = '#pre_' + id;
+    impAux = '#imp_' + id;
+    $(cantAux).html(cantidad);
+    $(preAux).html(precio);
+    $(impAux).html(importe);
+  } else {
+    url = <?php echo "'".base_url()."pos/billing/delArticulo/'";?>;
+    boton = '<a href="' + url + id + '" class="btn btn-circle btn-xs btn-danger botdel"><span class="fa fa-minus-circle"></span></a>';
+    linea = "<tr class='alert alert-warning' id='art_" + id + "'>";
+    linea += "<td><strong>" + descripcion + "</strong></td>";
+    linea += "<td id='cant_" + id + "'>" + cantidad + "</td>";
+    linea += "<td align='right' id='pre_'" + id + "'>" + precio + "</td>";
+    linea += "<td align='right' id='imp_" + id + "'>" + importe + "</td>";
+    linea += "<td>" + boton + "</td>";
+    linea += "</tr>";
+    $("#brief > tbody").prepend(linea);
+  }
 }
 function ConsultoPrecio(e){
   e.preventDefault();
@@ -427,7 +452,13 @@ function ImprimoTicketVie() {
               });
 }
 function Imprimo() {
-  $("#imprimo").modal('show');
+  $("#cartelImpresion").on("show.bs.modal", function () {
+    $(this).find(".modal-dialog").css("height", 300);
+    $(this).find(".modal-dialog").css("width", 300);
+  });
+  $("#cartelImpresion").modal({keyboard: true});
+  $("#cartelImpresion").modal('show');
+
 }
 function getSpecialKey(code){
   if(code > 111 && code < 124){
@@ -558,5 +589,39 @@ function muestroClientes(data){
     linea += "</tr>";
     $("#datosClientes > tbody").append(linea);
   })
+}
+function validoDatosArticulo() {
+  if ($('#codigobarra').val().indexOf('*') > -1) {
+    artic = $('#codigobarra').val().split('*');
+    switch (artic.length) {
+      case 2:
+        if ((!isNaN(parseFloat(artic[0]))) && (!isNaN(parseInt(artic[1])))) {
+          datos = {tmpfacencab_id: $('#tmpfacencab_id').val(), codigobarra: artic[1], cantidad: parseFloat(artic[0])};
+        } else {
+          datos = false;
+        }
+        break;
+      case 3:
+        if ((!isNaN(parseFloat(artic[0]))) &&
+          (!isNaN(parseInt(artic[1]))) &&
+          (!isNaN(parseFloat(artic[2])))
+        ) {
+          datos = {
+            tmpfacencab_id: $('#tmpfacencab_id').val(),
+            codigobarra: artic[1],
+            cantidad: artic[0],
+            precio: artic[2]
+          };
+        } else {
+          datos = false;
+        }
+        break;
+      default :
+        datos = false;
+    }
+  } else {
+    datos = $('#addCart').serialize();
+  }
+  return datos;
 }
 </script>

@@ -10,7 +10,7 @@
 class Setting extends Admin_Controller{
   function __construct() {
     parent::__construct();
-    Assets::add_js ('iconpicker/js/bootstrap-iconpicker');
+    Assets::js ("iconpicker/js/bootstrap-iconpicker");
     Assets::add_css ('iconpicker/css/bootstrap-iconpicker.min');
   }
   
@@ -20,6 +20,7 @@ class Setting extends Admin_Controller{
   function index(){
     $modulos=$this->Modulos_model->getAll();
     $menues=$this->Menues_model->getAll();
+    Template::set ('impresoras', $this->Printers->get ());
     Template::set('modulosTable', $modulos);
     Template::set('menuTable', $menues);
     Template::render();

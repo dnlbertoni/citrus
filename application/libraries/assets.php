@@ -252,10 +252,8 @@ class Assets {
 
 		$type .= '_scripts';
 
-		if (is_string($script))
-		{
-			if (!isset(self::$$type[$script]))
-			{
+    if (is_string ($script)) {
+      if (!isset(self::$$type[$script])) {
 				array_unshift(self::${$type}, $script);
 			}
 		}
