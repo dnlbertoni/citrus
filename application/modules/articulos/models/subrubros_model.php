@@ -29,7 +29,8 @@ class Subrubros_model extends MY_Model{
     $this->db->order_by('ALIAS_SUBRUBRO');
     return $this->db->get()->result();
   }
-  function getAllConArticulos(){
+  /* funcion discontinuada el 2014-10-05*/
+  function getAllConArticulos1(){
     $this->db->select('tbl_subrubros.ID_SUBRUBRO AS ID_SUBRUBRO');
     $this->db->select('DESCRIPCION_SUBRUBRO');
     $this->db->select('DESCRIPCION_RUBRO AS rubro');
@@ -40,6 +41,19 @@ class Subrubros_model extends MY_Model{
     $this->db->join("tbl_subrubros", "tbl_subrubros.id_subrubro = tbl_articulos.id_subrubro", "right");
     $this->db->join("tbl_rubros", "tbl_subrubros.id_rubro = tbl_rubros.id_rubro", "right");
     $this->db->group_by('tbl_articulos.id_subrubro');
+    $this->db->order_by('descripcion_rubro');
+    $this->db->order_by('alias_subrubro');
+    return $this->db->get()->result();
+  }
+  function getAllConArticulos(){
+    $this->db->select('sr.ID_SUBRUBRO AS ID_SUBRUBRO');
+    $this->db->select('DESCRIPCION_SUBRUBRO');
+    $this->db->select('DESCRIPCION_RUBRO AS rubro');
+    $this->db->select('ALIAS_SUBRUBRO');
+    $this->db->select('(SELECT COUNT(art.ID_ARTICULO) FROM tbl_articulos AS art WHERE art.ID_SUBRUBRO=sr.ID_SUBRUBRO) AS articulos', FALSE);
+    $this->db->select('(SELECT SUM(IF(art.WIZARD=1,1,0)) FROM tbl_articulos AS art WHERE art.ID_SUBRUBRO=sr.ID_SUBRUBRO) AS Warticulos', FALSE);
+    $this->db->from('tbl_subrubros as sr');
+    $this->db->join("tbl_rubros", "sr.id_rubro = tbl_rubros.id_rubro", "right");
     $this->db->order_by('descripcion_rubro');
     $this->db->order_by('alias_subrubro');
     return $this->db->get()->result();

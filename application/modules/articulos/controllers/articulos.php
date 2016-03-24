@@ -466,10 +466,18 @@ class Articulos extends MY_Controller{
     echo "Grabacion Ok";
   }
   function insertoDesdeLSCSV(){
-    $this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'preciocosto_articulo', $this->input->post('costo'));
-    $this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'preciovta_articulo', $this->input->post('precio'));
-    $this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'markup_articulo', $this->input->post('markup'));
-    echo "Grabacion Ok";
+    $this->output->enable_profiler('true');
+    $datos = array( 'codigobarra_articulo' => $this->input->post('codigobarra'),
+                    'DESCRIPCION_ARTICULO' => $this->input->post('detalle'),
+                    'preciovta_articulo'   => $this->input->post('precio'),
+                    'preciocosto_articulo' => $this->input->post('costo'),
+                    'markup_articulo'      => $this->input->post('markup')
+                  );
+    $id=$this->Articulos_model->add($datos);
+    //$this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'preciocosto_articulo', $this->input->post('costo'));
+    //$this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'preciovta_articulo', $this->input->post('precio'));
+    //$this->Articulos_model->updateArticulo($this->input->post('codigobarra'), 'markup_articulo', $this->input->post('markup'));
+    echo "Grabacion Ok - Id asignado :" . $id;
   }
   function setRubro(){
     $estado=$this->Articulos_model->updateArticulo($this->input->post('codigobarra'),'id_subrubro', $this->input->post('id_subrubro'));

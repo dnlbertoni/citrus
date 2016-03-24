@@ -561,4 +561,55 @@ class Topdf extends MY_Controller{
     shell_exec($cmd);
     redirect('carteles/', 'location',301);
   }
+  function listaDeArticulos(){
+        foreach($_POST as $key=>$valor){
+            if(!preg_match('/(Imprimir)|(tamano)/', $key)){
+                $codigos[] = $valor;
+            }
+        }
+        $tamano=$this->input->post('tamano');
+        $fuente = $tamano * 2.25;
+        $print = ($this->input->post('Imprimir')=="Imprimir")?true:false;
+        $this->fpdf->Open();
+        $this->fpdf->SetMargins(0,0,0);
+        $this->fpdf->SetAutoPageBreak(true);
+        $this->fpdf->SetDrawColor(128);
+        $this->fpdf->SetTopMargin(10);
+        $this->fpdf->AddPage();
+        $ancho=150;
+        $alto=$tamano;
+        $col=0;
+        $row=0;
+        foreach($codigos as $valor){
+            $x=$col * $ancho;
+            $y=$row * $alto + 15;
+            $articulo= $this->Articulos_model->getDatosBasicos($valor);
+            $id=$articulo->id;
+            $this->fpdf->SetFont('Times','' ,$fuente / 1.5 );
+            $this->fpdf->SetXY($x+10,$y);
+            $this->fpdf->Cell(50,0, $articulo->codigobarra ." - ",0,0,'R');
+            $this->fpdf->SetFont('Times','' ,$fuente);
+            $this->fpdf->SetXY($x+60,$y);
+            $this->fpdf->Cell($ancho,0,substr($articulo->descripcion,0,($ancho/$tamano) * 2),0,0,'L');
+            $row++;
+            $margen = 20;
+            if($row>(((290 - $margen)/$tamano)-1)){
+                $row=0;
+                $this->fpdf->AddPage();
+            };
+        };
+        $rubroNombre = $this->Articulos_model->getNombreRubro($id);
+        if($print){
+            $file = TMP . "cartel.pdf";
+            $this->fpdf->Output($file,'F');
+            $cmd = sprintf("lp %s -d %s",$file,$this->Printer);
+            shell_exec($cmd);
+            $cmd = sprintf("rm -f  %s",$file);
+            shell_exec($cmd);
+        }else{
+            $file ="listadeprecios_".$rubroNombre.".pdf";
+            $this->fpdf->Output($file,'D');
+        }
+        redirect('carteles/','location',301);
+    }
 }

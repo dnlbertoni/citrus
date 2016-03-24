@@ -1,10 +1,23 @@
 <?php
 class Tmpmovim_model extends MY_Model{
-  var $tabla = "tmp_movimientos";
+  var $tabla = "tmp_movim";
   var $tablaArticulos = "tbl_articulos";
   function  __construct() {
     parent::__construct();
-    $this->setTable('tmp_movimientos');
+    $this->setTable ('tmp_movim');
+  }
+
+  function getRenglon ($idRenglon){
+    $this->db->select ('descripcion_tmpmov as nombre');
+    $this->db->select ('cantidad_tmpmov    as cantidad');
+    $this->db->select ('preciovta_tmpmov   as precio');
+    $this->db->select ('tasaiva_tmpmov     as iva');
+    $this->db->select ('codigobarra_tmpmov as codigobarra');
+    $this->db->select ('tmpfacencab_id     as tmpfacencab_id');
+    $this->db->select('(cantidad_tmpmov * preciovta_tmpmov ) AS importe', false);
+    $this->db->from ($this->tabla);
+    $this->db->where ("id_tmpmov", $idRenglon);
+    return $this->db->get ()->row ();
   }
   function agregoAlComprobante($id, $codigobarra, $cantidad, $precio ){
     $this->db->select('id_tmpmov');
@@ -40,16 +53,21 @@ class Tmpmovim_model extends MY_Model{
     $this->db->where('tmpfacencab_id', $id);
     $this->db->where('codigobarra_tmpmov', $codigobarra);
     $this->db->update($this->tabla);
-    return $id;
+    $this->db->_reset_select ();
+    $this->db->select ('id_tmpmov as idRenglon');
+    $this->db->from ($this->getTable ());
+    $this->db->where ('tmpfacencab_id', $id);
+    $this->db->where ('codigobarra_tmpmov', $codigobarra);
+    return $this->db->get ()->row ('idRenglon');
   }
   function delArticulo($codmov){
     $this->db->from($this->tabla);
     $this->db->where('id_tmpmov', $codmov);
-    $idencab = $this->db->get()->row()->tmpfacencab_id;
-    //$this->db->_reset_select();
+    $movimiento = $this->db->get()->row();
+    //borro comprobante
     $this->db->where('id_tmpmov', $codmov);
     $this->db->delete($this->tabla);
-    return $idencab;
+    return $movimiento->tmpfacencab_id;
   }
   function getTotales($id){
     $this->db->select('SUM(cantidad_tmpmov*preciovta_tmpmov) AS Total',false);

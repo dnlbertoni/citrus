@@ -119,6 +119,9 @@ class Factura extends MY_Controller{
       $data['condVta']     = ($this->Cuenta_model->getCtacte( $data['Articulos'][0]->cuenta)==1)?"Cta Cte":"Contado";
     };
     $data['codigobarra']  =$codigobarra;
+    if(!$data['existe']){
+      $this->Articulos_model->agregoLog($codigobarra,'pos/factura/presupuesto');
+    }
     $this->load->view('pos/factura/presupuestoDetalle', $data);
   }
   function delArticulo(){
@@ -315,13 +318,6 @@ class Factura extends MY_Controller{
         'estado'    => $estado
     );
     $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
-     /**
-     * GRABO MOVIEIMTNO DE CAJA
-     */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcom_id ,$estado, $this->hasar->importe );
-    /**
-     * IMPRIMO MOVIMEINTO DE CTACTE
-     */
     if($DNF==1){
       $this->printCtaCte($cuenta, $puesto, $numero, $this->hasar->importe, $idFacencab);
     };
@@ -379,17 +375,7 @@ class Factura extends MY_Controller{
         'percep'    => 0,
         'estado'    => $estado
     );
-    /**
-     * GRABO COMPROBANTE FACTURA
-     */
     $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
-    /**
-     * GRABO MOVIEIMTNO DE CAJA
-     */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcom_id ,$estado, $this->hasar->importe );
-    /**
-     * IMPRIMO MOVIMEINTO DE CTACTE
-     */
     if($DNF==1){
       $this->printCtaCte($cuenta, $puesto, $numero, $this->hasar->importe, $idFacencab);
     };
@@ -454,13 +440,7 @@ class Factura extends MY_Controller{
     );
     $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
     $num        = $this->Numeradores_model->updateRemito($ptorem, $numero+1);
-        /**
-     * GRABO MOVIEIMTNO DE CAJA
-     */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcom_id ,$estado, $this->hasar->importe );
-    /**
-     * IMPRIMO MOVIMEINTO DE CTACTE
-     */
+    //$this->load->view('pos/carga');
     if($DNF==1){
       $this->printCtaCte($cuenta, $puesto, $numero, $importe * $negativo, $idFacencab);
     };
@@ -519,13 +499,6 @@ class Factura extends MY_Controller{
     );
     $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
     $num        = $this->Numeradores_model->updateRemito($ptorem, $numero+1);
-    /**
-     * GRABO MOVIEIMTNO DE CAJA
-     */
-     $cajaOK=$this->_graboCaja($idFacencab, $tipcom_id ,$estado, $this->hasar->importe );
-    /**
-     * IMPRIMO MOVIMEINTO DE CTACTE
-     */    
     if($DNF==1){
       $this->printCtaCteLaser($cuenta, $puesto, $numero, $importe * $negativo, $idFacencab,$items);
     }else{
@@ -734,7 +707,7 @@ class Factura extends MY_Controller{
       $this->fpdf->SetXY(0,$linea);
       $this->fpdf->Cell(10,5,$item->cantidad,0,0,'L');
       $this->fpdf->SetXY(10,$linea);
-      $this->fpdf->Cell(80,5,substr($item->detalle,0,30),0,0,'L');
+      $this->fpdf->Cell(80,5,substr($item->detalle,0,27),0,0,'L');
       $this->fpdf->SetXY(70,$linea);
       $this->fpdf->Cell(10,5,$item->precio,0,0,'R');
       $this->fpdf->SetXY(85,$linea);
@@ -771,18 +744,5 @@ class Factura extends MY_Controller{
     $cmd=sprintf("lp -o media=Custom.100x148mm %s -d %s", $nombre,PRREMITO);
     shell_exec($cmd);
     return $nombre;
-  }
-  private function _graboCaja( $idFacencab, $tipcom_id, $estado, $importe){
-    $this->load->model('Tipcom_model');
-    $concepto=$this->Tipcom_model->getConceptoCaja($tipcom_id);
-    $datosCaja = array(
-        'caja_id' => 'NULL', 
-        'concepto_id' => $concepto,
-        'facencab_id' => $idFacencab, 
-        'fpago_id'    => $estado, 
-        'importe'     => $importe
-    );
-    $idCajmovim = $this->Cajamovim_model->add($datosCaja);
-    return $idCajmovim;
   }
 }

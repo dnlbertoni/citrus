@@ -30,12 +30,14 @@ class Ctacte_movim_model extends MY_Model{
     $this->db->group_by('id_cuenta');
     return $this->db->get()->result();
   }
-  private function _buscoComprobante($id){
+  private function _buscoComprobante($id, $liq=FALSE){
     // buso el comprobante original
     $this->db->select('idencab as factura');
     $this->db->from($this->getTable());
     $this->db->where('id', $id);
-    $this->db->where('id_liq IS NULL', '', FALSE);
+    if(!$liq){
+      $this->db->where('id_liq IS NULL', '', FALSE);
+    }
     $q=$this->db->get()->row();
     if(count($q)==0){
       return "no es posible cambiar de cuenta";
@@ -48,8 +50,8 @@ class Ctacte_movim_model extends MY_Model{
    * @param $id id del comprobante de cuenta corriente
    *
    */
-  function getEncabezado($id){
-    $idencab=$this->_buscoComprobante($id);
+  function getEncabezado($id,$liq=FALSE){
+    $idencab=$this->_buscoComprobante($id,$liq);
     $this->db->select('DATE_FORMAT(fecha, "%d/%m/%Y") as fecha');
     $this->db->select('facencab.cuenta_id');
     $this->db->select('cuenta.nombre as cuenta_nombre');
@@ -63,8 +65,8 @@ class Ctacte_movim_model extends MY_Model{
     $this->db->where('facencab.id', $idencab);
     return $this->db->get()->row();
   }
-  function getComprobante($id){
-    $idencab=$this->_buscoComprobante($id);
+  function getComprobante($id,$liq=FALSE){
+    $idencab=$this->_buscoComprobante($id,$liq);
     $this->db->select('codigobarra_articulo as Codigobarra');
     $this->db->select('cantidad_movim as Cantidad');
     $this->db->select('facmovim.id_articulo');

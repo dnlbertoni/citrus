@@ -36,13 +36,12 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
-define('VERSION','3.5');
+define('VERSION','4.01');
 
 switch($_SERVER['REMOTE_ADDR']){
   case '192.168.1.102':
     $puesto = 3;
         $rutaUniversal='/var/www/fiscal';
-
     break;
   default:
     $puesto = 4;
@@ -50,10 +49,10 @@ switch($_SERVER['REMOTE_ADDR']){
 }
 switch(ENVIRONMENT){
   case 'activo':
-    $rutaUniversal='/var/www/fiscal';
+    $rutaUniversal='/var/www/fiscal/';
     break;
   default:
-    $rutaUniversal='/home/citrusdesa.autoservsantaluciacom.ar/fiscal';
+    $rutaUniversal='/home/citrusdesa.autoservsantalucia.com.ar/assets/tmp/fiscal';
     break;
 }
 define('TMP', BASEPATH .'../assets/tmp/');
@@ -61,6 +60,7 @@ define('PUESTO', $puesto);
 define('PRREMITO','laser03');
 define('PRCARTEL','laser03');
 define('ABSOLUT_PATH',$rutaUniversal);
-
+define('ACTIVO', 1);
+define('SUSPENDIDO', 0);
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

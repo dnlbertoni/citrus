@@ -51,39 +51,10 @@ class Tmpfacencab_model extends MY_Model{
     return $this->db->get()->row();
   }
   function updateTotales($id, $importe){
-    $this->db->select('importe');
-    $this->db->from($this->getTable());
-    $this->db->where('id', $id);
-    $importeAnterior = $this->db->get()->row()->importe;
-    $this->db->_reset_select();  
     $this->db->set('importe', $importe);
     $this->db->where('id', $id);
     $this->db->update($this->getTable());
     $this->db->_reset_select();
-    
-// busco todas  las formas de pago vigentes para ese comprobante
-    $this->db->from('tmp_fpagos');
-    $this->db->where('tmpfacencab_id', $id);
-    $fpagos = $this->db->get()->result();
-    $this->db->_reset_select();
-
-    $importeDiferencia = $importe - $importeAnterior;
-    
-    foreach ($fpagos as $fp){
-      if($fp->monto==0){
-        $calculo = $importeDiferencia; 
-      }else{
-       $calculo = ( ( $fp->monto / $importeAnterior ) * $importeDiferencia ) + $fp->monto;        
-      }
-      $nuevo[$fp->id] = $calculo;
-    }
-    /* actualizo fpagos */
-    foreach ($nuevo as $key=>$value) {
-      $this->db->set('monto', $value);
-      $this->db->update('tmp_fpagos');
-      $this->db->where('id', $key);
-      $this->db->_reset_select();      
-    }
   }
   function cambioCuenta($id, $cuenta_id){
     $this->db->set('cuenta_id', $cuenta_id);

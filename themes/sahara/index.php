@@ -1,8 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-  <?php Assets::add_js('jquery-ui-1.8.9.min')?>
-  <?php Assets::add_js('jquery-1.7.1' )?>
+  <?php Assets::add_js (array ( 'jquery-ui-1.8.9.min.js', 'jquery-1.7.1.js' )) ?>
   <?php echo Assets::css('jquery-ui')?>
   <?php echo Assets::js() ?>
   <?php echo Assets::css() ?>
@@ -39,7 +38,9 @@
       </div>
       <?php echo Template::block('tareas');?>
       <?php else:?>
-        <?php echo Template::yield1()?>
+        <div id="columnFull">
+          <?php echo Template::yield1 () ?>
+        </div>
       <?php endif;?>
     </div>
     <div id="ventanaAjax"></div>
