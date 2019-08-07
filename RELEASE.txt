@@ -9,3 +9,7 @@
 * se modifico el codigo de factura.php para que se puede elegir por que via imprimir
 * esta seteado por codigo en una variable no es modificable por el usuario
 **/
+
+/***
+** tratando de hacer un merge para unificar y comenzar el desarrollo
+**/
