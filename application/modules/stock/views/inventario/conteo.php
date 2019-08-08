@@ -168,7 +168,11 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<<<<<<< HEAD
 <div class="modal fade modal-lg " role="dialog" id="ventanaError" tabindex="-1">
+=======
+<div class="modal fade modal-lg " role="dialog" id="ventanaError" tabindex="-1" >
+>>>>>>> 3.5
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header dialog-header-error">
@@ -178,10 +182,15 @@
       <div class="modal-body text-center">
         <p>El articulo no se encuentra en la base de datos</p>
       </div>
+<<<<<<< HEAD
     </div>
     <!-- /.modal-content -->
   </div>
   <!-- /.modal-dialog -->
+=======
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+>>>>>>> 3.5
 </div><!-- /.modal -->
 
 <script>
@@ -202,7 +211,11 @@
                }
            };
        });
+<<<<<<< HEAD
       $("#cantidadBultosModal").bind('keydown', function (e) {
+=======
+       $("#cantidadBultosModal").bind('keydown',function(e){
+>>>>>>> 3.5
             var code = e.keyCode;
             if($("#cantidadBultosModal").hasClass('focus')){
                 if($("#cantidadBultosModal").val().trim().length > 0){
@@ -219,7 +232,11 @@
                 }
             };
         });
+<<<<<<< HEAD
       $("#cantidadXbultosModal").bind('keydown', function (e) {
+=======
+       $("#cantidadXbultosModal").bind('keydown',function(e){
+>>>>>>> 3.5
             var code = e.keyCode;
             if($("#cantidadXbultosModal").hasClass('focus')){
                 if($("#cantidadXbultosModal").val().trim().length > 0){
@@ -231,7 +248,11 @@
                 }
             };
         });
+<<<<<<< HEAD
       $("#unidadesModal").bind('keydown', function (e) {
+=======
+       $("#unidadesModal").bind('keydown', function(e){
+>>>>>>> 3.5
             var code = e.keyCode;
             if($("#unidadesModal").hasClass('focus')){
                 if($("#unidadesModal").val().trim().length > 0){
@@ -260,8 +281,13 @@
            $(this).find('input:text:visible:first').focus();
            $(this).find('input:text:visible:first').addClass('focus');
          <?php else :?>
+<<<<<<< HEAD
          $("#unidadesModal").focus();
          $("#unidadesModal").addClass('focus');
+=======
+           $("#unidadesModal").focus();
+           $("#unidadesModal").addClass('focus');
+>>>>>>> 3.5
          <?php endif;?>
        });
         $("#ventanaCantidades").on('hidden.bs.modal', function(e){
@@ -269,9 +295,15 @@
             $("#unidades").val('');
             $("#cantidadBultos").val('');
             $("#cantidadXBultos").val('');
+<<<<<<< HEAD
           $("#unidadesModal").val('');
           $("#cantidadBultosModal").val('');
           $("#cantidadXBultosModal").val('');
+=======
+            $("#unidadesModal").val('');
+            $("#cantidadBultosModal").val('');
+            $("#cantidadXBultosModal").val('');
+>>>>>>> 3.5
             $("#codigobarra").addClass('focus');
             $("#codigobarra").focus();
         });
@@ -325,20 +357,34 @@
         }
     }
     function PreguntoCantidadBultos(e){
+<<<<<<< HEAD
       $("#codigobarra").removeClass('focus');
       valor = $("#codigobarra").val();
       DatosDelArticulo(valor);
+=======
+          $("#codigobarra").removeClass('focus');
+          valor=$("#codigobarra").val();
+          DatosDelArticulo(valor);
+>>>>>>> 3.5
     }
     function DatosDelArticulo(codigo){
         url=<?php echo $paginaAjaxDatosArticulo?> + '/' + codigo;
         $.getJSON(url, function(data){
+<<<<<<< HEAD
           if (data.existe) {
+=======
+          if(data.existe){
+>>>>>>> 3.5
             $("#nombreArticulo").text(data.nombre);
             $("#nombreArticuloModal").text(data.nombre);
             $("#cantidadXbultosModal").val(data.bultos);
             $("#cantidadXbultos").val(data.bultos);
             $("#ventanaCantidades").modal('show');
+<<<<<<< HEAD
           } else {
+=======
+          }else{
+>>>>>>> 3.5
             $("#ventanaError").modal('show');
           }
         });

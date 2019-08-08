@@ -29,11 +29,15 @@
           </div>
           <div class="btn-group">
             <button class="btn btn-info" id="F6"><span class="badge pull-left"> F6 </span>&nbsp;Cliente</button>
-            <button class="btn btn-info" id="F8"><span class="badge pull-left"> F8 </span>&nbsp;Forma Pago</button>
+           <!--  <button class="btn btn-info" id="F8"><span class="badge pull-left"> F8 -- sacar </span>&nbsp;Forma Pago</button> -->
           </div>
           <div class="btn-group">
             <button class="btn btn-success" id="F10"><span class="badge pull-left"> F10 </span>&nbsp;Vale</button>
+<<<<<<< HEAD
             <button class="btn btn-success" id="F12"><span class="badge pull-left"> F12 </span>&nbsp;Impresion</button>
+=======
+            <?php echo anchor ('pos/billing/emitoComprobante','<span class="badge pull-left"> F12 </span>&nbsp;Impresion','role="button" class="btn btn-success" id="F12"')?>
+>>>>>>> 3.5
           </div>
         </div>
           </div>
@@ -44,7 +48,25 @@
   <div class="col-lg-2 col-md-2 col-xs-2">
     <div class="panel <?php echo ($presuEncab->tipcom_id == 1) ? 'panel-info' : 'panel-danger'; ?>">
       <div class="panel-heading"><h4>
+<<<<<<< HEAD
           <span id="tipcom_nom"><?php echo ($presuEncab->tipcom_id == 1) ? 'Ticket' : 'Remito'; ?></span>
+=======
+          <span id="tipcom_nom">
+            <?php
+            switch($presuEncab->tipcom_id){
+              case 1:
+                $msg='Ticket';
+                break;
+              case 2:
+                $msg='Factura';
+                break;
+              case 6:
+                $msg='Remito';
+                break;
+            };
+            echo $msg; ?>
+          </span>
+>>>>>>> 3.5
           <span><?php printf ("%04.0f", $presuEncab->puesto) ?></span>
         </h4>
       </div>
@@ -77,10 +99,25 @@
           </div>
   <div class="col-lg-3 col-md-3 col-xs-3">
             <div class="panel panel-warning">
+<<<<<<< HEAD
               <div class=" panel-heading"><h4 class="text-center">Forma de Pago</h4></div>
               <div class=" panel-body">
                 <div class="list-group" id="fpagosList">
+=======
+              <div class=" panel-heading">
+                <h4 class="text-center">Forma de Pago </h4>
+              </div>
+              <div class=" panel-body">
+                <div id="fpagosList">
+                  <div>
+                    <span class='fpagoNombre'>CONTADO</span>
+                    <span> &nbsp;&nbsp;0</span>
+                    <div class='btn btn_mod' ><span class='fa fa-refresh'></span></div>
+                    <div class='btn btn_del' ><span class='fa fa-trash-o'></span></div>
+                  </div>
+>>>>>>> 3.5
                 </div>
+                <div class="btn btn-info"><span class="fa fa-plus-circle"></span> Nuevo Medio Pago</div>
               </div>
             </div>
           </div>
@@ -91,7 +128,11 @@
               <div class=" panel-body">
                 <div>
                   <div class="alert alert-info text-right " style="font-size:48px;font-weight: bolder " id="importe">
+<<<<<<< HEAD
                     <?php printf ("$%01.2f", floatval ($totales->Total)); ?>
+=======
+                    <?php printf ("$%01.2f", floatval($totales->Total)); ?>
+>>>>>>> 3.5
                   </div>
                 </div>
               </div>
@@ -104,17 +145,30 @@
               <div class="panel-body">
                 <table class="table" id="brief">
                   <thead>
+<<<<<<< HEAD
                   <tr>
                     <th width="50%">Descripcion</th>
                     <th width="5%">Cantidad</th>
                     <th width="10%">Precio</th>
                     <th colspan="2">Importe</th>
+=======
+                  <tr style="text-align: center">
+                    <th width="20%">Codigo</th>
+                    <th width="40%">Descripcion</th>
+                    <th width="10%">Cantidad</th>
+                    <th width="10%">Precio</th>
+                    <th width="20%" colspan="2">Importe</th>
+>>>>>>> 3.5
                   </tr>
                   </thead>
                   <tbody>
                   <?php if ($Articulos && count ($Articulos) > 0): ?>
                     <?php foreach ($Articulos as $articulo): ?>
                       <tr id="art_<?php echo $articulo->codmov; ?>">
+<<<<<<< HEAD
+=======
+                        <td><strong><?php echo $articulo->Codigobarra ?></strong></td>
+>>>>>>> 3.5
                         <td><strong><?php echo $articulo->Nombre ?></strong></td>
                         <td id="cant_<?php echo $articulo->codmov; ?>"><?php echo $articulo->Cantidad ?></td>
                         <td class="text-right"
@@ -185,15 +239,39 @@
     </div>
     <div class="modal-body">
       <div id="datosFpagos">
+<<<<<<< HEAD
         <?php echo form_input ('monto', 0, 'montoTXT') ?>
         <?php foreach ($mediosDePagos as $mp): ?>
+=======
+        <div>
+          <?php echo form_label('Importe')?>
+          <?php echo form_input ('monto', 0, 'id="montoTXT"') ?>
+        </div>
+        <?php
+        $cant=0;
+        echo "<div>";
+        foreach ($mediosDePagos as $mp): ?>
+>>>>>>> 3.5
           <?php
           $label = $tiposMdP[$mp->tipo]['label'];
           $icon  = $tiposMdP[$mp->tipo]['icon'];
           ?>
+<<<<<<< HEAD
           <button type="button" class="btn btn-<?php echo $label ?>"><span
               class="fa <?php echo $icon ?>"></span> <?php echo $mp->nombre ?></button>
         <?php endforeach; ?>
+=======
+          <button type="button" class="btn btn-<?php echo $label ?> btn-mpago">
+            <span class="fa <?php echo $icon ?>"></span> <?php echo $mp->nombre ?></button>
+          <?php
+          $cant++;
+          if($cant==3){
+            $cant=0;
+            echo "</div><div>&nbsp;</div><div>";
+          };?>
+        <?php endforeach; ?>
+        <?php echo "</div>";?>
+>>>>>>> 3.5
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" id="btn-fpagosSave"><span class="fa fa-save"></span> Grabar
@@ -214,7 +292,11 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">Impresion de comprobante...</h4>
       </div>
+<<<<<<< HEAD
       <div class="modal-body">
+=======
+      <div class="modal-body" id="cartelImpresionCuerpo">
+>>>>>>> 3.5
         <div align="center">
           <p>Se esta impriendo el comprobante</p>
           <i class="fa fa-spinner fa-spin fa-4x"></i>
@@ -228,12 +310,24 @@
     </div>
   </div>
 </div><!-- /.modal impresion-->
+<<<<<<< HEAD
+=======
+
+<!-- Modal HTML -->
+<div id="espera" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Content will be loaded here from "remote.php" file -->
+    </div>
+  </div>
+</div>
+
+>>>>>>> 3.5
 
 <div id="precio"></div>
 
 <script>
 $(document).ready(function(){
-  setInterval('updateClock()', 1000);  
   muestroFpagos();
   $("#loading").css('text-align', 'center');
   $("#loading").hide();
@@ -264,7 +358,7 @@ $(document).ready(function(){
           CambioComprobante();
           break;
         case 'f12':
-          Imprimo();
+          Imprimo(e);
           break;
       }
     }
@@ -291,16 +385,18 @@ $(document).ready(function(){
     AgregoArticulo();
   });
   //activo botones
-  $("#F1").button();
+  //$("#F1").button();
   $("#F1").click(function(){CanceloComprobante();});
-  $("#F6").button();
+  //$("#F6").button();
   $("#F6").click(function(){CambioCliente();});
-  $("#F8").button();
-  $("#F8").click(function(){CambioCondicion();});
-  $("#F10").button();
-  $("#F10").click(function(){ImprimoRemito();});
-  $("#F12").button();
-  $("#F12").click(function(){ImprimoTicket();});
+  //$("#F8").button();
+  $("#F8").click(function(){CambioCondicion('agrego');});
+  //$("#F10").button();
+  $("#F10").click(function(){CambioComprobante();});
+  //$("#F12").button();
+  $("#F12").click(function(e){
+    e.stopPropagation();
+    Imprimo(e);});
   $("#addCart").submit(function(e){
     e.preventDefault();
   });
@@ -322,7 +418,11 @@ function AgregoArticulo(e){
         if (data.error) {
           MuestroError(data.codigoB, data.errorTipo, data.descripcion);
         } else {
+<<<<<<< HEAD
           AgregoRenglon(data.id, data.descripcion, data.cantidad, data.precio, data.importe);
+=======
+          AgregoRenglon(data.id, data.codigoB, data.descripcion, data.cantidad, data.precio, data.importe);
+>>>>>>> 3.5
           $("#bultos").html(data.Bultos);
           $("#importe").html(data.Totales);
           $("#importe2").html(data.Totales);
@@ -337,11 +437,19 @@ function AgregoArticulo(e){
   } else {
     alert('Hubo un ERROR en la estructora de envio de datos');
   }
+<<<<<<< HEAD
 }
 function MuestroError(CB, error, descripcion) {
   alert(CB + " " + descripcion + " " + error);
 }
 function AgregoRenglon(id, descripcion, cantidad, precio, importe){
+=======
+}
+function MuestroError(CB, error, descripcion) {
+  alert(CB + " " + descripcion + " " + error);
+}
+function AgregoRenglon(id, codigobarra, descripcion, cantidad, precio, importe){
+>>>>>>> 3.5
   $("#brief > tbody > tr").first().removeClass('alert-warning');
   // busco si ya no hay un articulo similar
   nombreAux = '#art_' + id;
@@ -357,6 +465,10 @@ function AgregoRenglon(id, descripcion, cantidad, precio, importe){
     url = <?php echo "'".base_url()."pos/billing/delArticulo/'";?>;
     boton = '<a href="' + url + id + '" class="btn btn-circle btn-xs btn-danger botdel"><span class="fa fa-minus-circle"></span></a>';
     linea = "<tr class='alert alert-warning' id='art_" + id + "'>";
+<<<<<<< HEAD
+=======
+    linea += "<td><strong>" + codigobarra + "</strong></td>";
+>>>>>>> 3.5
     linea += "<td><strong>" + descripcion + "</strong></td>";
     linea += "<td id='cant_" + id + "'>" + cantidad + "</td>";
     linea += "<td align='right' id='pre_'" + id + "'>" + precio + "</td>";
@@ -419,14 +531,64 @@ function CambioCliente(){
      envioFormCliente();
    });    
 }
+<<<<<<< HEAD
 function CambioCondicion() {
   $("#fpago").modal({keyboard: true});
   $("#fpago").modal('show');
+=======
+function CambioCondicion( accion) {
+  $(".btn-mpago").each(function(){
+    $(this).show();
+  });
+  $("#fpago").modal({keyboard: true});
+  $("#fpago").modal('show');
+  $("#fpago").on('shown.bs.modal', function(){
+    if(accin='cambio'){
+      $("#montoTXT").val(1000);
+      $("#montoTXT").hide();
+    }else{
+      $("#montoTXT").focus();
+    }
+    $(".fpagoNombre").each(function(){
+      valor=$(this).html().trim();
+      $(".btn-mpago").each(function(){
+        value=$(this).text().trim();
+        if(valor==value){
+          $(this).hide();
+        };
+      });
+    });
+  });
+>>>>>>> 3.5
 }
 function CambioComprobante(){
-  tipo = ($("#tipcom_nom").html()=='Ticket')?6:1;
-  url = <?php echo $paginaCambioComprob;?> + tipo;
-  window.location.replace(url);  
+  switch ($('#tipcom_nom').text().trim()){
+    case 'Ticket':
+          tipAux=6;
+          break;
+    case 'Factura':
+          tipAux=6;
+          break;
+    case 'Remito':
+          if(parseInt($('#idcuenta').text())==1){
+            tipAux=1;
+          }else{
+            tipAux=2;
+          }
+          break;
+  }
+  url = <?php echo $paginaCambioComprob;?>;
+  //window.location.replace(url);
+  idencab=$("#tmpfacencab_id").val();
+  posting=$.ajax({
+      url: url,
+      method: "GET",
+      data: {id:idencab,tipo:tipAux },
+      dataType: "json"
+  });
+  posting.done(function(tipo){
+    $('#tipcom_nom').html(tipo.nombre);
+  });
 }
 function ImprimoTicketVie() {
   var url = $("#paginaTicket").val() + '/' + $("#tipcom_id").val() + '/' + $("#condVtaId").val();
@@ -451,14 +613,37 @@ function ImprimoTicketVie() {
                  $("#imprimo").dialog("open");
               });
 }
+<<<<<<< HEAD
 function Imprimo() {
+=======
+function Imprimo(e) {
+  e.preventDefault();
+>>>>>>> 3.5
   $("#cartelImpresion").on("show.bs.modal", function () {
     $(this).find(".modal-dialog").css("height", 300);
     $(this).find(".modal-dialog").css("width", 300);
   });
   $("#cartelImpresion").modal({keyboard: true});
   $("#cartelImpresion").modal('show');
+<<<<<<< HEAD
 
+=======
+  pagina=$("#F12").attr('href');
+  tmpfacencab_id=$("#tmpfacencab_id").val();
+  $.ajax({
+    url: pagina,
+    contentType: "application/x-www-form-urlencoded",
+    global: true,
+    type: "POST",
+    data: ({ tmpfacencab: tmpfacencab_id
+    }),
+    dataType: "json",
+    async:true,
+    success: function(datos){
+      location.reload();
+    }
+  });
+>>>>>>> 3.5
 }
 function getSpecialKey(code){
   if(code > 111 && code < 124){
@@ -492,31 +677,13 @@ function updateClock(){
   $("#bultos").html(total);
   $("#clock").html(currentTimeString); 
  }
-function delArt(codmov){
-  pagina = $("#paginaBorroArticulo").val();
-  $.ajax({
-        url: pagina,
-        contentType: "application/x-www-form-urlencoded",
-        global: false,
-        type: "POST",
-        data: ({ codmov : codmov }),
-        dataType: "html",
-        async:true,
-        //beforeSend: function(){$("#loading").fadeIn();},
-        success: function(msg){
-           $("#brief").html(msg);
-           $("#codigobarra").val('');
-           $("#codigobarra").focus();
-           $("#loading").fadeOut(100);
-        }
-  }).responseText;
-}
 /* funciones de muestra del comprobante */
 function muestroFpagos(){
  $("#fpagosList").html('');
- $.getJSON(<?php echo $paginaMuestroFpagos;?>,function(data){
+  $.getJSON(<?php echo $paginaMuestroFpagos;?>,function(data){
    $.each(data,function(key, dato){
      if(dato.fpagos_id==1){
+<<<<<<< HEAD
        label = 'list-group-item-success';
      }else{
        if(dato.fpagos_id==9){
@@ -526,21 +693,49 @@ function muestroFpagos(){
       }
      }
      linea = " <div class='list-group-item " + label + "'>" + dato.pagoNombre + " " + dato.monto + "</div>";
+=======
+       label = 'alert-success';
+     }else{
+       if(dato.fpagos_id==9){
+         label = 'alert-danger';
+      }else{
+         label = 'alert-warning';
+      }
+     }
+     linea  = " <div class='alert "+ label+" ' role='alert' >";
+     linea += "<span class='fpagoNombre'>" + dato.pagoNombre + "</span>";
+     linea += "<span> &nbsp;&nbsp;" + dato.monto + "</span>";
+     linea += "<div class='btn btn_mod' id='mod_" + dato.id + "'><span class='fa fa-refresh'></span></div>";
+     linea += "<div class='btn btn_del' id='del_" + dato.id + "'><span class='fa fa-trash-o'></span></div>";
+     linea += "</div>";
+>>>>>>> 3.5
      $("#fpagosList").append(linea);
    });
  });
+  $(".btn_mod").each(function(){
+    alert('entro');
+  });
 }
 function getFpagos() {
   $("#getFpagos").html('');
   $.getJSON(<?php echo $paginaMuestroFpagos;?>, function (data) {
     $.each(data, function (key, dato) {
       if (dato.fpagos_id == 1) {
+<<<<<<< HEAD
         label = 'alert alert-success';
       } else {
         if (dato.fpagos_id == 9) {
           label = 'alert alert-danger';
         } else {
           label = 'alert alert-warning';
+=======
+        label = 'list-group-item list-group-item-success';
+      } else {
+        if (dato.fpagos_id == 9) {
+          label = 'list-group-item list-group-item-alert';
+        } else {
+          label = 'list-group-item list-group-item-warning';
+>>>>>>> 3.5
         }
       }
       linea = "<tr class='" + label + "'><td>" + dato.pagoNombre + "</td><td></td><td>";

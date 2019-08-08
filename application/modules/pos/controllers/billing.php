@@ -3,25 +3,29 @@
 /**
  * Class Billing
  *
- * @property Tmpfacencab_model $tmpfacencab_model
- * @property Tmpmovim_model    $tmpmovim_model
+ * @property Tmpfacencab_model $Tmpfacencab_model
+ * @property Tmpmovim_model    $Tmpmovim_model
+ * @property Tmpfpagos_model    $Tmpfpagos_model
+ * @property Hasar              $Hasar
+ * @property Cuenta_model      $Cuenta_model
+ * @property Cajamovim_model   $Cajamovim_model
  */
-class Billing extends Admin_Controller
-{
+class Billing extends Admin_Controller{
   var $puesto;
   var $PrinterRemito;
   function  __construct() {
     parent::__construct();
     $this->puesto = PUESTO;
-    $this->PrinterRemito=2; // 1 controlador 2 laser
+    $this->PrinterRemito = 2; // 1 controlador 2 laser
     $this->load->model('Articulos_model','',true);
     $this->load->model('Tmpmovim_model', '', true);
     $this->load->model('Tmpfacencab_model');
     $this->load->model('Tmpfpagos_model');
     $this->load->model('Numeradores_model','',true);
-    $this->load->model('Cuenta_model','',true);
-    $this->load->model('Facencab_model', '',true);
+    $this->load->model('Cuenta_model');
+    $this->load->model('Facencab_model');
     $this->load->model('Fpagos_model');
+    $this->load->model('Ctactemovim_model');
   }
   function presupuesto(){
     //busco datos del previo
@@ -53,9 +57,13 @@ class Billing extends Admin_Controller
     $data['fpagos']         = $this->Tmpfpagos_model->getPagosComprobante($numeroTemporal);
     $data['total'] = 0;
     $data['paginaMuestroFpagos']  = "'". base_url()."index.php/pos/billing/muestroFpagos/".$numeroTemporal."'";
-    $data['paginaCambioComprob']  = "'". base_url()."pos/billing/cambioTipoComprobante/".$numeroTemporal."/'";
+    $data['paginaCambioComprob']  = "'". base_url()."pos/billing/cambioTipoComprobante/'";
     $data['mediosDePagos'] = $this->Fpagos_model->getAll ();
-    $data['tiposMdP'] = array ( 'EFECTIVO' => array ( 'label' => 'success', 'icon' => 'fa-money' ), 'CTACTE' => array ( 'label' => 'primary', 'icon' => 'fa-users' ), 'DEBITO' => array ( 'label' => 'primary', 'icon' => 'fa-credit-card' ), 'TARJETA' => array ( 'label' => 'warning', 'icon' => 'fa-credit-card' ), 'CHEQUE' => array ( 'label' => 'danger', 'icon' => 'fa-suitcase' ) );
+    $data['tiposMdP'] = array ( 'EFECTIVO' => array ( 'label' => 'success', 'icon' => 'fa-money' ),
+                                'CTACTE' => array ( 'label' => 'primary', 'icon' => 'fa-users' ),
+                                'DEBITO' => array ( 'label' => 'primary', 'icon' => 'fa-credit-card' ),
+                                'TARJETA' => array ( 'label' => 'warning', 'icon' => 'fa-credit-card' ),
+                                'CHEQUE' => array ( 'label' => 'danger', 'icon' => 'fa-suitcase' ) );
     Template::set($data);
     Template::render();
   }
@@ -66,96 +74,52 @@ class Billing extends Admin_Controller
     header('Content-Type: application/json');
     echo $jsonString;
   }
+  function addArticulo (){
+    $this->output->enable_profiler (false);
+    $codigobarra    = $this->input->post ('codigobarra');
+    $tmpfacencab_id = $this->input->post ('tmpfacencab_id');
+    $precio = ($this->input->post ('precio')) ? $this->input->post ('precio') : FALSE;
+    $cantidad       = ($this->input->post ('cantidad')) ? $this->input->post ('cantidad') : 1;
+    $error          = TRUE;
 
-  function addArticuloOLD (){
-    $this->output->enable_profiler(false);
-    $codigobarra = $this->input->post('codigobarra');
-    $tmpfacencab_id = $this->input->post('tmpfacencab_id');
-    /*****************************************
-    * analizo si viene con cantidad incluida *
-    *****************************************/
-    $tmp_arti   = explode('*',$codigobarra);
-    $tmp_precio = 0;
-    switch (count($tmp_arti)){
-      case 2: //cantidad multiplicada por el codigo
-              $cantidad=$tmp_arti[0];
-              $codigobarra=$tmp_arti[1];
-              break;
-      case 3: //cantidad multiplicada por el codigo con un precio determinado
-              $cantidad    = $tmp_arti[0];
-              $tmp_precio  = $tmp_arti[1];
-              $codigobarra = $tmp_arti[2];
-              break;
-      default:
-              $codigobarra = $codigobarra;
-              $cantidad    = 1;
-              break;
-    };
-    /*******************************************
-    * busco el articulo y la info que necesito *
-    *******************************************/
-    $articulo = $this->Articulos_model->getDatosPresupuesto($codigobarra);
-    /*
-    if($articulo){
-      $existe   = (count($articulo)<1 && trim($codigobarra)!="")? false : true ;
-      $errorTipo = ($existe)?'El articulo NO EXISTE en la base de datos':'';
-    }else {
-      $existe = FALSE;
+    // busco articulo y traigo datos, precio y estado
+    $articulo = $this->Articulos_model->getDatosPresupuesto ($codigobarra);
+    if (!$articulo) { //verifico que el articulo exista
+      $error     = TRUE;
       $errorTipo = 'El articulo NO EXISTE en la base de datos';
-    }
-    */
-    if (!$articulo) {
-      $existe    = FALSE;
-      $errorTipo = 'El articulo NO EXISTE en la base de datos';
-    }
-    if( $tmp_precio > 0 ){
-      $precio=$tmp_precio;
-    }else{
-      if(isset($articulo->precio)){
-         $precio=floatval($articulo->precio);
-      }else{
-         $precio=0;
+    } else {
+      if ($articulo->precio == 0) { //verifico que el articulo tenga precio superior a 0
+        $error     = TRUE;
         $errorTipo = "El articulo no POSEE PRECIO";
+      } else {
+        if ($articulo->estado === SUSPENDIDO) { //verifico que el articulo no este suspendido
+          $error     = TRUE;
+          $errorTipo = "El articulo esta SUSPENDIDO";
+        } else { // el articulo tiene un precio aceptable
+          $articulo->precio = (!$precio) ? $articulo->precio : $precio;
+          $error            = FALSE;
+          $errorTipo        = '';
+        };
       };
     };
-    /************************************
-    * agrego al comprobante el articulo *
-    ************************************/
-    if(trim($codigobarra)!=''&& $existe && ($precio!=0)){
-      $renglon = $this->Tmpmovim_model->agregoAlComprobante($tmpfacencab_id,$codigobarra, $cantidad, $precio);//agrego al comprobante
-      $totales = $this->Tmpmovim_model->getTotales($tmpfacencab_id);//busco totales
-      $resultado = $this->Tmpfacencab_model->updateTotales($tmpfacencab_id,$totales->Total);// actualizo totales
-      $json = array(  'id'          => $renglon,
-                      'codigoB'     => $codigobarra,
-                      'descripcion' => $articulo->nombre, 
-                      'cantidad'    => sprintf("%5.2f",$cantidad), 
-                      'precio'      => sprintf("$%10.2f",$precio),
-                      'importe'     => sprintf("$%10.2f",$cantidad*$precio),
-                      'error'       => false, 
-                      'errorTipo'   => '',
-                      'Totales'     => sprintf("$%10.2f",$totales->Total), 
-                      'Bultos'      => $totales->Bultos
-                    );
-    }else{
-      $valorCero = true;
-      $json = array(  'codigoB'     => $codigobarra,
-                      'error'       => true, 
-                      'errorTipo'   => $errorTipo
-                    );
-    };
-    /*
-     * grabo en la tabla temporal de articulos sin grabar
-     */
-    if (!$existe) {
-      $this->Articulos_model->agregoLog ($codigobarra, 'pos/factura/presupuesto');
+    if (!$error) { // si no existen errores continuo con el proceso
+      $renglon = $this->Tmpmovim_model->agregoAlComprobante ($tmpfacencab_id, $codigobarra, $cantidad, $articulo->precio);//agrego al comprobante
+      $renglonFinal = $this->Tmpmovim_model->getRenglon ($renglon);
+      //var_dump($renglon);
+      $totales      = $this->Tmpmovim_model->getTotales ($tmpfacencab_id);//busco totales
+      /* actualizo fpagos */
+      $this->Tmpfpagos_model->actualizoPagos($tmpfacencab_id, $totales->Total);
+      $resultado    = $this->Tmpfacencab_model->updateTotales ($tmpfacencab_id, $totales->Total);// actualizo totales
+      $json         = array ( 'id' => $renglon, 'codigoB' => $codigobarra, 'descripcion' => $renglonFinal->nombre, 'cantidad' => sprintf ("%5.2f", $renglonFinal->cantidad), 'precio' => sprintf ("$%10.2f", $renglonFinal->precio), 'importe' => sprintf ("$%10.2f", $renglonFinal->cantidad * $renglonFinal->precio), 'error' => $error, 'errorTipo' => $errorTipo, 'Totales' => sprintf ("$%10.2f", $totales->Total), 'Bultos' => $totales->Bultos, 'Formas' => $resultado );
+
+    } else {
+      $this->Articulos_model->agregoLog ($codigobarra, 'pos/billing/addArticulo', $errorTipo);
+      $detalle = (isset($articulo->nombre)) ? $articulo->nombre : '';
+      $json = array ( 'codigoB' => $codigobarra, 'descripcion' => $detalle, 'error' => $error, 'errorTipo' => $errorTipo, 'precioViejo' => $precio );
     }
-    /*
-     * exporto los datos del comprobante
-     */
-    $jsonString= json_encode($json);
-    header('Content-Type: application/json');
+    $jsonString = json_encode ($json);
+    header ('Content-Type: application/json');
     echo $jsonString;
-    //$this->load->view('pos/billing/presupuestoDetalle', $data);
   }
 
   function addArticulo ()
@@ -206,6 +170,9 @@ class Billing extends Admin_Controller
   }
   function delArticulo($id){
     $tmpfacencab_id = $this->Tmpmovim_model->delArticulo($id);
+    $totales      = $this->Tmpmovim_model->getTotales ($tmpfacencab_id);//busco totales
+    /* actualizo fpagos */
+    $this->Tmpfpagos_model->actualizoPagos($tmpfacencab_id, $totales->Total);
     //$totales = $this->Tmpmovim_model->getTotales($tmpfacencab_id);//busco totales
     //$resultado = $this->Tmpfacencab_model->updateTotales($tmpfacencab_id,$totales->Total);// actualizo totales
     Template::redirect('pos/billing/presupuesto');
@@ -227,9 +194,26 @@ class Billing extends Admin_Controller
     }
     Template::redirect('pos/billing/presupuesto');
   }
-  public function cambioTipoComprobante($id,$tipcom_id){
+  public function cambioTipoComprobante(){
+    $this->output->enable_profiler(false);
+    $id=$this->input->get('id');
+    $tipcom_id=intval($this->input->get('tipo'));
     $this->Tmpfacencab_model->cambioComprobante($id,$tipcom_id);
-    Template::redirect('pos/billing/presupuesto');    
+    switch($tipcom_id){
+      case 1:
+        $tipo['nombre']='Ticket';
+        break;
+      case 2:
+        $tipo['nombre']='Factura';
+        break;
+      case 6:
+        $tipo['nombre']='Remito';
+        break;
+    };
+    $jsonString = json_encode ($tipo);
+    header ('Content-Type: application/json');
+    echo $jsonString;
+    //Template::redirect('pos/billing/presupuesto');
   }
   function cambioCondicion(){
     $puesto=$this->input->post('puesto');
@@ -240,131 +224,92 @@ class Billing extends Admin_Controller
     //Template::render();
   }
   function emitoComprobante(){
-    
-  }
-  function printTicket($puesto,$idencab, $tipcom_id, $vale){
-    //$this->output->enable_profiler(true);
-    //preparo el comprobante a imprimir
-    $items     = $this->Tmpmovim_model->itemsComprobante($puesto,$idencab);
-    $total     = $this->Tmpmovim_model->totalComprobante($puesto,$idencab);
-    $cuenta    = $this->Tmpmovim_model->getCuenta($idencab, $puesto);
-    $cliente   = $this->Cuenta_model->getByIdComprobante($cuenta);
+    $this->output->enable_profiler(false);
+    $this->load->library('hasar');
+    $tmpfacenab_id = $this->input->post('tmpfacencab');
+    //leo comporobante completo
+    $comprobante = $this->Tmpfacencab_model->getById($tmpfacenab_id);
+    $renglones   = $this->Tmpmovim_model->itemsComprobante($tmpfacenab_id);
+    $cliente     = $this->Cuenta_model->getByIdComprobante($comprobante->cuenta_id);
+    $total       = $this->Tmpmovim_model->totalComprobante($comprobante->id);
+    $fpagos      = $this->Tmpfpagos_model->getPagosComprobante($tmpfacenab_id);
+    $ctacte=false;
+    foreach($fpagos as $fp){
+      if($fp->fpagos_id==9){
+        $ctacte=true;
+        break;
+      }
+    }
     /*
-     * documentos = tipcom_id
-     * posibles resultados
-     * 1 ticket comun
-     * 2 factura comun
-     * 6 dnf para cuenta corriente sin factura
-     */
-    //genero el archivo
-    switch($tipcom_id){
+   * documentos = tipcom_id
+   * posibles resultados
+   * 1 ticket
+   * 2 factura
+   * 6 dnf
+   */
+    //imprimo comprobante
+    switch($comprobante->tipcom_id){
       case 1:
-        $nom_archiv = $this->_imprimeTicket($puesto, $idencab, $items, $total);
-        $data['file']      = $nom_archiv;
-        $data['puesto']    = $puesto;
-        $data['idencab']   = $idencab;
-        $data['cuenta']    = $cuenta;
-        $data['tipcom_id'] = 1;
-        $data['DNF']       = $vale;
-        $data['accion']    = 'printTicketDo';
-        $data['Imprimo']   = 'Ticket';
+        $archivo = $this->_imprimeTicket($this->puesto,$comprobante->id,$renglones, $total, false );
+
+        $this->hasar->setPuesto($this->puesto);
+        $this->hasar->nombres($archivo);
+        $respuesta  = $this->hasar->RespuestaFull();
+        //$respEstado = $this->hasar->Estado();
+        $comprobante->numero = $this->hasar->last_print;
+        $comprobante->importe = $this->hasar->importe;
+        $ivatot = $this->hasar->importe;
+        $letra='T';
+
         break;
       case 2:
-        $data['file']      = $this->_imprimeFactura($puesto, $idencab, $items, $total, $cliente);
-        $data['puesto']    = $puesto;
-        $data['idencab']   = $idencab;
-        $data['cuenta']    = $cuenta;
-        $data['tipcom_id'] = 2;
-        $data['DNF']       = $vale;
-        $data['accion']    = 'printFacturaDo';
-        $data['Imprimo']   = 'Factura';
+        $archivo = $this->_imprimeFactura($this->puesto,$comprobante->id,$renglones, $total, $cliente );
+
+        $this->hasar->setPuesto($this->puesto);
+        $this->hasar->nombres($archivo);
+        $respuesta  = $this->hasar->RespuestaFull();
+        //$respEstado = $this->hasar->Estado();
+        $comprobante->numero = $this->hasar->last_print;
+        $comprobante->importe = $this->hasar->importe;
+        $ivatot = $this->hasar->importe;
+
+        $letra='T'; //ver cliente
+
         break;
       case 6:
-        $ptorem            = 90 + $puesto;
-        $numrem            = $this->Numeradores_model->getNextRemito($ptorem);
-        $firma             = ($vale==0)?false:true;
+        $ptorem = 90 + $comprobante->puesto;
+        $numrem = $this->Numeradores_model->getNextRemito($ptorem);
+        $ivatot=0;
         if($this->PrinterRemito==1){
-          $data['file']      = $this->_imprimeDNF($ptorem,$numrem,$puesto, $idencab, $cliente,$items,$detalle,$firma);
+          $archivo = $this->_imprimeDNF($ptorem,$numrem,$this->puesto, $comprobante->id, $cliente,$renglones,1,false);
+
+          $this->hasar->setPuesto($this->puesto);
+          $this->hasar->nombres($archivo);
+          $respuesta  = $this->hasar->RespuestaFull();
+          //$respEstado = $this->hasar->Estado();
+
         }else{
-          $data['file']      = $this->_imprimeDNFLaser($ptorem,$numrem,$puesto, $idencab, $cliente,$items, false);
+          $archivo = $this->_imprimeDNFLaser($ptorem,$numrem,$comprobante->puesto, $comprobante->id, $cliente,$renglones,false);
         };
-        $data['puesto']    = $puesto;
-        $data['idencab']   = $idencab;
-        $data['cuenta']    = $cuenta;
-        $data['tipcom_id'] = 6;
-        $data['DNF']       = $vale;
-        //$data['accion']    = 'printRemitoDo';
-        $data['accion']    = 'printRemitoDoLaser';
-        $data['Imprimo']   = 'Comprobante';
+        $letra='R';
         break;
-      };
-    $this->load->view('pos/factura/carga', $data);
-  }
-  function printCtaCte($cuenta, $puesto, $numero, $importe, $idFacencab){
-    $this->output->enable_profiler(true);
-    //preparo el comprobante a imprimir
-    $cliente           = $this->Cuenta_model->getByIdComprobante($cuenta);
-    $ptorem            = 80 + $puesto;
-    $numrem            = $this->Numeradores_model->getNextCompCtaCte($ptorem);
-    $numeroFac         = $this->Facencab_model->getNumeroFromIdencab($idFacencab);
-    //genero el archivo
-    $data['file']      = $this->_imprimeDNFCtaCte($ptorem,$numrem,$puesto, $numeroFac, $cliente,$importe);
-    $data['puesto']    = $puesto;
-    $data['idencab']   = $idFacencab;
-    $data['cuenta']    = $cuenta;
-    $data['tipcom_id'] = 7; //comprobante de CtaCte
-    $data['importe']   = $importe;
-    $data['accion']    = 'printCtaCteDo';
-    $data['Imprimo']   = 'Compr. CtaCte';
-    $this->load->view('pos/factura/carga', $data);
-  }
-  function printCtaCteLaser($cuenta, $puesto, $numero, $importe, $idFacencab,$items){
-    $this->output->enable_profiler(true);
-    //preparo el comprobante a imprimir
-    $cliente           = $this->Cuenta_model->getByIdComprobante($cuenta);
-    $ptorem            = 80 + $puesto;
-    $numrem            = $this->Numeradores_model->getNextCompCtaCte($ptorem);
-    $numeroFac         = $this->Facencab_model->getNumeroFromIdencab($idFacencab);
-    //genero el archivo
-    $data['file']      = $this->_imprimeDNFLaser($ptorem,$numrem,90+$puesto, $numeroFac, $cliente, $items,true);
-    $data['puesto']    = $puesto;
-    $data['idencab']   = $idFacencab;
-    $data['cuenta']    = $cuenta;
-    $data['tipcom_id'] = 7; //comprobante de CtaCte
-    $data['importe']   = $importe;
-    $data['accion']    = 'printCtaCteDo';
-    $data['Imprimo']   = 'Compr. CtaCte';
-    $this->load->view('pos/factura/carga', $data);
-  }
-  function printTicketDo(){
-    $this->load->library('hasar');
-    $puesto    = $this->input->post('puesto');
-    $idencab   = $this->input->post('idencab');
-    $cuenta    = $this->Tmpmovim_model->getCuenta($idencab, $puesto);
-    $tipcom_id = $this->input->post('tipcom');
-    $DNF       = $this->input->post('DNF');
-    $estado    = ($DNF==1)?9:1;
-    $this->hasar->setPuesto($puesto);
-    $this->hasar->nombres($this->input->post('file'));
-    $respuesta  = $this->hasar->RespuestaFull();
-    //$respEstado = $this->hasar->Estado();
-    //$cuenta = $this->Tmpmovim_model->getCuenta($idencab, $puesto);
-    $numero = $this->hasar->last_print;
-    $items  = $this->Tmpmovim_model->itemsComprobante($puesto, $idencab);
-    $letra = "T";
+    }
+    /*
+     * grabo comprobante
+     */
     $ivamax = 0;
     $ivamin = 0;
-    foreach($items as $item){
+    foreach($renglones as $item){
       $datosMovim[] = array(
-          'tipcomid_movim'    => $tipcom_id,
-          'puesto_movim'      => $puesto,
-          'numero_movim'      => $numero,
-          'letra_movim'       => $letra,
-          'id_articulo'       => $item->id_articulo,
-          'codigobarra_movim' => $item->codigobarra,
-          'cantidad_movim'    => $item->cantidad,
-          'preciovta_movim'   => $item->precio,
-          'tasaiva_movim'     => $item->iva
+        'tipcomid_movim'    => $comprobante->tipcom_id,
+        'puesto_movim'      => $comprobante->puesto,
+        'numero_movim'      => $comprobante->numero,
+        'letra_movim'       => $letra,
+        'id_articulo'       => $item->id_articulo,
+        'codigobarra_movim' => $item->codigobarra,
+        'cantidad_movim'    => $item->cantidad,
+        'preciovta_movim'   => $item->precio,
+        'tasaiva_movim'     => $item->iva
       );
       if($item->iva > 20){
         $ivamax += ($item->precio / (1 + ($item->iva/100))) * $item->iva / 100;
@@ -373,258 +318,61 @@ class Billing extends Admin_Controller
       }
     }
     $datosEncab = array(
-        'tipcom_id' => $tipcom_id,
-        'puesto'    => $puesto,
-        'numero'    => $numero,
-        'letra'     => $letra,
-        'cuenta_id' => $cuenta,
-        'importe'   => $this->hasar->importe,
-        'neto'      => $this->hasar->importe - $this->hasar->ivatot,
-        'ivamin'    => $ivamin,
-        'ivamax'    => $ivamax,
-        'impint'    => 0,
-        'ingbru'    => 0,
-        'percep'    => 0,
-        'estado'    => $estado
+      'tipcom_id' => $comprobante->tipcom_id,
+      'puesto'    => $comprobante->puesto,
+      'numero'    => $comprobante->numero,
+      'letra'     => $letra,
+      'cuenta_id' => $comprobante->cuenta_id,
+      'importe'   => $comprobante->importe,
+      'neto'      => $comprobante->importe - $ivatot,
+      'ivamin'    => $ivamin,
+      'ivamax'    => $ivamax,
+      'impint'    => 0,
+      'ingbru'    => 0,
+      'percep'    => 0,
+      'estado'    => ($ctacte)?9:1
     );
-    $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
-     /**
-     * GRABO MOVIEIMTNO DE CAJA
-     */
-    $cajaOK = $this->_graboCaja ($idFacencab, $tipcom_id, $estado, $this->hasar->importe);
-    /**
-     * IMPRIMO MOVIMEINTO DE CTACTE
-     */
-    if($DNF==1){
-      $this->printCtaCte($cuenta, $puesto, $numero, $this->hasar->importe, $idFacencab);
-    };
-    //$this->load->view('pos/carga');
-  }
-  function printFacturaDo(){
-    $this->load->library('hasar');
-    $puesto    = $this->input->post('puesto');
-    $idencab   = $this->input->post('idencab');
-    $cuenta    = $this->Tmpmovim_model->getCuenta($idencab, $puesto);
-    $tipcom_id = $this->input->post('tipcom');
-    $DNF       = $this->input->post('DNF');
-    $estado    = ($DNF==1)?9:1;
-    $this->hasar->setPuesto($puesto);
-    $this->hasar->nombres($this->input->post('file'));
-    $respuesta  = $this->hasar->RespuestaFull();
-    //$respEstado = $this->hasar->Estado();
-    //$cuenta = $this->Tmpmovim_model->getCuenta($idencab, $puesto);
-    $numero = $this->hasar->last_print;
-    $items  = $this->Tmpmovim_model->itemsComprobante($puesto, $idencab);
-    $cliente = $this->Cuenta_model->getByIdComprobante($cuenta);
-    $letra = ($cliente->condiva==1)?"A":"B";
-    $ivamax = 0;
-    $ivamin = 0;
-    foreach($items as $item){
-      $datosMovim[] = array(
-          'tipcomid_movim'    => $tipcom_id,
-          'puesto_movim'      => $puesto,
-          'numero_movim'      => $numero,
-          'letra_movim'       => $letra,
-          'id_articulo'       => $item->id_articulo,
-          'codigobarra_movim' => $item->codigobarra,
-          'cantidad_movim'    => $item->cantidad,
-          'preciovta_movim'   => $item->precio,
-          'tasaiva_movim'     => $item->iva
-      );
-      if($item->iva > 20){
-        $ivamax += ($item->precio / (1 + ($item->iva/100))) * $item->iva / 100;
-      }else{
-        $ivamin += ($item->precio / (1 + ($item->iva/100))) * $item->iva / 100;
-      }
-    }
-    $datosEncab = array(
-        'tipcom_id' => $tipcom_id,
-        'puesto'    => $puesto,
-        'numero'    => $numero,
-        'letra'     => $letra,
-        'cuenta_id' => $cuenta,
-        'importe'   => $this->hasar->importe,
-        'neto'      => $this->hasar->importe - $this->hasar->ivatot,
-        'ivamin'    => $ivamin,
-        'ivamax'    => $ivamax,
-        'impint'    => 0,
-        'ingbru'    => 0,
-        'percep'    => 0,
-        'estado'    => $estado
-    );
-    /**
-     * GRABO COMPROBANTE FACTURA
-     */
     $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
     /**
      * GRABO MOVIEIMTNO DE CAJA
      */
-    $cajaOK = $this->_graboCaja ($idFacencab, $tipcom_id, $estado, $this->hasar->importe);
+    $cajaOK = $this->_graboCaja ($idFacencab, $comprobante->tipcom_id, $fpagos );
     /**
      * IMPRIMO MOVIMEINTO DE CTACTE
      */
-    if($DNF==1){
-      $this->printCtaCte($cuenta, $puesto, $numero, $this->hasar->importe, $idFacencab);
-    };
-  }
-  function printRemitoDo(){
-    $this->load->library('hasar');
-    $puesto    = $this->input->post('puesto');
-    $idencab   = $this->input->post('idencab');
-    $cuenta    = $this->Tmpmovim_model->getCuenta($idencab, $puesto);
-    $tipcom_id = $this->input->post('tipcom');
-    $DNF       = $this->input->post('DNF');
-    $estado    = ($DNF==1)?9:1;
-    $ptorem    = 90 + $puesto;
-    $numero    = $this->Numeradores_model->getNextRemito($ptorem);
-    $this->hasar->setPuesto($puesto);
-    $this->hasar->nombres($this->input->post('file'));
-    $respuesta  = $this->hasar->RespuestaFull();
-    //$respEstado = $this->hasar->Estado();
-    //$cuenta = $this->Tmpmovim_model->getCuenta($idencab, $puesto);
-    $items  = $this->Tmpmovim_model->itemsComprobante($puesto, $idencab);
-    $cliente = $this->Cuenta_model->getByIdComprobante($cuenta);
-    $letra = "R";
-    $ivamax = 0;
-    $ivamin = 0;
-    $importe = 0;
-    $neto    = 0;
-    $negativo = ($tipcom_id==9)?-1:1;
-    foreach($items as $item){
-      $datosMovim[] = array(
-          'tipcomid_movim'    => $tipcom_id,
-          'puesto_movim'      => $ptorem,
-          'numero_movim'      => $numero,
-          'letra_movim'       => $letra,
-          'id_articulo'       => $item->id_articulo,
-          'codigobarra_movim' => $item->codigobarra,
-          'cantidad_movim'    => $item->cantidad,
-          'preciovta_movim'   => $item->precio,
-          'tasaiva_movim'     => $item->iva
-      );
-      if($item->iva > 20){
-        $ivamax += ($item->precio / (1 + ($item->iva/100))) * $item->iva / 100;
-      }else{
-        $ivamin += ($item->precio / (1 + ($item->iva/100))) * $item->iva / 100;
-      }
-      $importe += $item->precio * $item->cantidad;
-      $neto    += $item->precio / (1 + ($item->iva/100)) * $item->cantidad ;
-    }
-    $datosEncab = array(
-        'tipcom_id' => $tipcom_id,
+    if($ctacte){
+      //preparo el comprobante a imprimir
+      $ptorem            = 80 + $comprobante->puesto;
+      $numrem            = $this->Numeradores_model->getNextCompCtaCte($ptorem);
+      $numeroFac         = $comprobante->numero;
+      //genero el archivo
+      $this->_imprimeDNFLaser($ptorem,$numrem,90 + $comprobante->puesto, $numeroFac, $cliente, $renglones,true);
+      $estado    = 'P';
+      $ptorem    = 80 + $comprobante->puesto;
+      $numero    = $this->Numeradores_model->getNextCompCtaCte($ptorem);
+      $datosEncab = array(
         'puesto'    => $ptorem,
         'numero'    => $numero,
-        'letra'     => $letra,
-        'cuenta_id' => $cuenta,
-        'importe'   => $importe,
-        'neto'      => $neto,
-        'ivamin'    => $ivamin,
-        'ivamax'    => $ivamax,
-        'impint'    => 0,
-        'ingbru'    => 0,
-        'percep'    => 0,
+        'importe'   => $comprobante->importe,
+        'id_cuenta' => $comprobante->cuenta_id,
+        'idencab'   => $idFacencab,
         'estado'    => $estado
-    );
-    $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
-    $num        = $this->Numeradores_model->updateRemito($ptorem, $numero+1);
-        /**
-     * GRABO MOVIEIMTNO DE CAJA
-     */
-    $cajaOK = $this->_graboCaja ($idFacencab, $tipcom_id, $estado, $this->hasar->importe);
-    /**
-     * IMPRIMO MOVIMEINTO DE CTACTE
-     */
-    if($DNF==1){
-      $this->printCtaCte($cuenta, $puesto, $numero, $importe * $negativo, $idFacencab);
-    };
-  }
-  function printRemitoDoLaser(){
-    $puesto    = $this->input->post('puesto');
-    $idencab   = $this->input->post('idencab');
-    $cuenta    = $this->Tmpmovim_model->getCuenta($idencab, $puesto);
-    $tipcom_id = $this->input->post('tipcom');
-    $DNF       = $this->input->post('DNF');
-    $estado    = ($DNF==1)?9:1;
-    $ptorem    = 90 + $puesto;
-    $numero    = $this->Numeradores_model->getNextRemito($ptorem);
-    $items  = $this->Tmpmovim_model->itemsComprobante($puesto, $idencab);
-    $cliente = $this->Cuenta_model->getByIdComprobante($cuenta);
-    $letra = "R";
-    $ivamax = 0;
-    $ivamin = 0;
-    $importe = 0;
-    $neto    = 0;
-    $negativo = ($tipcom_id==9)?-1:1;
-    foreach($items as $item){
-      $datosMovim[] = array(
-          'tipcomid_movim'    => $tipcom_id,
-          'puesto_movim'      => $ptorem,
-          'numero_movim'      => $numero,
-          'letra_movim'       => $letra,
-          'id_articulo'       => $item->id_articulo,
-          'codigobarra_movim' => $item->codigobarra,
-          'cantidad_movim'    => $item->cantidad,
-          'preciovta_movim'   => $item->precio,
-          'tasaiva_movim'     => $item->iva
       );
-      if($item->iva > 20){
-        $ivamax += ($item->precio / (1 + ($item->iva/100))) * $item->iva / 100;
-      }else{
-        $ivamin += ($item->precio / (1 + ($item->iva/100))) * $item->iva / 100;
-      }
-      $importe += $item->precio * $item->cantidad;
-      $neto    += $item->precio / (1 + ($item->iva/100)) * $item->cantidad ;
+      $this->Ctactemovim_model->graboComprobante($datosEncab);
+      $num = $this->Numeradores_model->updateCompCtaCte($ptorem, $numero+1);
     }
-    $datosEncab = array(
-        'tipcom_id' => $tipcom_id,
-        'puesto'    => $ptorem,
-        'numero'    => $numero,
-        'letra'     => $letra,
-        'cuenta_id' => $cuenta,
-        'importe'   => $importe,
-        'neto'      => $neto,
-        'ivamin'    => $ivamin,
-        'ivamax'    => $ivamax,
-        'impint'    => 0,
-        'ingbru'    => 0,
-        'percep'    => 0,
-        'estado'    => $estado
-    );
-    $idFacencab = $this->Facencab_model->graboComprobante($datosEncab,$datosMovim);
-    $num        = $this->Numeradores_model->updateRemito($ptorem, $numero+1);
-    /**
-     * GRABO MOVIEIMTNO DE CAJA
+    /*
+     * limpio los temporales
      */
-    $cajaOK = $this->_graboCaja ($idFacencab, $tipcom_id, $estado, $this->hasar->importe);
-    /**
-     * IMPRIMO MOVIMEINTO DE CTACTE
-     */    
-    if($DNF==1){
-      $this->printCtaCteLaser($cuenta, $puesto, $numero, $importe * $negativo, $idFacencab,$items);
-    }else{
-      echo "termino";
-    }
+    $this->Tmpfpagos_model->vacio($comprobante->id);
+    $this->Tmpmovim_model->vacio($comprobante->id);
+    $this->Tmpfacencab_model->vacio($comprobante->id);
+    /*
+     * libero la pagina
+     */
+    echo json_encode('ok');
   }
-  function printCtaCteDo(){
-    $this->load->model('Ctactemovim_model','',true);
-    $puesto    = $this->input->post('puesto');
-    $idencab   = $this->input->post('idencab');
-    $cuenta    = $this->input->post('cuentaAjax');
-    $importe   = $this->input->post('importe');
-    $estado    = 'P';
-    $ptorem    = 80 + $puesto;
-    $numero    = $this->Numeradores_model->getNextCompCtaCte($ptorem);
-    $datosEncab = array(
-        'puesto'    => $ptorem,
-        'numero'    => $numero,
-        'importe'   => $importe,
-        'id_cuenta' => $cuenta,
-        'idencab'   => $idencab,
-        'estado'    => $estado
-    );
-    $this->Ctactemovim_model->graboComprobante($datosEncab);
-    $num = $this->Numeradores_model->updateCompCtaCte($ptorem, $numero+1);
-  }
+
   function _imprimeTicket($puesto, $idencab, $items, $total){
     $this->load->library("hasar");
     $this->load->library("ticket");
@@ -765,7 +513,7 @@ class Billing extends Admin_Controller
     $hoja=0;
     $total=0;
     $fechoy= new DateTime();
-    $fecha = $fechoy->format("d-m-Y");
+    $fecha = $fechoy->format("d/m/Y H:m");
     $this->fpdf->Open();
     $this->fpdf->SetMargins(0,0,0);
     $this->fpdf->SetAutoPageBreak(true);
@@ -779,13 +527,13 @@ class Billing extends Admin_Controller
         $this->fpdf->AddPage('P',array('100','148'));
         $this->fpdf->SetFont('Arial','b','10');
         $this->fpdf->Cell(0,5,"Documento No Valido como Factura",0,1,'C');
-        $this->fpdf->Cell(70,5,sprintf("( %s ) %s",$cliente->codigo,$cliente->nombre),0,0,'L');
-        $this->fpdf->Cell(30,5,$fecha,0,1,'R');
+        $this->fpdf->Cell(70,5,sprintf("( %s ) %s",$cliente->codigo,$cliente->nombre),0,1,'L');
 
         if($firma){
           $this->fpdf->Cell(50,5,sprintf("Comp. CtaCte: %04.0f-%08.0f", $puesto,$idencab),0,0,'L');
         }
-        $this->fpdf->Cell(50,5,sprintf("Rem: %04.0f-%08.0f", $ptorem,$numrem),0,1,'R');
+        $this->fpdf->Cell(50,5,sprintf("Rem: %04.0f-%08.0f", $ptorem,$numrem),0,0,'L');
+        $this->fpdf->Cell(50,5,$fecha,0,1,'R');
         $this->fpdf->Line(0,25,100,25);
         $this->fpdf->SetFont('Arial','b','8');
         $this->fpdf->SetXY(0,25);
@@ -802,8 +550,8 @@ class Billing extends Admin_Controller
           $this->fpdf->Cell(0,5,sprintf("Transporte --> %4.2f", $total),0,1,'R');
         };
       };
-      $this->fpdf->SetFont('Arial','','10');
-      $linea =($hoja==0)?$renglon*5 + 30:$renglon*5 + 35;
+      $this->fpdf->SetFont('Arial','','8');
+      $linea =($hoja==0)?$renglon*4 + 30:$renglon*4 + 35;
       $this->fpdf->SetXY(0,$linea);
       $this->fpdf->Cell(10,5,$item->cantidad,0,0,'L');
       $this->fpdf->SetXY(10,$linea);
@@ -839,23 +587,26 @@ class Billing extends Admin_Controller
       $this->fpdf->SetXY(0,$linea+22);
       $this->fpdf->Cell(0,5,"Firma del Cliente",0,1,'C');
     };
-    $nombre = ABSOLUT_PATH . PUESTO . "/pdf/ticket.pdf";
+    $nombre = ABSOLUT_PATH . '/'. PUESTO . "/pdf/ticket.pdf";
     $this->fpdf->Output($nombre, 'F');
     $cmd=sprintf("lp -o media=Custom.100x148mm %s -d %s", $nombre,PRREMITO);
     shell_exec($cmd);
     return $nombre;
   }
-  private function _graboCaja( $idFacencab, $tipcomp, $estado, $importe){
+  private function _graboCaja( $idFacencab,$tipcom, $fpagos ){
     $this->load->model('Tipcom_model');
-      $concepto=$this->Tipcom_model->getConceptoCaja($tipcom);
+    $this->load->model('Cajamovim_model');
+    $concepto=$this->Tipcom_model->getConceptoCaja($tipcom);
+    foreach($fpagos as $fp){
       $datosCaja = array(
-        'caja_id' => 'NULL', 
+        'caja_id' => 1,
         'concepto_id' => $concepto,
-        'facencab_id' => $idFacencab, 
-        'fpago_id'    => $estado, 
-        'importe'     => $importe
-    );
-    $idCajmovim = $this->Cajamovim_model->add($datosCaja);
+        'facencab_id' => $idFacencab,
+        'fpago_id'    => $fp->fpagos_id,
+        'importe'     => $fp->monto
+      );
+      $idCajmovim = $this->Cajamovim_model->add($datosCaja);
+    }
     return $idCajmovim;
   }
 }

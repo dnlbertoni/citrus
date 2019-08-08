@@ -7,13 +7,22 @@ class Tmpmovim_model extends MY_Model{
     $this->setTable ('tmp_movim');
   }
 
+<<<<<<< HEAD
   function getRenglon ($idRenglon)
   {
+=======
+  function getRenglon ($idRenglon){
+>>>>>>> 3.5
     $this->db->select ('descripcion_tmpmov as nombre');
     $this->db->select ('cantidad_tmpmov    as cantidad');
     $this->db->select ('preciovta_tmpmov   as precio');
     $this->db->select ('tasaiva_tmpmov     as iva');
     $this->db->select ('codigobarra_tmpmov as codigobarra');
+<<<<<<< HEAD
+=======
+    $this->db->select ('tmpfacencab_id     as tmpfacencab_id');
+    $this->db->select('(cantidad_tmpmov * preciovta_tmpmov ) AS importe', false);
+>>>>>>> 3.5
     $this->db->from ($this->tabla);
     $this->db->where ("id_tmpmov", $idRenglon);
     return $this->db->get ()->row ();
@@ -62,11 +71,11 @@ class Tmpmovim_model extends MY_Model{
   function delArticulo($codmov){
     $this->db->from($this->tabla);
     $this->db->where('id_tmpmov', $codmov);
-    $idencab = $this->db->get()->row()->tmpfacencab_id;
-    //$this->db->_reset_select();
+    $movimiento = $this->db->get()->row();
+    //borro comprobante
     $this->db->where('id_tmpmov', $codmov);
     $this->db->delete($this->tabla);
-    return $idencab;
+    return $movimiento->tmpfacencab_id;
   }
   function getTotales($id){
     $this->db->select('SUM(cantidad_tmpmov*preciovta_tmpmov) AS Total',false);

@@ -14,7 +14,7 @@ class Subrubros extends MY_Controller{
     $datos['tareas'][] = array('articulos/submarcas/', 'Submarcas');
     /*
     Template::set($datos);
-
+    
     Template::set_block('tareas', 'tareas'); // panel de tareas
 */
     $subrubros = $this->Subrubros_model->getAllConArticulos();
