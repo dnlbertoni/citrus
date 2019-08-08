@@ -25,9 +25,79 @@ class Ctacte_movim_model extends MY_Model{
     $this->db->from($this->getTable());
     $this->db->join('cuenta', 'id_cuenta=cuenta.id', 'inner');
     $this->db->where('ctacte_movim.estado', $estado);
+    $this->db->having('total > 0');
     $this->db->order_by('nombre');
     $this->db->group_by('id_cuenta');
     return $this->db->get()->result();
+  }
+  private function _buscoComprobante($id){
+    // buso el comprobante original
+    $this->db->select('idencab as factura');
+    $this->db->from($this->getTable());
+    $this->db->where('id', $id);
+    $this->db->where('id_liq IS NULL', '', FALSE);
+    $q=$this->db->get()->row();
+    if(count($q)==0){
+      return "no es posible cambiar de cuenta";
+    }else{
+      return $q->factura;
+    }
+  }
+  /*
+   * @method muestroComprobante
+   * @param $id id del comprobante de cuenta corriente
+   *
+   */
+  function getEncabezado($id){
+    $idencab=$this->_buscoComprobante($id);
+    $this->db->select('DATE_FORMAT(fecha, "%d/%m/%Y") as fecha');
+    $this->db->select('facencab.cuenta_id');
+    $this->db->select('cuenta.nombre as cuenta_nombre');
+    $this->db->select('CONCAT(tipcom.abreviatura," - ", facencab.letra ) as tipocom', false);
+    $this->db->select('CONCAT(puesto,"-",numero) as comprobante', false);
+    $this->db->select('IF(facencab.estado=1,"Contado", "CtaCte") as condvta');
+    $this->db->select('importe as total');
+    $this->db->from('facencab');
+    $this->db->join('cuenta', 'cuenta.id=facencab.cuenta_id', 'inner');
+    $this->db->join('tipcom', 'tipcom.id=facencab.tipcom_id', 'inner');
+    $this->db->where('facencab.id', $idencab);
+    return $this->db->get()->row();
+  }
+  function getComprobante($id){
+    $idencab=$this->_buscoComprobante($id);
+    $this->db->select('codigobarra_articulo as Codigobarra');
+    $this->db->select('cantidad_movim as Cantidad');
+    $this->db->select('facmovim.id_articulo');
+    $this->db->select('descripcion_articulo as Nombre');
+    $this->db->select('preciovta_movim as Precio');
+    $this->db->select('cantidad_movim * preciovta_movim as Importe');
+    $this->db->from('facmovim');
+    $this->db->join('tbl_articulos', 'tbl_articulos.id_articulo=facmovim.id_articulo', 'inner');
+    $this->db->where('facmovim.idencab', $idencab);
+    return $this->db->get()->result();
+  }
+    /*
+   * @method quitarDeLaCuenta
+   * @param $id id del comprobante de cuenta corriente
+   *
+   */
+  function quitarDeLaCuenta($id){
+    $idencab = $this->_buscoComprobante($id);
+    $this->db->trans_begin();
+    // cambio de estado el comprobante en la lista de movimientos de facturas
+    $this->db->set('estado', 1);
+    $this->db->where('id', $idencab);
+    $this->db->update('facencab');
+    //$this->db->free_result();
+    //borro de los movimientos de la cuenta corriente
+    $this->db->where('id', $id);
+    $this->db->where('id_liq IS NULL', '', FALSE);
+    $this->db->delete('ctacte_movim');
+    if ($this->db->trans_status() === FALSE){
+        $this->db->trans_rollback();
+    }else{
+        $this->db->trans_commit();
+    };
   }
   function getFecha($tipo='min', $estado='P', $cuenta=0){
     if($tipo=='min')

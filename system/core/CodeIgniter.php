@@ -27,42 +27,26 @@
  * @link		http://codeigniter.com/user_guide/
  */
 
-/**
- * CodeIgniter Version
- *
- * @var string
- *
+/*
+ * ------------------------------------------------------
+ *  Define the CodeIgniter Version
+ * ------------------------------------------------------
  */
-	define('CI_VERSION', '2.1.0');
-
-/**
- * CodeIgniter Branch (Core = TRUE, Reactor = FALSE)
- *
- * @var boolean
- *
- */
-	define('CI_CORE', FALSE);
+	define('CI_VERSION', '2.0');
 
 /*
  * ------------------------------------------------------
  *  Load the global functions
  * ------------------------------------------------------
  */
-	require(BASEPATH.'core/Common.php');
+	require(BASEPATH.'core/Common'.EXT);
 
 /*
  * ------------------------------------------------------
  *  Load the framework constants
  * ------------------------------------------------------
  */
-	if (defined('ENVIRONMENT') AND file_exists(APPPATH.'config/'.ENVIRONMENT.'/constants.php'))
-	{
-		require(APPPATH.'config/'.ENVIRONMENT.'/constants.php');
-	}
-	else
-	{
-		require(APPPATH.'config/constants.php');
-	}
+	require(APPPATH.'config/constants'.EXT);
 
 /*
  * ------------------------------------------------------
@@ -199,13 +183,6 @@
 	}
 
 /*
- * -----------------------------------------------------
- * Load the security class for xss and csrf support
- * -----------------------------------------------------
- */
-	$SEC =& load_class('Security', 'core');
-
-/*
  * ------------------------------------------------------
  *  Load the Input class and sanitize globals
  * ------------------------------------------------------
@@ -226,7 +203,7 @@
  *
  */
 	// Load the base controller class
-	require BASEPATH.'core/Controller.php';
+	require BASEPATH.'core/Controller'.EXT;
 
 	function &get_instance()
 	{
@@ -234,20 +211,20 @@
 	}
 
 
-	if (file_exists(APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php'))
+	if (file_exists(APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller'.EXT))
 	{
-		require APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php';
+		require APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller'.EXT;
 	}
 
 	// Load the local application controller
 	// Note: The Router class automatically validates the controller path using the router->_validate_request().
 	// If this include fails it means that the default controller in the Routes.php file is not resolving to something valid.
-	if ( ! file_exists(APPPATH.'controllers/'.$RTR->fetch_directory().$RTR->fetch_class().'.php'))
+	if ( ! file_exists(APPPATH.'controllers/'.$RTR->fetch_directory().$RTR->fetch_class().EXT))
 	{
 		show_error('Unable to load your default controller. Please make sure the controller specified in your Routes.php file is valid.');
 	}
 
-	include(APPPATH.'controllers/'.$RTR->fetch_directory().$RTR->fetch_class().'.php');
+	include(APPPATH.'controllers/'.$RTR->fetch_directory().$RTR->fetch_class().EXT);
 
 	// Set a mark point for benchmarking
 	$BM->mark('loading_time:_base_classes_end');
@@ -269,25 +246,7 @@
 		OR in_array(strtolower($method), array_map('strtolower', get_class_methods('CI_Controller')))
 		)
 	{
-		if ( ! empty($RTR->routes['404_override']))
-		{
-			$x = explode('/', $RTR->routes['404_override']);
-			$class = $x[0];
-			$method = (isset($x[1]) ? $x[1] : 'index');
-			if ( ! class_exists($class))
-			{
-				if ( ! file_exists(APPPATH.'controllers/'.$class.'.php'))
-				{
-					show_404("{$class}/{$method}");
-				}
-
-				include_once(APPPATH.'controllers/'.$class.'.php');
-			}
-		}
-		else
-		{
-			show_404("{$class}/{$method}");
-		}
+		show_404("{$class}/{$method}");
 	}
 
 /*
@@ -338,12 +297,12 @@
 				$method = (isset($x[1]) ? $x[1] : 'index');
 				if ( ! class_exists($class))
 				{
-					if ( ! file_exists(APPPATH.'controllers/'.$class.'.php'))
+					if ( ! file_exists(APPPATH.'controllers/'.$class.EXT))
 					{
 						show_404("{$class}/{$method}");
 					}
 
-					include_once(APPPATH.'controllers/'.$class.'.php');
+					include_once(APPPATH.'controllers/'.$class.EXT);
 					unset($CI);
 					$CI = new $class();
 				}

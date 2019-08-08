@@ -46,7 +46,7 @@ class Hasar{
   function __construct(){  //metodo constructor
     $fs                    = chr(28);
     //$ruta_universal        =  "/var/www/beta/citrusDev/rsc/tmp/fiscal";  // codeigniter
-    $ruta_universal        = "/var/www/fiscal";  // debian
+    $ruta_universal        = ABSOLUT_PATH;  // debian
     $this->ruta            = $ruta_universal;
     $this->mandar          = "mandar";
     $this->recibir         = "recibir";
@@ -56,7 +56,7 @@ class Hasar{
   }
   function setPuesto($num){
     $this->puestoVta          = $num;
-    $this->display = ($num==4)?1:0;
+    $this->display = ($num==4)?0:0;
   }
   function nombres($valor="estado"){
     $this->nFile=$valor;

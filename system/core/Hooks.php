@@ -28,23 +28,8 @@
  */
 class CI_Hooks {
 
-	/**
-	 * Determines wether hooks are enabled
-	 *
-	 * @var bool
-	 */
 	var $enabled		= FALSE;
-	/**
-	 * List of all hooks set in config/hooks.php
-	 *
-	 * @var array
-	 */
 	var $hooks			= array();
-	/**
-	 * Determines wether hook is in progress, used to prevent infinte loops
-	 *
-	 * @var bool
-	 */
 	var $in_progress	= FALSE;
 
 	/**
@@ -80,15 +65,7 @@ class CI_Hooks {
 		// Grab the "hooks" definition file.
 		// If there are no hooks, we're done.
 
-		if (defined('ENVIRONMENT') AND is_file(APPPATH.'config/'.ENVIRONMENT.'/hooks.php'))
-		{
-		    include(APPPATH.'config/'.ENVIRONMENT.'/hooks.php');
-		}
-		elseif (is_file(APPPATH.'config/hooks.php'))
-		{
-			include(APPPATH.'config/hooks.php');
-		}
-
+		@include(APPPATH.'config/hooks'.EXT);
 
 		if ( ! isset($hook) OR ! is_array($hook))
 		{

@@ -27,35 +27,40 @@ define('DIR_WRITE_MODE', 0777);
 |
 */
 
-define('FOPEN_READ', 							'rb');
+define('FOPEN_READ',							'rb');
 define('FOPEN_READ_WRITE',						'r+b');
-define('FOPEN_WRITE_CREATE_DESTRUCTIVE', 		'wb'); // truncates existing file data, use with care
-define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE', 	'w+b'); // truncates existing file data, use with care
-define('FOPEN_WRITE_CREATE', 					'ab');
-define('FOPEN_READ_WRITE_CREATE', 				'a+b');
-define('FOPEN_WRITE_CREATE_STRICT', 			'xb');
+define('FOPEN_WRITE_CREATE_DESTRUCTIVE',		'wb'); // truncates existing file data, use with care
+define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE',	'w+b'); // truncates existing file data, use with care
+define('FOPEN_WRITE_CREATE',					'ab');
+define('FOPEN_READ_WRITE_CREATE',				'a+b');
+define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
-define('BASE_URL_IMG', 'rsc/img/');
-define('TMP', BASEPATH . '../rsc/tmp/');
-/*
- * Version
- */
-define('VERSION', '2.1');
-/*
- * puesto del controlador fiscal
- */
+define('VERSION','3.5');
+
 switch($_SERVER['REMOTE_ADDR']){
   case '192.168.1.102':
     $puesto = 3;
+        $rutaUniversal='/var/www/fiscal';
     break;
   default:
     $puesto = 4;
     break;
 }
+switch(ENVIRONMENT){
+  case 'activo':
+    $rutaUniversal='/var/www/fiscal';
+    break;
+  default:
+    $rutaUniversal='/home/citrusdesa.autoservsantaluciacom.ar/fiscal';
+    break;
+}
+define('TMP', BASEPATH .'../assets/tmp/');
 define('PUESTO', $puesto);
 define('PRREMITO','laser03');
 define('PRCARTEL','laser03');
-
+define('ABSOLUT_PATH',$rutaUniversal);
+define('ACTIVO', 1);
+define('SUSPENDIDO', 0);
 /* End of file constants.php */
-/* Location: ./system/application/config/constants.php */
+/* Location: ./application/config/constants.php */

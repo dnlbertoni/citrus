@@ -7,7 +7,6 @@
  * @category - Model
  * @author - Udi Mosayev @ umNet
  * @property CI_DB_active_record $db
- * @var boolean $_created si la tabla tiene un campo con ese nombre asigna la fehca de cracion automaticamente
  */
 
 class MY_Model extends CI_Model{
@@ -15,9 +14,9 @@ class MY_Model extends CI_Model{
   // The main table name
   private $_table;
   private $_primaryKey;
-  private $_created = false;
+  private $_modelo = array ();
   public function __construct() {
-     parent::__construct();        
+     parent::__construct();
   }
 
   /**
@@ -26,18 +25,17 @@ class MY_Model extends CI_Model{
    */
   public function setTable($tabla) {
 	  $this->_table = $tabla;
-	  $campos = $this->getCampos($tabla);
+    $campos = $this->getCampos ();
 	  foreach($campos as $camp){
 		  if($camp->primary_key == 1){
 			  $this->_primaryKey = $camp->name;
-		  };
-          if($camp->name=="created"){
-			  $this->_created = true;            
-          }
+		  }
 	  }
   }
-  public function getCampos($tabla){
-	  return $this->db->field_data($tabla);
+
+  public function getCampos ()
+  {
+    return $this->db->field_data ($this->_table);
   }
   public function getTable() {
           return $this->_table;
@@ -46,10 +44,56 @@ class MY_Model extends CI_Model{
 	  return $this->_primaryKey;
   }
 
+  public function setModelo ($modelo)
+  {
+    if (is_array ($modelo)) {
+      $this->_modelo = $modelo;
+    } else {
+      return "no es una matriz";
+    }
+  }
+
+  public function getModelo ()
+  {
+    return $this->_modelo;
+  }
+
+  public function getInicial ()
+  {
+    $campos    = $this->getCampos ();
+    $resultado = array ();
+    foreach ($campos as $campo) {
+      $value = '';
+      switch ( $campo->type ) {
+        case 'boolean':
+        case 'bool':
+          $value = (bool) $value;
+          break;
+
+        case 'integer':
+        case 'int':
+          $value = (int) $value;
+          break;
+
+        case 'float':
+          $value = (float) $value;
+          break;
+
+        case 'string':
+          $value = (string) $value;
+          break;
+
+        default:
+          break;
+      }
+      $resultado[$campo->name] = $value;
+    };
+    return (object) $resultado;
+  }
   // Log as Error each time nonexisting method called.
   public function __call($name, $arguments) {
           $args = implode(',',$arguments);
-          log_message('error', $name.'('.$args.') Not exists.');
+    log_message ('error', $name . '(' . $args . ') No EXISTE.');
           return FALSE;
   }
 
@@ -89,9 +133,6 @@ class MY_Model extends CI_Model{
           $this->update($data,$data[$field_control]);
           return true;
         }else{
-          if($this->_created){
-            $this->db->set('created','NOW()',false);
-          };
           $this->db->insert($this->getTable(), $data);
           return $this->db->insert_id();
         }
@@ -139,16 +180,10 @@ class MY_Model extends CI_Model{
                   log_message('error', 'Got non-numeric id: '.$id);
                   return FALSE;
           } else {
-                  /* write the old&new data to history
-                  foreach($data as $fieldName=>$fieldValue) {
-                          $this->history->write($this->getTable(), $id, $fieldName, $fieldValue);
-                  }
-                  */
                   $this->db->where($this->getPrimaryKey(), $id);
                   $this->db->update($this->getTable(), $data);
           }
   }
-
   /**
    * This method returns all the rows of this model
    * @param Array $where Array of field=>value
@@ -161,7 +196,6 @@ class MY_Model extends CI_Model{
           $query = $this->db->get_where($this->getTable(), $where);
           return $query;
   }
-
   /**
    * This method gets 1 row from a table and returns it.
    * @param Integer $id
@@ -177,7 +211,6 @@ class MY_Model extends CI_Model{
 		  return $this->db->get()->row();
 	  }
   }
-
   /**
    * This method logically deletes a row.
    * @param Integer $id
@@ -191,14 +224,13 @@ class MY_Model extends CI_Model{
                   return FALSE;
           }
   }
-
   public function toDropDown($campoId, $campoNombre){
           $this->db->select($campoId);
           $this->db->select($campoNombre);
           $this->db->from($this->getTable());
           $this->db->order_by($campoNombre);
           $query = $this->db->get();
-          $datos = array();
+          $datos = array('S'=>"Seleccione...");
           foreach($query->result() as $item){
                   $datos[$item->{$campoId}] = $item->{$campoNombre};
           }
@@ -219,8 +251,13 @@ class MY_Model extends CI_Model{
           }
           return $datos;
   }
-  public function getAll($orden=FALSE, $limite=false){
+
+  public function getAll ($estado = 'ALL', $orden = FALSE, $limite = FALSE)
+  {
     $this->db->from($this->getTable());
+    if ($estado != 'ALL') {
+      $this->db->where ('estado', $estado);
+    };
     if($orden)
 	  $this->db->order_by($orden);
     if($limite){
@@ -251,10 +288,8 @@ class MY_Model extends CI_Model{
     $this->db->where('id',$id);
     $this->db->update($this->getTable());
     return true;
+  }
 }
-
-}
-
 /* End of file MY_Model.php*/
-/* Location: ./application/model/MY_Model.php */
+/* Location: ./application/core/MY_Model.php */
 

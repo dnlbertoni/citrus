@@ -37,7 +37,7 @@ require dirname(__FILE__).'/Modules.php';
  **/
 class MX_Router extends CI_Router
 {
-	protected $module;
+	private $module;
 	
 	public function fetch_module() {
 		return $this->module;

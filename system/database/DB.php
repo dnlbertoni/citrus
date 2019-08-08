@@ -21,23 +21,26 @@
  * @category	Database
  * @author		ExpressionEngine Dev Team
  * @link		http://codeigniter.com/user_guide/database/
- * @param 	string
- * @param 	bool	Determines if active record should be used or not
  */
 function &DB($params = '', $active_record_override = NULL)
 {
 	// Load the DB config file if a DSN string wasn't passed
 	if (is_string($params) AND strpos($params, '://') === FALSE)
 	{
-		// Is the config file in the environment folder?
-		if ( ! defined('ENVIRONMENT') OR ! file_exists($file_path = APPPATH.'config/'.ENVIRONMENT.'/database.php'))
+		
+		$file_path = APPPATH.'config/'.ENVIRONMENT.'/database'.EXT;
+		
+		if ( ! file_exists($file_path))
 		{
-			if ( ! file_exists($file_path = APPPATH.'config/database.php'))
+			log_message('debug', 'Database config for '.ENVIRONMENT.' environment is not found. Trying global config.');
+			$file_path = APPPATH.'config/database'.EXT;
+			
+			if ( ! file_exists($file_path))
 			{
-				show_error('The configuration file database.php does not exist.');
+				continue;
 			}
 		}
-
+		
 		include($file_path);
 
 		if ( ! isset($db) OR count($db) == 0)
@@ -85,7 +88,7 @@ function &DB($params = '', $active_record_override = NULL)
 		{
 			parse_str($dns['query'], $extra);
 
-			foreach ($extra as $key => $val)
+			foreach($extra as $key => $val)
 			{
 				// booleans please
 				if (strtoupper($val) == "TRUE")
@@ -118,11 +121,11 @@ function &DB($params = '', $active_record_override = NULL)
 		$active_record = $active_record_override;
 	}
 
-	require_once(BASEPATH.'database/DB_driver.php');
+	require_once(BASEPATH.'database/DB_driver'.EXT);
 
 	if ( ! isset($active_record) OR $active_record == TRUE)
 	{
-		require_once(BASEPATH.'database/DB_active_rec.php');
+		require_once(BASEPATH.'database/DB_active_rec'.EXT);
 
 		if ( ! class_exists('CI_DB'))
 		{
@@ -137,7 +140,7 @@ function &DB($params = '', $active_record_override = NULL)
 		}
 	}
 
-	require_once(BASEPATH.'database/drivers/'.$params['dbdriver'].'/'.$params['dbdriver'].'_driver.php');
+	require_once(BASEPATH.'database/drivers/'.$params['dbdriver'].'/'.$params['dbdriver'].'_driver'.EXT);
 
 	// Instantiate the DB adapter
 	$driver = 'CI_DB_'.$params['dbdriver'].'_driver';

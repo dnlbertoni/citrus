@@ -1,14 +1,14 @@
 <?php
 /*
  * Modelo de tabla articulos para la impresion de carteles varios
- * 
+ *
  */
- 
+
 class Articulos_model extends MY_Model{
   var $tabla = "tbl_articulos";
   function __construct(){
     parent::__construct();
-    $this->setTable("tbl_articulos");    
+    $this->setTable("tbl_articulos");
   }
   function getDatosBasicos($id){
   $id = intval($id);
@@ -48,7 +48,7 @@ class Articulos_model extends MY_Model{
     //echo $this->db->_compile_select();
     return $this->db->get()->result();
   }
-  function PendientesImpresion(){
+  function PendientesImpresion($limite=false){
     $this->db->distinct();
     $this->db->select('tbl_preciosmovim.id_articulo      AS id');
     $this->db->select('codigobarra_articulo AS Codigobarra');
@@ -61,6 +61,9 @@ class Articulos_model extends MY_Model{
     $this->db->join('tbl_subrubros', 'tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro', 'inner');
     $this->db->join('stk_submarcas', 'tbl_articulos.id_marca = stk_submarcas.id_submarca', 'inner');
     $this->db->where('impreso',0);
+    if($limite){
+      $this->db->limit($limite);
+    }
     $this->db->order_by('Subrubro');
     $this->db->order_by('Submarca');
     return $this->db->get()->result();
@@ -128,4 +131,21 @@ class Articulos_model extends MY_Model{
     $q = $this->db->get()->row();
     return $q->nombre;
   }
+  function getListaFull($activos=true){
+    $this->db->_reset_select();
+    $this->db->select("id_articulo AS id");    
+    $this->db->select("descripcion_articulo AS descripcion");
+    $this->db->select("preciovta_articulo AS precio");
+    $this->db->select("tbl_rubros.descripcion_rubro AS rubro");
+    $this->db->select("tbl_subrubros.descripcion_subrubro AS subrubro");
+    $this->db->select('codigobarra_articulo as codigobarra');
+    $this->db->from($this->tabla);
+    $this->db->join('tbl_subrubros', 'tbl_subrubros.id_subrubro=tbl_articulos.id_subrubro', 'left');
+    $this->db->join('tbl_rubros', 'tbl_rubros.id_rubro=tbl_subrubros.id_rubro', 'left');
+    if($activos)
+      $this->db->where('tbl_articulos.estado_articulo',1);
+    $this->db->order_by('rubro');
+    $this->db->order_by('subrubro');
+    return $this->db->get()->result();
+  }  
  }

@@ -28,23 +28,8 @@
  */
 class CI_Config {
 
-	/**
-	 * List of all loaded config values
-	 *
-	 * @var array
-	 */
 	var $config = array();
-	/**
-	 * List of all loaded config files
-	 *
-	 * @var array
-	 */
 	var $is_loaded = array();
-	/**
-	 * List of paths to search when trying to load a config file
-	 *
-	 * @var array
-	 */
 	var $_config_paths = array(APPPATH);
 
 	/**
@@ -66,7 +51,7 @@ class CI_Config {
 		// Set the base_url automatically if none was provided
 		if ($this->config['base_url'] == '')
 		{
-			if (isset($_SERVER['HTTP_HOST']))
+			if(isset($_SERVER['HTTP_HOST']))
 			{
 				$base_url = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
 				$base_url .= '://'. $_SERVER['HTTP_HOST'];
@@ -95,38 +80,30 @@ class CI_Config {
 	 */
 	function load($file = '', $use_sections = FALSE, $fail_gracefully = FALSE)
 	{
-		$file = ($file == '') ? 'config' : str_replace('.php', '', $file);
-		$found = FALSE;
+		$file = ($file == '') ? 'config' : str_replace(EXT, '', $file);
 		$loaded = FALSE;
 
-		foreach ($this->_config_paths as $path)
-		{
-			$check_locations = defined('ENVIRONMENT')
-				? array(ENVIRONMENT.'/'.$file, $file)
-				: array($file);
+		foreach($this->_config_paths as $path)
+		{			
+			$file_path = $path.'config/'.ENVIRONMENT.'/'.$file.EXT;
 
-			foreach ($check_locations as $location)
+			if (in_array($file_path, $this->is_loaded, TRUE))
 			{
-				$file_path = $path.'config/'.$location.'.php';
-
-				if (in_array($file_path, $this->is_loaded, TRUE))
-				{
-					$loaded = TRUE;
-					continue 2;
-				}
-
-				if (file_exists($file_path))
-				{
-					$found = TRUE;
-					break;
-				}
-			}
-
-			if ($found === FALSE)
-			{
+				$loaded = TRUE;
 				continue;
 			}
 
+			if ( ! file_exists($file_path))
+			{
+				log_message('debug', 'Config for '.ENVIRONMENT.' environment is not found. Trying global config.');
+				$file_path = $path.'config/'.$file.EXT;
+				
+				if ( ! file_exists($file_path))
+				{
+					continue;
+				}
+			}
+			
 			include($file_path);
 
 			if ( ! isset($config) OR ! is_array($config))
@@ -159,7 +136,6 @@ class CI_Config {
 
 			$loaded = TRUE;
 			log_message('debug', 'Config file loaded: '.$file_path);
-			break;
 		}
 
 		if ($loaded === FALSE)
@@ -168,9 +144,9 @@ class CI_Config {
 			{
 				return FALSE;
 			}
-			show_error('The configuration file '.$file.'.php'.' does not exist.');
+			show_error('The configuration file '.ENVIRONMENT.'/'.$file.EXT.' and '.$file.EXT.' do not exist.');
 		}
-
+		
 		return TRUE;
 	}
 
@@ -218,7 +194,10 @@ class CI_Config {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Fetch a config file item - adds slash after item (if item is not empty)
+	 * Fetch a config file item - adds slash after item
+	 *
+	 * The second parameter allows a slash to be added to the end of
+	 * the item, in the case of a path.
 	 *
 	 * @access	public
 	 * @param	string	the config item name
@@ -231,10 +210,6 @@ class CI_Config {
 		{
 			return FALSE;
 		}
-		if( trim($this->config[$item]) == '')
-		{
-			return '';
-		}
 
 		return rtrim($this->config[$item], '/').'/';
 	}
@@ -243,7 +218,6 @@ class CI_Config {
 
 	/**
 	 * Site URL
-	 * Returns base_url . index_page [. uri_string]
 	 *
 	 * @access	public
 	 * @param	string	the URI string
@@ -258,48 +232,14 @@ class CI_Config {
 
 		if ($this->item('enable_query_strings') == FALSE)
 		{
-			$suffix = ($this->item('url_suffix') == FALSE) ? '' : $this->item('url_suffix');
-			return $this->slash_item('base_url').$this->slash_item('index_page').$this->_uri_string($uri).$suffix;
-		}
-		else
-		{
-			return $this->slash_item('base_url').$this->item('index_page').'?'.$this->_uri_string($uri);
-		}
-	}
-
-	// -------------------------------------------------------------
-
-	/**
-	 * Base URL
-	 * Returns base_url [. uri_string]
-	 *
-	 * @access public
-	 * @param string $uri
-	 * @return string
-	 */
-	function base_url($uri = '')
-	{
-		return $this->slash_item('base_url').ltrim($this->_uri_string($uri),'/');
-	}
-
-	// -------------------------------------------------------------
-
-	/**
-	 * Build URI string for use in Config::site_url() and Config::base_url()
-	 *
-	 * @access protected
-	 * @param  $uri
-	 * @return string
-	 */
-	protected function _uri_string($uri)
-	{
-		if ($this->item('enable_query_strings') == FALSE)
-		{
 			if (is_array($uri))
 			{
 				$uri = implode('/', $uri);
 			}
-			$uri = trim($uri, '/');
+
+			$index = $this->item('index_page') == '' ? '' : $this->slash_item('index_page');
+			$suffix = ($this->item('url_suffix') == FALSE) ? '' : $this->item('url_suffix');
+			return $this->slash_item('base_url').$index.trim($uri, '/').$suffix;
 		}
 		else
 		{
@@ -313,10 +253,12 @@ class CI_Config {
 					$str .= $prefix.$key.'='.$val;
 					$i++;
 				}
+
 				$uri = $str;
 			}
+
+			return $this->slash_item('base_url').$this->item('index_page').'?'.$uri;
 		}
-	    return $uri;
 	}
 
 	// --------------------------------------------------------------------

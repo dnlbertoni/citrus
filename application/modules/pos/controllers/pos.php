@@ -1,4 +1,4 @@
-<?php 
+<?php
 class Pos extends MY_Controller{
   var $puesto;
   function __construct(){
@@ -11,24 +11,22 @@ class Pos extends MY_Controller{
 
     $this->load->model('Facencab_model','',true);
     $this->load->model('Tipcom_model','',true);
-    $this->template->write('title','Puesto de Venta');
 
     $datos['tareas'][] = array( 'pos/factura/presupuesto/', '>> Ticket <<');
     $datos['tareas'][] = array( 'pos/cierreJournal' , 'Cierre Jornada');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas    
+    Template::set($datos);
+    Template::set_block('tareas','tareas'); // panel de tareas
   }
   function index(){
-    $this->template->add_js('pos/index');
-    $this->template->write_view('contenido', 'pos/index');
-    $this->template->render();
+    Template::render();
   }
   function cierreJournal(){
     $fechoy = getdate();
-    $data['opciones'] = array('X' => 'Cierre X', 
+    $data['opciones'] = array('X' => 'Cierre X',
                               'Z' => 'Cierre Z' );
     $data ['fecha'] = $fechoy['mday'] . '/'. $fechoy['mon'] . '/'. $fechoy['year'];
-    $this->template->write_view('contenido', 'pos/cierreJournal', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::render();
   }
   function cierreJournalDo(){
     $tipo=$this->input->post('tipo');
@@ -79,11 +77,12 @@ class Pos extends MY_Controller{
       $id = $this->Facencab_model->save($datos);
       $data ['fac']           = $this->Facencab_model->getRegistro($id);
       $data ['tipcom_nombre'] = $this->Tipcom_model->getNombre($tipcom);
-      $this->template->add_js('pos/muestroZ');
-      $this->template->write_view('contenido','pos/muestroZ', $data);
-      $this->template->render();
+      Assets::add_js('pos/muestroZ');
+      Template::set($data);
+      Template::set_view('pos/muestroZ');
+      Template::render();
     }else{
-     $this->index();
+      Template::redirect('pos/index');
     };
   }
 }

@@ -4,11 +4,6 @@ class Subrubros extends MY_Controller{
     parent::__construct();
     $this->load->model("Rubros_model", "", TRUE);
     $this->load->model("Subrubros_model", "", TRUE);
-    /*panel de tareas
-    $datos['tareas'][] = array('articulos/precios/', '');
-    $datos['tareas'][] = array('articulos/marcas/', '');
-    $datos['tareas'][] = array('articulos/rubros/', 'Rubros');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas */
   }
   function index(){
     //panel de tareas
@@ -17,12 +12,16 @@ class Subrubros extends MY_Controller{
     $datos['tareas'][] = array('articulos/subrubros/', 'Subrubros');
     $datos['tareas'][] = array('articulos/marcas/', 'Marcas');
     $datos['tareas'][] = array('articulos/submarcas/', 'Submarcas');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas
-    
-    $subrubros = $this->Subrubros_model->getAllConRubros();
+    /*
+    Template::set($datos);
+
+    Template::set_block('tareas', 'tareas'); // panel de tareas
+*/
+    $subrubros = $this->Subrubros_model->getAllConArticulos();
     $data['subrubros'] = $subrubros;
-    $this->template->write_view('contenido', 'articulos/subrubros/index', $data);
-    $this->template->render();
+    Assets::add_js('ui-tableFilter');
+    Template::set($data);
+    Template::render();
   }
   function agregar($metodo="html"){
     $subrubro = array( 'DESCRIPCION_SUBRUBRO' => '',
@@ -36,8 +35,9 @@ class Subrubros extends MY_Controller{
     $data['cancelar'] = $metodo;
     if($metodo=="html"){
       $data['accionSub'] = 'articulos/subrubros/agregarDo';
-      $this->template->write_view('contenido', 'articulos/subrubros/ver', $data);
-      $this->template->render();
+      Template::set($data);
+      Template::set_view('articulos/subrubros/ver');
+      Template::render();
     }else{
       $data['accionSub'] = 'articulos/subrubros/agregarDo/ajax';
       $this->load->view('articulos/subrubros/ver', $data);
@@ -60,11 +60,11 @@ class Subrubros extends MY_Controller{
                    );
     $id = $this->Subrubros_model->add($datos);
     if($metodo=="html"){
-          $this->index();
+      Template::redirect('articulos/subrubros');
     }else{
-      echo "<span class='codigo'>",$id,"</span>";
+      echo "<span class='codigo'>",$id,"</span><span class='nombre' style='display:hide;'>".strtoupper($this->input->post('descripcion'))."</span>";
     }
-    $this->template->render();
+    Template::render();
   }
   function editar($id, $metodo="html"){
 	$data['subrubro']  = $this->Subrubros_model->getById($id);
@@ -73,8 +73,9 @@ class Subrubros extends MY_Controller{
         $data['cancelar'] = $metodo;
         if($metodo=="html"){
           $data['accionSub'] = 'articulos/subrubros/editarDo';
-          $this->template->write_view('contenido', 'articulos/subrubros/ver', $data);
-          $this->template->render();
+          Template::set($data);
+          Template::set_view('articulos/subrubros/ver');
+          Template::render();
         }else{
           $data['accionSub'] = 'articulos/subrubros/editarDo/ajax';
           $this->load->view('articulos/subrubros/ver', $data);
@@ -89,12 +90,12 @@ class Subrubros extends MY_Controller{
     $id = $this->input->post('id');
     $this->Subrubros_model->update($datos, $id);
     if($metodo=="html"){
-      $this->index();
+      Template::redirect('articulos/subrubros');
     };
   }
   function borrar($id){
 	  $this->Subrubros_model->borrar($id);
-	  $this->index();
+      Template::redirect('articulos');
   }
   function combosubrubros(){
     $id = $this->input->post("id");
@@ -120,5 +121,12 @@ class Subrubros extends MY_Controller{
     $data['target']    = $this->input->post('destino');
     $data['targetRubro'] = sprintf("'%sindex.php/articulos/subrubros/agregar/ajax'", base_url());
     $this->load->view('articulos/subrubros/listadoAjax', $data);
+  }
+  function verArticulos($id){
+    $data['subrubro']=$this->Subrubros_model->getNombre($id);
+    $sub=$this->Subrubros_model->getById($id);
+    $data['rubro']=$this->Rubros_model->getNombre($sub->ID_RUBRO);
+    $data['articulos']=$this->Subrubros_model->getArticulosFromSubrubro($id);
+    $this->load->view('subrubros/listadoArticulos', $data);
   }
 }

@@ -5,10 +5,9 @@ class Version extends MY_Controller{
     parent::__construct();
     $this->load->model('Version_model','',true);
   }
-  
+
   function index(){
     $data['titulo'] = "";
-    $this->template->write_view('contenido', 'index', $data);
-    $this->template->render();
+    Template::render();
   }
 }

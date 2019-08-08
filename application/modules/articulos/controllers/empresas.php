@@ -28,8 +28,8 @@ class Empresas extends MY_Controller{
       $data['totalArticulosMarcas'] += $articulo->genericos;
     }
     $data['totalMarcas']=count($marcas);
-    $this->template->write_view('contenido', 'articulos/empresas/index', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::render();
   }
   function verArticulos($idEmpresa,$tipo="empresa"){
     if($tipo=="marca"){
@@ -49,16 +49,17 @@ class Empresas extends MY_Controller{
     $data['urlBuscoAjaxMarca'] = sprintf("'%sindex.php/articulos/%s/%s/%s'", base_url(),$url,$funcion,'resultadoAjaxMarca');
     $url       = 'subrubros';
     $data['urlBuscoAjaxRubro'] = sprintf("'%sindex.php/articulos/%s/%s/%s'", base_url(),$url,$funcion,'resultadoAjaxRubro');
-    $this->template->add_js('selectBoxes');
-    $this->template->add_js('filtrarTabla');
-    $this->template->add_js('ui-tableFilter');
-    $this->template->write_view('contenido', 'articulos/empresas/listadoArticulos', $data);
-    $this->template->render();
+    Assets::add_js('selectBoxes');
+    Assets::add_js('filtrarTabla');
+    Assets::add_js('ui-tableFilter');
+    Template::set($data);
+    Template::set_view('articulos/empresas/listadoArticulos');
+    Template::render();
   }
   function asignaEmpresa(){
     $datos = array('id'=>$this->input->post('id'), 'id_marca'=>$this->input->post('id_marca'));
     $this->Empresas_model->add($datos, 'id');
-    $this->index();
+      Template::redirect('empresas');
   }
   function asigna(){
     $campo = ($this->input->post('tipo')=="rubro")?'id_subrubro':'id_marca';
@@ -68,7 +69,7 @@ class Empresas extends MY_Controller{
         $this->Articulos_model->update($datos,$valor);
       }
     };
-    //$this->template->render();
-    $this->index();
+    //Template::render();
+      Template::redirect('empresas');
   }
 }

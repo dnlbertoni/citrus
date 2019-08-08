@@ -1,7 +1,7 @@
-<?php 
+<?php
 class Articulos_model extends MY_Model{
   var $tabla = array("name"        => "tbl_articulos",
-                     "id"          => "id_articulo", 
+                     "id"          => "id_articulo",
                      "nombre"      => "descripcion_articulo",
                      "precio"      => "preciovta_articulo",
                      "codigobarra" => "codigobarra_articulo"
@@ -12,7 +12,7 @@ class Articulos_model extends MY_Model{
     $this->tabla = (object) $this->tabla;
     $this->setTable($this->tabla->name);
   }
-  function Inicializar(){
+  function Inicializar($full=false){
     $campos = $this->db->field_data($this->tabla->name);
     $datos=array();
     foreach($campos as $campo){
@@ -26,7 +26,19 @@ class Articulos_model extends MY_Model{
         };
       }
     }
-
+    $datos['ID_SUBRUBRO']=44;
+    $datos['ID_MARCA']=0;
+    $datos['TASAIVA_ARTICULO']=21;
+    $datos['ESTADO_ARTICULO']=1;
+    $datos['wizard']=0;
+    if($full){
+      $datos['ID_RUBRO'] = 0;
+      $datos['DESCRIPCION_RUBRO'] = '';
+      $datos['DESCRIPCION_SUBRUBRO'] = '';
+      $datos['ID_SUBMARCA'] = 0;
+      $datos['DETALLE_MARCA'] = '';
+      $datos['DETALLE_SUBMARCA'] = '';
+    }
     return (object) $datos;
   }
   function buscoNombre($valor){
@@ -36,6 +48,7 @@ class Articulos_model extends MY_Model{
     $this->db->select("descripcion_subrubro    AS subrubro");
     $this->db->select("detalle_submarca           AS marca");
     $this->db->select("estado_articulo         AS estado");
+    $this->db->select("codigobarra_articulo    AS codigobarra");
     $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "left");
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
     $this->db->from($this->tabla->name);
@@ -54,6 +67,7 @@ class Articulos_model extends MY_Model{
     $this->db->select($this->tabla->precio . " AS precio");
     $this->db->select("descripcion_subrubro    AS subrubro");
     $this->db->select("detalle_submarca           AS marca");
+    $this->db->select("codigobarra_articulo    AS codigobarra");
     $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "left");
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
     $this->db->from($this->tabla->name);
@@ -69,13 +83,16 @@ class Articulos_model extends MY_Model{
     $this->db->select($this->tabla->id . "     AS id");
     $this->db->select($this->tabla->nombre . " AS nombre");
     $this->db->select($this->tabla->precio . " AS precio");
+    $this->db->select($this->tabla->codigobarra . " AS codigobarra");
     $this->db->select("descripcion_subrubro    AS subrubro");
     $this->db->select("detalle_submarca           AS marca");
     $this->db->select("estado_articulo         AS estado");
+    $this->db->select("codigobarra_articulo    AS codigobarra");
     $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "left");
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
     $this->db->from($this->tabla->name);
     $this->db->where('tbl_articulos.id_marca', $valor);
+    $this->db->order_by('estado', 'DESC');
     $q = $this->db->get();
     if($q->num_rows() > 0){
       return $q->result();
@@ -88,8 +105,9 @@ class Articulos_model extends MY_Model{
     $this->db->select($this->tabla->nombre . " AS nombre");
     $this->db->select($this->tabla->precio . " AS precio");
     $this->db->select("descripcion_subrubro    AS subrubro");
-    $this->db->select("detalle_submarca           AS marca");
+    $this->db->select("detalle_submarca        AS marca");
     $this->db->select("estado_articulo         AS estado");
+    $this->db->select("codigobarra_articulo    AS codigobarra");
     $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "left");
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
     $this->db->from($this->tabla->name);
@@ -107,13 +125,14 @@ class Articulos_model extends MY_Model{
       return false;
     }
   }
-  function searchGlobal($marca, $rubro){
+  function searchGlobal($marca=false, $rubro=false){
     $this->db->select($this->tabla->id . "     AS id");
     $this->db->select($this->tabla->nombre . " AS nombre");
     $this->db->select($this->tabla->precio . " AS precio");
     $this->db->select("descripcion_subrubro    AS subrubro");
     $this->db->select("detalle_submarca        AS marca");
     $this->db->select("estado_articulo         AS estado");
+    $this->db->select("codigobarra_articulo    AS codigobarra");
     $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "inner");
     $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "inner");
     $this->db->from($this->tabla->name);
@@ -130,11 +149,12 @@ class Articulos_model extends MY_Model{
     }else{
       return false;
     }
-  }  
+  }
   function getDatosBasicos($id){
     $id = intval($id);
     //$this->db->_reset_select();
     $this->db->select("id_articulo AS id, descripcion_articulo AS descripcion, preciovta_articulo AS precio");
+    $this->db->select("preciocosto_articulo   AS costo");
     $this->db->from($this->tabla->name);
     $this->db->where($this->tabla->id, $id);
     return $this->db->get()->row();
@@ -161,8 +181,9 @@ class Articulos_model extends MY_Model{
     $this->db->update($this->tabla->name,$datos);
     $datPrecio = $this->getDatosBasicos($id);
     $precio    = $datPrecio->precio;
+    $costo     = $datPrecio->costo;
     if($precio)
-      $this->actualizoPrecio($id, $precio);
+      $this->actualizoPrecio($id, $precio, $costo);
     return true;
   }
   function getDatosPrecio($codigo){
@@ -173,7 +194,7 @@ class Articulos_model extends MY_Model{
     $this->db->where($this->tabla->codigobarra, $codigo);
     $q =  $this->db->get();
     if($q->num_rows()>0)
-            return $q->row();
+      return $q->row();
     else
       return false;
   }
@@ -192,7 +213,9 @@ class Articulos_model extends MY_Model{
   function getByIdFull($id){
 	$this->db->from($this->getTable());
 	$this->db->join('tbl_subrubros', 'tbl_subrubros.id_subrubro = tbl_articulos.id_subrubro', 'left');
+	$this->db->join('tbl_rubros', 'tbl_rubros.id_rubro = tbl_subrubros.id_rubro', 'left');
 	$this->db->join('stk_submarcas', 'stk_submarcas.id_submarca = tbl_articulos.id_marca', 'left');
+	$this->db->join('stk_marcas', 'stk_marcas.id_marca = stk_submarcas.id_marca', 'left');
 	$this->db->where($this->getPrimaryKey(), $id);
 	return $this->db->get()->row();
   }
@@ -265,17 +288,34 @@ class Articulos_model extends MY_Model{
     $this->db->order_by("cantidad", "DESC");
     return $this->db->get()->result();
   }
-  function actualizoPrecio($id, $precio){
+  function actualizoPrecio($id, $precio, $costo=false){
     $this->db->set('preciovta_articulo', $precio);
     $this->db->set('estado_articulo', 1);
     $this->db->where('id_articulo', $id);
     $this->db->update($this->getTable());
-    //$this->db->_reset_select();
-    $this->db->set('id_articulo', $id);
-    $this->db->set('fecha', 'NOW()', FALSE);
-    $this->db->set('precio', $precio);
-    $this->db->set('impreso', 0);
-    $this->db->insert('tbl_preciosmovim');
+    $this->db->_reset_select();
+    //busco ultimo precio en la base y lo comparo
+    $this->db->select('precio');
+    $this->db->select('fecha');
+    $this->db->from('tbl_preciosmovim');
+    $this->db->where('id_articulo', $id);
+    $this->db->order_by('fecha', 'DESC');
+    $this->db->limit(1);
+    $q=$this->db->get()->row();
+    /*
+    if($precio != $q->precio){ // grabo en preciosmovim
+      $this->db->_reset_select();
+      $this->db->set('id_articulo', $id);
+      $this->db->set('fecha', 'NOW()', FALSE);
+      $this->db->set('precio', $precio);
+      if($costo){
+        $this->db->set('costo', $costo);
+      }
+      $this->db->set('impreso', 0);
+      $this->db->insert('tbl_preciosmovim');
+    }
+     *
+     */
     return true;
   }
   function getActivos(){
@@ -317,5 +357,139 @@ class Articulos_model extends MY_Model{
       $this->db->or_where('tbl_articulos.empresa', $idEmpresa->id);
     }
     return $this->db->get()->result();
+  }
+  function getByCodigobarraCsv($Cb){
+    $this->db->select('id_articulo          as id');
+    $this->db->select('codigobarra_articulo as codigobarra');
+    $this->db->select('descripcion_articulo as descripcion');
+    $this->db->select('preciocosto_articulo as costo');
+    $this->db->select('markup_articulo as markup');
+    $this->db->select('preciovta_articulo   as precio');
+    $this->db->select('tbl_articulos.id_subrubro as id_subruro');
+    $this->db->select('descripcion_subrubro as nombre_subrubro');
+    $this->db->select('tbl_articulos.id_marca as id_submarca');
+    $this->db->select('detalle_submarca as nombre_submarca');
+    $this->db->select('fechamodif_articulo as fecha');
+    $this->db->from($this->tabla->name);
+    $this->db->join('tbl_subrubros', 'tbl_subrubros.id_subrubro=tbl_articulos.id_subrubro', 'inner');
+    $this->db->join('stk_submarcas', 'stk_submarcas.id_submarca=tbl_articulos.id_marca', 'inner');
+    $this->db->where($this->tabla->codigobarra,$Cb);
+    $q = $this->db->get();
+    if($q->num_rows()>0){
+      return $q->row();
+    }else{
+      return FALSE;
+    }
+  }
+  function updateArticulo($CB, $campo, $valor){
+    $this->db->set($campo, $valor);
+    $this->db->where('codigobarra_articulo',$CB);
+    $this->db->update($this->getTable());
+    return true;
+  }
+  function filtroWizard($orden){
+    $this->db->select($this->tabla->id . "     AS id");
+    $this->db->select($this->tabla->nombre . " AS nombre");
+    $this->db->select($this->tabla->precio . " AS precio");
+    $this->db->select($this->tabla->codigobarra . " AS codigobarra");
+    $this->db->select("descripcion_subrubro    AS subrubro");
+    $this->db->select("detalle_submarca           AS marca");
+    $this->db->select("estado_articulo         AS estado");
+    $this->db->join("tbl_subrubros","tbl_articulos.id_subrubro = tbl_subrubros.id_subrubro", "left");
+    $this->db->join("stk_submarcas","tbl_articulos.id_marca = stk_submarcas.id_submarca", "left");
+    $this->db->from($this->tabla->name);
+    $this->db->where('tbl_articulos.wizard <', 1, FALSE);
+    $this->db->or_where('tbl_articulos.wizard IS NULL','', FALSE);
+    //$this->db->limit(50);
+    $this->db->order_by('tbl_articulos.id_marca', 'ASC');
+    $this->db->order_by('estado', 'DESC');
+    $this->db->order_by($orden, 'ASC');
+    $q = $this->db->get();
+    if($q->num_rows() > 0){
+      return $q->result();
+    }else{
+      return false;
+    }
+  }
+  function getKeyWords($id_subrubro=false){
+    $this->db->distinct();
+    $this->db->select('especificacion');
+    $this->db->from($this->getTable());
+    if($id_subrubro){
+      $this->db->where('id_subrubro', $id_subrubro);
+    };
+    $this->db->where('especificacion IS NOT NULL', '', FALSE);
+    $this->db->where('TRIM(especificacion) <>""', '', FALSE);
+    $q = $this->db->get()->result();
+    if(count($q)>0){
+      foreach($q as $palabra){
+        $aux =  explode(' ', $palabra->especificacion);
+        foreach($aux as $a){
+          $exclusiones=array(' ','','de', 'sabor', 'la', 'a', 'y', 'el', 'del');
+          if(!in_array(strtolower($a), $exclusiones)){
+            $palabras[]=  strtoupper($a);
+          }
+        }
+      }
+      $palabras = array_unique($palabras);
+      asort($palabras);
+    }else{
+      $palabras=array();
+    }
+    return $palabras;
+  }
+  function getKeyUnits($id_subrubro=false){
+    $this->db->distinct();
+    $this->db->select('medida');
+    $this->db->from($this->getTable());
+    if($id_subrubro){
+      $this->db->where('id_subrubro', $id_subrubro);
+    };
+    $this->db->where('medida IS NOT NULL', '', FALSE);
+    $this->db->where('TRIM(medida) <>""', '', FALSE);
+    $q = $this->db->get()->result();
+    if(count($q)>0){
+      foreach($q as $palabra){
+        $aux =  explode(' ', $palabra->medida);
+        foreach($aux as $a){
+            $palabras[]= intval($a);
+        }
+      }
+      $palabras = array_unique($palabras);
+      asort($palabras);
+    }else{
+      $palabras=array();
+    }
+    return $palabras;
+  }
+  function getMarkupRubro($id_subrubro=false){
+    $this->db->distinct();
+    $this->db->select('markup_articulo as markup');
+    $this->db->from($this->getTable());
+    if($id_subrubro){
+      $this->db->where('id_subrubro', $id_subrubro);
+    };
+    $this->db->where('markup_articulo IS NOT NULL', '', FALSE);
+    $this->db->where('preciocosto_articulo > 0', '', FALSE);
+    $this->db->where('markup_articulo > 0', '', FALSE);
+    $q = $this->db->get()->result();
+    if(count($q)>0){
+      foreach($q as $palabra){
+        $aux =  explode(' ', $palabra->markup);
+        foreach($aux as $a){
+            $palabras[]= intval($a);
+        }
+      }
+      $palabras = array_unique($palabras);
+      asort($palabras);
+    }else{
+      $palabras=array();
+    }
+    return $palabras;
+  }
+  function getStatusWizard(){
+    $this->db->select('SUM(IF(wizard=1,1,0))/COUNT(id_articulo)*100 AS progreso', FALSE);
+    $this->db->from($this->getTable());
+    return $this->db->get()->row()->progreso;
   }
 }

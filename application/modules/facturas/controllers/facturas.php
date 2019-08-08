@@ -5,17 +5,14 @@ class Facturas extends MY_Controller {
     $this->load->model('Facencab_model','',true);
     $this->load->model('Tipcom_model','',true);
 
-    $this->template->write('title','Modulo de Facturas');
-    $datos['tareas'][] = array( 'facturas/add/10', 'Agregar Fac Cpras');
-    $datos['tareas'][] = array( 'facturas/add/13', 'Agregar N/C Cpras');
-    $datos['tareas'][] = array( 'facturas/cierresZmanual', 'Agregar Cierre Z Manual');
-    $datos['tareas'][] = array( 'facturas/addCierresZ', 'Agregar Cierre Z Controlador');
-    $this->template->write_view('tareas','_tareas', $datos); // panel de tareas    
+    Template::set('title','Modulo de Facturas');
+    $datos['tareas'][] = array( 'facturas/buscar', 'Facturas Compra');
+
+    Template::set($datos);
+    Template::set_block('tareas','tareas'); // panel de tareas
   }
   function index(){
-    $this->template->add_js('facturas/index');
-    $this->template->write_view('contenido', 'facturas/index');
-    $this->template->render();
+    Template::render();
   }
   function add($tipcom=0,$cuenta_id=0){
     $data ['tipcom_nombre']    = $this->Tipcom_model->getNombre($tipcom);
@@ -26,8 +23,8 @@ class Facturas extends MY_Controller {
     $data ['claseTitulo']  = ($tipcom==13 || $tipcom==3)?"ui-state-error":"ui-state-default";
     $data ['target']       = "cuentaAjax";
     $data ['targetCuenta'] = sprintf("'%sindex.php/cuenta/searchAjax%s'", base_url(),'/cuentaAjax');
-    $this->template->write_view('contenido', 'facturas/add', $data);      
-    $this->template->render();
+    Template::set($data);
+    Template::render();
   }
   function cierresZmanual($tipcom=4,$cuenta_id=1){
     $data ['tipcom_nombre']    = $this->Tipcom_model->getNombre($tipcom);
@@ -35,59 +32,45 @@ class Facturas extends MY_Controller {
     $data ['cuenta_id']    = $cuenta_id;
     $data ['cuenta_nombre']= 'Consumidor Final';
     $data ['agregaCuenta'] = ($cuenta_id==0)?true:false;
-    $this->template->add_css('colorbox'); //agrego estilos para colorbox
-    $this->template->add_js('jquery.colorbox-min'); //agrego el core para colorbox
-    $this->template->add_js('facturas/cierresZmanual'); //agrego script de la pantalla
-    $this->template->write_view('contenido', 'facturas/cierresZmanual', $data);      
-    $this->template->render();
+    Assets::add_css('colorbox'); //agrego estilos para colorbox
+    Assets::add_js('jquery.colorbox-min'); //agrego el core para colorbox
+    Assets::add_js('facturas/cierresZmanual'); //agrego script de la pantalla
+    Template::set($data);
+    Template::render();
   }
   function addDo(){
-  // activar las propiedades de validacion
-    $this->_set_fields();
-    $this->_set_rules();
-    // validar
-    if ($this->validation->run() == FALSE){
-        $data['message'] = '';
-    }else{
-        // save data
-        $coef = ($this->input->post('tipcom_id')==3 || $this->input->post('tipcom_id')==13 )? -1 : 1;
-        // calculo el  periva
-        $auxper = explode("-",$this->input->post('fecha'));
-        $periva = $auxper[0] . $auxper[1];
-        $tipcom = $this->Tipcom_model->getById($this->input->post('tipcom_id'));
-        if( $tipcom->libroiva == 2 ){
-          $periva=0;          
-        }
-        // compilo del objeto de carga
-        $datos = array('tipcom_id' => $this->input->post('tipcom_id'),
-                       'puesto'    => $this->input->post('puesto'),
-                       'numero'    => $this->input->post('numero'),
-                       'letra'     => $this->input->post('letra'),
-                       'fecha'     => $this->input->post('fecha'),
-                       'cuenta_id' => $this->input->post('cuenta_id'),
-                       'importe'   => $this->input->post('importe')* $coef,
-                       'neto'      => $this->input->post('neto')   * $coef,
-                       'ivamin'    => $this->input->post('ivamin') * $coef,
-                       'ivamax'    => $this->input->post('ivamax') * $coef,
-                       'ingbru'    => $this->input->post('ingbru') * $coef,
-                       'impint'    => $this->input->post('impint') * $coef,
-                       'percep'    => $this->input->post('percep') * $coef,
-                       'periva'    => $periva,
-                       'estado'    => 1 );
-        $id = $this->Facencab_model->save($datos);
-        $this->load->library('fb');
-        $this->fb->error($periva, "error");
-        // set form input name="id"
-        //$this->validation->id = $id;
- 
-        // set user message
-        //$data['message'] = '<div class="success">Nueva Cuenta Creada Con exito</div>';
-    };
-    if($this->input->post('tipcom_id')==4){
-      $this->cierresZmanual();    
-    }else{
-      $this->add($this->input->post('tipcom_id'),0);      
+    // save data
+    $coef = ($this->input->post('tipcom_id')==3 || $this->input->post('tipcom_id')==13 )? -1 : 1;
+    // calculo el  periva
+    $auxper = explode("-",$this->input->post('fecha'));
+    $periva = $auxper[0] . $auxper[1];
+    $tipcom = $this->Tipcom_model->getById($this->input->post('tipcom_id'));
+    if( $tipcom->libroiva == 2 ){
+      $periva=0;
     }
+    // compilo del objeto de carga
+    $datos = array('tipcom_id' => $this->input->post('tipcom_id'),
+                   'puesto'    => $this->input->post('puesto'),
+                   'numero'    => $this->input->post('numero'),
+                   'letra'     => $this->input->post('letra'),
+                   'fecha'     => $this->input->post('fecha'),
+                   'cuenta_id' => $this->input->post('cuenta_id'),
+                   'importe'   => $this->input->post('importe')* $coef,
+                   'neto'      => $this->input->post('neto')   * $coef,
+                   'ivamin'    => $this->input->post('ivamin') * $coef,
+                   'ivamax'    => $this->input->post('ivamax') * $coef,
+                   'ingbru'    => $this->input->post('ingbru') * $coef,
+                   'impint'    => $this->input->post('impint') * $coef,
+                   'percep'    => $this->input->post('percep') * $coef,
+                   'periva'    => $periva,
+                   'estado'    => 1 );
+    $id = $this->Facencab_model->save($datos);
+     if($this->input->post('tipcom_id')==4){
+      $this->cierresZmanual();
+    }else{
+      Template::redirect('facturas/add/'.$this->input->post('tipcom_id').'/' . 0);
+    }
+
   }
   // campos de validacion
   function _set_fields(){
@@ -95,13 +78,14 @@ class Facturas extends MY_Controller {
     $campos['puesto'] = 'puesto';
     $campos['numero'] = 'numero';
 
-  
+
     $this->validation->set_fields($campos);
   }
   function addCierresZ(){
     $data['formulario'] = true;
-    $this->template->write_view('contenido', 'facturas/cierresZ', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::set_view('facturas/cierresZ');
+    Template::render();
   }
   function addCierresZDo(){
     $this->load->library('hasar');
@@ -127,7 +111,7 @@ class Facturas extends MY_Controller {
       $ivamin = ( $neto * ( 1 - $porcentaje ) * 0.105 );
       $diff = floatval($this->hasar->iva_cierre) - ( $ivamax + $ivamin );
       if( $this->hasar->iva_cierre > 0 ){
-        $porcDiff = $diff / floatval($this->hasar->iva_cierre);        
+        $porcDiff = $diff / floatval($this->hasar->iva_cierre);
       }else{
         $porcDiff = 0;
       };
@@ -144,11 +128,12 @@ class Facturas extends MY_Controller {
       $data['hasar']['ivamax']=$ivamax;
       $data['hasar']['diff'] = $diff;
       $data['hasar']['porcDiff'] = $porcDiff;
-      $data['hasar']['impint']=$this->hasar->impint_cierre;      
+      $data['hasar']['impint']=$this->hasar->impint_cierre;
     };
     $data['formulario']=false;
-    $this->template->write_view('contenido','facturas/cierresZ', $data);
-    $this->template->render();
+    Template::set($data);
+    Template::set_view('facturas/cierresZ');
+    Template::render();
   }
   function graboCierreZ(){
     if( !$this->Facencab_model->verificoCierreZ($this->input->post('numero')) ){
@@ -173,9 +158,42 @@ class Facturas extends MY_Controller {
     }else{
       $data ['fac']   = $this->Facencab_model->getCierreZ($this->input->post('numero'));
     };
-    $this->template->add_js('pos/muestroZ');
-    $this->template->write_view('contenido','pos/muestroZ', $data);
-    $this->template->render();
+    Assets::add_js('pos/muestroZ');
+    Template::set($data);
+    Template::set_view('pos/muestroZ');
+    Template::render();
+  }
+  function buscar(){
+    $this->load->model('Cuenta_model');
+    $proveedores=$this->Cuenta_model->getProveedoresLista();
+    Template::set('targetCuenta', sprintf("'%sindex.php/cuenta/searchAjax%s'", base_url(),'/cuentaAjax'));
+    Template::set('opProvee', $proveedores);
+    Template::set('accion', 'facturas/buscarDo');
+    Template::render();
+  }
+  function buscarDo(){
+    $facturas=$this->Facencab_model->getCuentasFechas($this->input->post('cuenta_id'), $this->input->post('desde'), $this->input->post('hasta'));
+    $fechas  = "Desde:";
+    $fechas .= ($this->input->post('desde') != "")? $this->input->post('desde') : "Primer Registro";
+    $fechas .= " - Hasta:";
+    $fechas .= ($this->input->post('hasta') != "")? $this->input->post('hasta') : "Ultimo Registro";
+    Template::set('fechas', $fechas);
+    Template::set('provee', ($this->input->post('cuenta_id')!='')?$this->input->post('cuenta_nombre'):'Todos');
+    Template::set('facturas', $facturas);
+    Template::set_view('facturas/listado');
+    Template::render();
+  }
+  function view($id, $method="ajax"){
+    $factura = $this->Facencab_model->getById($id);
+    $data['accion']='facturas/editar';
+    $data['factura']=$factura;
+    if($method=="html"){
+      Template::set($data);
+      Template::set_view('facturas/ver');
+      Template::render();
+    }else{
+      $this->load->view('facturas/ver', $data);
+    };
   }
   function estado(){
     $this->load->library('hasar');
@@ -186,9 +204,9 @@ class Facturas extends MY_Controller {
     $rules['letra'] = 'trim|required';
     $rules['puesto'] = 'val|required';
     $rules['numero'] = 'val|required';
- 
+
     $this->validation->set_rules($rules);
- 
+
     $this->validation->set_message('required', '* required');
     $this->validation->set_message('isset', '* required');
     $this->validation->set_error_delimiters('<p class="ui-state-error">', '</p>');
@@ -201,5 +219,5 @@ class Facturas extends MY_Controller {
     }else{
       return true;
     }
-  }  
+  }
 }

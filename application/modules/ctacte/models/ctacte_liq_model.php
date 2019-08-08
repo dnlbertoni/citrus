@@ -49,7 +49,11 @@ class Ctacte_liq_model extends MY_Model{
       $this->db->from($this->getTable());
       $this->db->group_by('id_cuenta');
       $this->db->having('id_cuenta', $idCuenta);
-      return $this->db->get()->row()->promedio;
-      
-  }  
+      $q = $this->db->get()->row();
+      if(count($q)>0){
+        return $q->promedio;
+      }else{
+        return false;
+      }
+  }
 }

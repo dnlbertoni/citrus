@@ -25,7 +25,7 @@
  * @link		
  */
 
-class CI_Cache_memcached extends CI_Driver {
+class Cache_memcached extends CI_Driver {
 
 	private $_memcached;	// Holds the memcached object
 
@@ -64,16 +64,7 @@ class CI_Cache_memcached extends CI_Driver {
 	 */
 	public function save($id, $data, $ttl = 60)
 	{
-		if (get_class($this->_memcached) == 'Memcached')
-		{
-			return $this->_memcached->set($id, array($data, time(), $ttl), $ttl);
-		}
-		else if (get_class($this->_memcached) == 'Memcache')
-		{
-			return $this->_memcached->set($id, array($data, time(), $ttl), 0, $ttl);
-		}
-		
-		return FALSE;
+		return $this->_memcached->add($id, array($data, time(), $ttl), $ttl);
 	}
 
 	// ------------------------------------------------------------------------

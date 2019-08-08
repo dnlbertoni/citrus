@@ -5,7 +5,7 @@
 | -------------------------------------------------------------------
 | This file will contain the settings needed to access your database.
 |
-| For complete instructions please consult the "Database Connection"
+| For complete instructions please consult the 'Database Connection'
 | page of the User Guide.
 |
 | -------------------------------------------------------------------
@@ -26,46 +26,52 @@
 |	['cachedir'] The path to the folder where cache files should be stored
 |	['char_set'] The character set used in communicating with the database
 |	['dbcollat'] The character collation used in communicating with the database
+|	['swap_pre'] A default table prefix that should be swapped with the dbprefix
+|	['autoinit'] Whether or not to automatically initialize the database.
+|	['stricton'] TRUE/FALSE - forces 'Strict Mode' connections
+|							- good for ensuring strict SQL while developing
 |
 | The $active_group variable lets you choose which connection group to
-| make active.  By default there is only one group (the "default" group).
+| make active.  By default there is only one group (the 'default' group).
 |
 | The $active_record variables lets you determine whether or not to load
 | the active record class
 */
 
-$active_group = "default";
-//$active_group = "debug";
-
+$active_group = (ENVIRONMENT==='activo')?'default':'desarrollo';
 $active_record = TRUE;
 
-$db['default']['hostname'] = "localhost";
-$db['default']['username'] = "sistemas";
-$db['default']['password'] = "kaltidus";
-$db['default']['database'] = "facturador";
-$db['default']['dbdriver'] = "mysql";
-$db['default']['dbprefix'] = "";
+$db['default']['hostname'] = 'localhost';
+$db['default']['username'] = 'sistemas';
+$db['default']['password'] = 'kaltidus';
+$db['default']['database'] = 'facturador';
+$db['default']['dbdriver'] = 'mysql';
+$db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
 $db['default']['db_debug'] = TRUE;
 $db['default']['cache_on'] = FALSE;
-$db['default']['cachedir'] = "";
-$db['default']['char_set'] = "utf8";
-$db['default']['dbcollat'] = "utf8_general_ci";
+$db['default']['cachedir'] = '';
+$db['default']['char_set'] = 'utf8';
+$db['default']['dbcollat'] = 'utf8_general_ci';
+$db['default']['swap_pre'] = '';
+$db['default']['autoinit'] = TRUE;
+$db['default']['stricton'] = FALSE;
 
-// debug
-$db['debug']['hostname'] = "localhost";
-$db['debug']['username'] = "sistemas";
-$db['debug']['password'] = "kaltidus";
-$db['debug']['database'] = "facturador_dev";
-$db['debug']['dbdriver'] = "mysql";
-$db['debug']['dbprefix'] = "";
-$db['debug']['pconnect'] = TRUE;
-$db['debug']['db_debug'] = TRUE;
-$db['debug']['cache_on'] = FALSE;
-$db['debug']['cachedir'] = "";
-$db['debug']['char_set'] = "utf8";
-$db['debug']['dbcollat'] = "utf8_general_ci";
-
+$db['desarrollo']['hostname'] = 'localhost';
+$db['desarrollo']['username'] = 'sistemas';
+$db['desarrollo']['password'] = 'kaltidus';
+$db['desarrollo']['database'] = 'facturador_dev';
+$db['desarrollo']['dbdriver'] = 'mysql';
+$db['desarrollo']['dbprefix'] = '';
+$db['desarrollo']['pconnect'] = TRUE;
+$db['desarrollo']['db_debug'] = TRUE;
+$db['desarrollo']['cache_on'] = FALSE;
+$db['desarrollo']['cachedir'] = '';
+$db['desarrollo']['char_set'] = 'utf8';
+$db['desarrollo']['dbcollat'] = 'utf8_general_ci';
+$db['desarrollo']['swap_pre'] = '';
+$db['desarrollo']['autoinit'] = TRUE;
+$db['desarrollo']['stricton'] = FALSE;
 
 /* End of file database.php */
-/* Location: ./system/application/config/database.php */
+/* Location: ./application/config/database.php */

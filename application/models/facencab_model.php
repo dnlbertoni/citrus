@@ -6,7 +6,7 @@ class Facencab_model extends MY_Model{
     $this->setTable('facencab');
   }
   function ListadoSumaPeriodos($libro){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->select('periva');
     $this->db->select('count(tipcom_id) AS cantidad');
     $this->db->select('sum(importe) AS total');
@@ -21,7 +21,7 @@ class Facencab_model extends MY_Model{
     return $q->result();
   }
   function ListadoFacturasPeriodoCerrar($libro, $periodo ){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->select('facencab.id, tipcom.abreviatura as tipcomp, facencab.letra, puesto, numero, cuenta.nombre as razonSocial, importe, ivapass, periva ');
     $this->db->select('date_format(fecha, "%d-%m-%Y") as fecha',false );
     $this->db->select('(ivamin+ivamax+percep) as ivatot', false);
@@ -42,7 +42,7 @@ class Facencab_model extends MY_Model{
     return $q->result();
   }
   function ListadoFacturasPeriodo($libro, $periodo ){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->select('facencab.id, tipcom.abreviatura as tipcomp, facencab.letra, puesto, numero, cuenta.nombre as razonSocial, importe, ivapass, periva ');
     $this->db->select('date_format(fecha, "%d-%m-%Y") as fecha',false );
     $this->db->select('(ivamin+ivamax+percep) as ivatot', false);
@@ -59,7 +59,7 @@ class Facencab_model extends MY_Model{
     return $q->result();
   }  
   function LibroIVA($libro, $periodo ){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->select('date_format(fecha, "%d-%m-%Y") as fecha',false );
     $this->db->select('CONCAT( tipcom.abreviatura, " ", facencab.letra, " ",  puesto,"-", numero) as comprobante', false);
     $this->db->select(' cuenta.nombre as razonSocial, cuenta.cuit as Cuit',false);
@@ -79,7 +79,7 @@ class Facencab_model extends MY_Model{
     return $q->result();
   } 
   function ListadoPercepciones( $periodo ){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->select('cuenta.nombre as razonSocial');
     $this->db->select('cuenta.cuit as cuit');
     $this->db->select_sum('importe', 'importe');
@@ -101,7 +101,7 @@ class Facencab_model extends MY_Model{
     return $q->result();
   }
   function ActualizoPeriva($periodo, $fac_id){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->trans_begin();
     
    //activo solo las facturas que estan seleccionadas
@@ -122,7 +122,7 @@ class Facencab_model extends MY_Model{
     return $estado;
   }
   function verificoCierreZ($numero){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->from($this->tabla);
     $this->db->where('numero', $numero);
     $this->db->where('tipcom_id', 4);
@@ -136,7 +136,7 @@ class Facencab_model extends MY_Model{
     }
   }
   function PeriodosToDropDown(){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->distinct();
     $this->db->select('periva');
     $this->db->from($this->tabla);
@@ -155,13 +155,13 @@ class Facencab_model extends MY_Model{
     return $q;
   }
   function getRegistro($id){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->from($this->tabla);
     $this->db->where('id', $id);
     return $this->db->get()->row();
   }
   function getCierreZ($numero){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->from($this->tabla);
     $this->db->where('numero', $numero);
     $this->db->where('tipcom_id', 4);

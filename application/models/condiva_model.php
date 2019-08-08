@@ -6,7 +6,7 @@ class Condiva_model extends MY_Model{
     $this->setTable('condiva');
   }
   function toDropDown(){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->select('id, nombre ');
     $this->db->from($this->tabla);
     $q = $this->db->get()->result();

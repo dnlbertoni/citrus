@@ -21,7 +21,7 @@ class Cuenta_model extends MY_Model{
     return $q->result();
   }
   function ListadoFiltradoNombre($valor){
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->select('id, nombre, cuit, letra');
     $search = '%'.$valor.'%';
     $this->db->from($this->tabla);

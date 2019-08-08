@@ -14,11 +14,19 @@ class Facencab_model extends MY_Model{
     $this->db->where('facencab.periva IS NOT NULL', null, false);
     $this->db->where('tipcom.libroiva',$libro);
     $this->db->group_by('periva');
-    $this->db->order_by('periva');
+    $this->db->order_by('periva', 'DESC');
     $q=$this->db->get();
     return $q->result();
   }
   function ListadoFacturasPeriodoCerrar($libro, $periodo ){
+    $ano = intval($periodo / 100);
+    $mes = $periodo - ($ano *100);
+    if( $mes < 4 ){
+      $mes += 12;
+      $ano--;
+    }
+    $mes -= 3;
+    $perdes = ( $ano * 100 ) + $mes;
     $this->db->select('facencab.id, tipcom.abreviatura as tipcomp, facencab.letra, puesto, numero, cuenta.nombre as razonSocial, importe, ivapass, periva ');
     $this->db->select('date_format(fecha, "%d-%m-%Y") as fecha',false );
     $this->db->select('(ivamin+ivamax+percep) as ivatot', false);
@@ -32,6 +40,7 @@ class Facencab_model extends MY_Model{
     };
     $this->db->where('tipcom.libroiva',$libro);
     $this->db->where('date_format(fecha, "%Y%m") <= ', $periodo, false);
+    $this->db->where('date_format(fecha, "%Y%m") >= ', $perdes, false);
     $this->db->where('facencab.estado <>', 2);
     $this->db->order_by('facencab.fecha');
     $this->db->order_by('tipcom_id');
@@ -54,7 +63,7 @@ class Facencab_model extends MY_Model{
     //echo $this->db->_compile_select();
     $q=$this->db->get();
     return $q->result();
-  }  
+  }
   function LibroIVA($libro, $periodo ){
     $this->db->select('date_format(fecha, "%d-%m-%Y") as fecha',false );
     $this->db->select('CONCAT( tipcom.abreviatura, " ", facencab.letra, " ",  puesto,"-", numero) as comprobante', false);
@@ -73,7 +82,7 @@ class Facencab_model extends MY_Model{
     //echo $this->db->_compile_select();
     $q=$this->db->get();
     return $q->result();
-  } 
+  }
   function ListadoPercepciones( $periodo ){
     $this->db->select('cuenta.nombre as razonSocial');
     $this->db->select('cuenta.cuit as cuit');
@@ -97,7 +106,7 @@ class Facencab_model extends MY_Model{
   }
   function ActualizoPeriva($periodo, $fac_id){
     $this->db->trans_begin();
-    
+
    //activo solo las facturas que estan seleccionadas
     foreach($fac_id as $key=>$valor){
       $this->db->set('ivapass', $valor);
@@ -158,5 +167,17 @@ class Facencab_model extends MY_Model{
     $this->db->where('puesto', 3);
     $this->db->where('letra', 'Z');
     return $this->db->get()->row();
+  }
+  function existeClave($clave=array()){
+    $this->db->from($this->getTable());
+    foreach($clave as $key=>$value){
+      $this->db->where($key, $value);
+    };
+    $q=$this->db->get()->result();
+    if(count($q)>0){
+      return true;
+    }else{
+      return false;
+    }
   }
 }
