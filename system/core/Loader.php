@@ -873,7 +873,7 @@ class CI_Loader {
 	 * @param	array	$_ci_data	Data to load
 	 * @return	object
 	 */
-	protected function _ci_load($_ci_data)
+	public function _ci_load($_ci_data)
 	{
 		// Set the default data variables
 		foreach (array('_ci_view', '_ci_vars', '_ci_path', '_ci_return') as $_ci_val)

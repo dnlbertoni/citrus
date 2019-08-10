@@ -394,5 +394,5 @@ class Users extends CI_Model
 	}
 }
 
-/* End of file users.php */
-/* Location: ./application/models/auth/users.php */
+/* End of file Users.php */
+/* Location: ./application/models/auth/Users.php */

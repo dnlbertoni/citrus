@@ -1,946 +1,587 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-/*
-	Class: Template
-	
-	The Template class makes the creation of consistently themed web pages across your
-	entire site simple and as automatic as possible. 
-	
-	It supports parent/child themes, controller-named automatic overrides, and more.
-	
-	Version - 3.0
-	Author	- Lonnie Ezell
-*/
+<?php
+
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
+/**
+ * CodeIgniter
+ *
+ * An open source application development framework for PHP 4.3.2 or newer
+ *
+ * @package CodeIgniter
+ * @author  ExpressionEngine Dev Team, a little modification by https://www.roytuts.com
+ * @copyright  Copyright (c) 2006, EllisLab, Inc.
+ * @since   Version 1.0
+ * @filesource
+ */
+// --------------------------------------------------------------------
+
 class Template {
 
-	private static $debug = false;
+    var $CI;
+    var $config;
+    var $template;
+    var $master;
+    var $regions = array(
+        '_scripts' => array(),
+        '_styles' => array(),
+        '_meta' => array()
+    );
+    var $output;
+    var $js = array();
+    var $css = array();
+    var $meta = array();
+    var $parser = 'parser';
+    var $parser_method = 'parse';
+    var $parse_template = FALSE;
 
-	/*
-		Var: $active_theme
-		Stores the name of the active theme (folder)
-		with a trailing slash. 
-	 */
-	protected static $active_theme = '';
-	
-	/*
-		Var: $default_theme
-		Stores the default theme from the config file
-		for a slight performance increase.
-	 */
-	 protected static $default_theme = '';
+    /**
+     * Constructor
+     *
+     * Loads template configuration, template regions, and validates existence of
+     * default template
+     *
+     * @access    public
+     */
+    function __construct() {
+        // Copy an instance of CI so we can use the entire framework.
+        $this->CI = & get_instance();
 
-	/*
-		Var: $current_view
-		The view to load. Normally not set unless
-		you need to bypass the automagic.
-	 */
-	protected static $current_view;
-	
-	/*
-		Var: $layout
-		The layout to render the views into.
-	 */
-	public static $layout;
-	
-	/*
-		Var: $parse_views
-		If true, CodeIgniter's Template Parser will be used to 
-		parse the view. If false, the view is displayed with
-		no parsing. Used by the yield() and block() 
-	 */
-	public static $parse_views = false;
-	
-	/*
-		Var: $data
-		The data to be passed into the views.
-		The keys are the names of the variables
-		and the values are the values.
-	 */
-	protected static $data = array();
-	
-	/*
-		Var: $blocks
-		An array of blocks. The key is the name
-		to reference it by, and the value is the file.
-		The class will loop through these, parse them,
-		and push them into the layout.
-	 */
-	protected static $blocks = array();
-	
-	/*
-		Var: $message
-		Holds a simple array to store the status Message
-		that gets displayed using the message() function.
-	 */
-	protected static $message;
+        // Load the template config file and setup our master template and regions
+        include(APPPATH . 'config/template' . '.php');
+        if (isset($template)) {
+            $this->config = $template;
+            $this->set_template($template['active_template']);
+        }
+    }
 
-	/*
-		Var: $theme_paths
-		An array of paths to look for themes.
-	 */
-	protected static $theme_paths	= array();	
-	
-	/*
-		Var: $site_path
-		The full server path to the site root.
-	 */
-	public static $site_path;
-	
-	/*
-		Var: $orig_view_path
-		Stores CI's default view path.
-	 */
-	protected static $orig_view_path;
-	
-	/*	
-		Var: $ci
-		An instance of the CI super object.
-	 */
-	private static $ci;
+    // --------------------------------------------------------------------
 
-	//--------------------------------------------------------------------
+    /**
+     * Use given template settings
+     *
+     * @access  public
+     * @param   string   array key to access template settings
+     * @return  void
+     */
+    function set_template($group) {
+        if (isset($this->config[$group])) {
+            $this->template = $this->config[$group];
+        } else {
+            show_error('The "' . $group . '" template group does not exist. Provide a valid group name or add the group first.');
+        }
+        $this->initialize($this->template);
+    }
 
-	/*
-		Method: __construct()
-		
-		This constructor is here purely for CI's benefit, as this is a
-		static class.
-		
-		Return:
-			void
-	 */
-	public function __construct(){	
-		self::$ci =& get_instance();
-		
-		self::init();
-	}
-	
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: init()
-		
-		Grabs an instance of the CI superobject, loads the Ocular config
-		file, and sets our default layout.
-	
-		Return:	
-			void
-	 */
-	public static function init(){
-		// If the application config file hasn't been loaded, do it now
-		if (!self::$ci->config->item('template.theme_paths'))
-		{ 
-			self::$ci->config->load('template');
-		}
-		
-		// Store our settings
-		self::$site_path 		= self::$ci->config->item('template.site_path');
-		self::$theme_paths 		= self::$ci->config->item('template.theme_paths');
-		self::$layout 			= self::$ci->config->item('template.default_layout');
-		self::$default_theme 	= self::$ci->config->item('template.default_theme');
-		self::$parse_views		= self::$ci->config->item('template.parse_views');
-		
-		// Store our orig view path, so we can reset it
-		self::$orig_view_path = self::$ci->load->_ci_view_path;
-		
-		log_message('debug', 'Template library loaded');
-	}
-	
-	//--------------------------------------------------------------------
-	
-	
-	/*
-		Method: render()
-		
-		Renders out the specified layout, which starts the process
-		of rendering the page content. Also determines the correct
-		view to use based on the current controller/method.
-		
-		Parameters:
-		 	$layout	- The name of the a layout to use. This overrides any current or default layouts set.
-		 	
-		Return:
-			void
-	 */
-	public static function render($layout=null){
-		$output = '';
-	
-		// We need to know which layout to render
-		$layout = empty($layout) ? self::$layout : $layout;		
+    // --------------------------------------------------------------------
 
-		// Is it in an AJAX call? If so, override the layout
-		if (self::$ci->input->is_ajax_request())
-		{
-			$layout = self::$ci->config->item('template.ajax_layout');
-			self::$ci->output->set_header("Cache-Control: no-store, no-cache, must-revalidate");
-			self::$ci->output->set_header("Cache-Control: post-check=0, pre-check=0");
-			self::$ci->output->set_header("Pragma: no-cache");
-			self::$ci->output->set_header('Content-Type: text/html');
-		}
-		
-		// Grab our current view name, based on controller/method
-		// which routes to views/controller/method.
-		if (empty(self::$current_view))
-		{		
-			self::$current_view =  self::$ci->router->class . '/' . self::$ci->router->method;
-		}
-		
-		//
-		// Time to render the layout
-		//
-		self::load_view($layout, self::$data, self::$ci->router->class, true, $output);
-		
-		if (empty($output)) { show_error('Unable to find theme layout: '. $layout); }
-		
-		global $OUT;
-		$OUT->set_output($output); 
-	}
-	
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: yield()
-		Renders the current page into the layout. 
-		
-		Uses a view based on the controller/function being run. (See __constructor).
-		
-		Return:
-			a string containing the output of the render process.
-	 */
-	public static function yield1(){ 	
-		$output = '';
-		
-		if (self::$debug) { echo 'Current View = '. self::$current_view; }
+    /**
+     * Set master template
+     *
+     * @access  public
+     * @param   string   filename of new master template file
+     * @return  void
+     */
+    function set_master_template($filename) {
+        if (file_exists(APPPATH . 'views/' . $filename) or file_exists(APPPATH . 'views/' . $filename . '.php')) {
+            $this->master = $filename;
+        } else {
+            show_error('The filename provided does not exist in <strong>' . APPPATH . 'views</strong>. Remember to include the extension if other than ".php"');
+        }
+    }
 
-		self::load_view(self::$current_view, null, self::$ci->router->class .'/'. self::$ci->router->method, false, $output);
-		
-		return $output;
-	}
-	
-	//--------------------------------------------------------------------
-	
-	//--------------------------------------------------------------------
-	// !BLOCKS
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: set_block()
-	
-		Stores the block named $name in the blocks array for later rendering.
-		The $current_view variable is the name of an existing view. If it is empty,
-		your script should still function as normal.
-		
-		Parameters:
-			$block_name	- the name of the block. Must match the name in the block() method.
-			$view_name	- the name of the view file to render.
-		
-		Return:
-			void
-	 */
-	public static function set_block($block_name='', $view_name=''){		
-		if (!empty($block_name))
-		{
-			self::$blocks[$block_name] = $view_name;
-		} 
-		
-	}
-	
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: block()
-	
-		Renders a "block" to the view.
-		
-		A block is a partial view contained in a view file in the 
-		application/views folder. It can be used for sidebars,
-		headers, footers, or any other recurring element within
-		a site. It is recommended to set a default when calling
-		this function within a layout. The default will be rendered
-		if no methods override the view (using the set_block() method).
-		
-		Parameters:
-			$block_name		- The name of the block to render.
-			$default_view	- The view to render if no other view has been set with the set_block() method.
-			$data			- An array of data to pass to the view.
-			$themed			- Whether we should look in the themes or standard view locations.
+    // --------------------------------------------------------------------
 
-		Return:
-			void
-	 */
-	public static function block($block_name='', $default_view='', $data=array(), $themed=false){		
-		if (empty($block_name)) 
-		{
-			log_message('debug', '[Template] No block name provided.');
-			return;
-		}
+    /**
+     * Dynamically add a template and optionally switch to it
+     *
+     * @access  public
+     * @param   string   array key to access template settings
+     * @param   array properly formed
+     * @return  void
+     */
+    function add_template($group, $template, $activate = FALSE) {
+        if (!isset($this->config[$group])) {
+            $this->config[$group] = $template;
+            if ($activate === TRUE) {
+                $this->initialize($template);
+            }
+        } else {
+            show_error('The "' . $group . '" template group already exists. Use a different group name.');
+        }
+    }
 
-		// If a block has been set previously use that
-		if (isset(self::$blocks[$block_name]))
-		{
-			$block_name = self::$blocks[$block_name];
-		} 
-		// Otherwise, use the default view.
-		else 
-		{
-			$block_name = $default_view;
-		}
+    // --------------------------------------------------------------------
 
-		if (self::$debug) { echo "Looking for block: <b>{$block_name}</b>."; }
+    /**
+     * Initialize class settings using config settings
+     *
+     * @access  public
+     * @param   array   configuration array
+     * @return  void
+     */
+    function initialize($props) {
+        // Set master template
+        if (isset($props['template'])
+                && (file_exists(APPPATH . 'views/' . $props['template']) or file_exists(APPPATH . 'views/' . $props['template'] . '.php'))) {
+            $this->master = $props['template'];
+        } else {
+            // Master template must exist. Throw error.
+            show_error('Either you have not provided a master template or the one provided does not exist in <strong>' . APPPATH . 'views</strong>. Remember to include the extension if other than ".php"');
+        }
 
-		if (empty($block_name)) 
-		{ 
-			log_message('debug', '[Template] Unable to find the default block: ' . $default_view);
-			return;
-		}
-		
-		self::load_view($block_name, $data, false, $themed, $output);
-		
-		return $output;
-	}
-	
-	//--------------------------------------------------------------------
-	
-	//--------------------------------------------------------------------
-	// !THEME PATHS
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: add_theme_path()
-		
-		Theme paths allow you to have multiple locations for themes to be
-		stored. This might be used for separating themes for different sub-
-		applications, or a core theme and user-submitted themes.
-		
-		Parameters:
-			$path	- A new path where themes can be found.
-	 */
-	public static function add_theme_path($path=null){
-		if (empty($path) || !is_string($path))
-		{
-			return false;
-		}
-		
-		// Make sure the path has a '/' at the end.
-		if (substr($path, -1) != '/')
-		{
-			$path .= '/';
-		}
-		
-		// If the path already exists, we're done here.
-		if (isset(self::$theme_paths[$path]))
-		{
-			return true;
-		}
-		
-		// Make sure the folder actually exists
-		if (is_dir(FCPATH . $path))
-		{
-			array_push(self::$theme_paths, $path);
-			return false;
-		} else 
-		{
-			log_message('debug', "[Template] Cannot add theme folder: $path does not exist");
-			return false;
-		}
-	}
-	
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: remove_theme_path()
-		
-		Parameters:
-			$path	- The path to remove from the theme paths.
+        // Load our regions
+        if (isset($props['regions'])) {
+            $this->set_regions($props['regions']);
+        }
 
-		Return:
-			void
-	 */
-	public static function remove_theme_path($path=null){
-		if (empty($path) || !is_string($path))
-		{
-			return;
-		}
-		
-		if (isset(self::$theme_paths[$path]))
-		{
-			unset(self::$theme_paths[$path]);
-		}
-	}
-	
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: set_theme()
-		
-		Stores the name of the active theme to use. This theme should be
-		relative to one of the 'template.theme_paths' folders.
-		
-		Parameters:
-			$theme	- The name of the active theme.
+        // Set parser and parser method
+        if (isset($props['parser'])) {
+            $this->set_parser($props['parser']);
+        }
+        if (isset($props['parser_method'])) {
+            $this->set_parser_method($props['parser_method']);
+        }
 
-		Return: 
-			void
-	 */
-	public static function set_theme($theme=null){
-		if (empty($theme) || !is_string($theme))
-		{
-			return;
-		}
+        // Set master template parser instructions
+        $this->parse_template = isset($props['parse_template']) ? $props['parse_template'] : FALSE;
+    }
 
-		// Make sure a trailing slash is there
-		if (substr($theme, -1) !== '/')
-		{
-			$theme .= '/';
-		}
+    // --------------------------------------------------------------------
 
-		self::$active_theme = $theme;
-	}
-	
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: theme()
-	
-		Returns the active theme.
-		
-		Return:
-			The name of the active theme.
-	 */
-	public static function theme(){
-		return self::$active_theme;
-	}
-	
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: theme_url()
-	
-		Returns the full url to a file in the currently active theme.
-		
-		Return:
-			The full url (including http://) to the resource.
-	 */
-	public static function theme_url($resource=''){
-		$url = base_url();
-		
-		// Add theme path
-		$url .= self::$theme_paths[0] .'/';
-		
-		// Add theme
-		$url .= empty(self::$active_theme) ? self::$default_theme : self::$active_theme;
-		
-		// Cleanup, just to be safe
-		$url = str_replace('//', '/', $url);
-		$url = str_replace(':/', '://', $url);
-		
-		return $url . $resource;
-	}
-	
-	//--------------------------------------------------------------------
-	
-	
-	/*
-		Method: set_view()
-		
-		Set the current view to render.
-		
-		Parameter:
-			$view	- The name of the view file to render as content.
-			
-		Return:
-			void
-	 */
-	public static function set_view($view=null){
-		if (empty($view) || !is_string($view))
-		{
-			return;
-		}
-		
-		self::$current_view = $view;
-	}
-	
-	//--------------------------------------------------------------------
-	
-	
-	/*
-		Method: set()
-		
-		Makes it easy to save information to be rendered within the views. 
-		As of 3.0, can also set any of the class properties.
-		
-		Parameters:
-			$var_name	- The name of the variable to set
-			$value		- The value to set it to.
-		@return void
-	 */
-	public static function set($var_name='', $value=''){		
-		// Added by dkenzik
-	    // 20101001
-	    // Easier migration when $data is scaterred all over your project
-	    //
-	    if(is_array($var_name) && $value=='')
-	    {
-	        foreach($var_name as $key => $value)
-	        {
-	        	self::$data[$key] = $value;
-	        }           
-	    }
-	    else
-	    {
-	    	// Is it a class property? 
-	    	if (isset(self::$$var_name))
-	    	{
-	    		self::$$var_name = $value;
-	    	}
-	    	else 
-	    	{
-	        	self::$data[$var_name] = $value;
-	        }
-	    }
-	}
-	
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: get()
-		
-		Returns a variable that has been previously set, or false if not exists.
-		As of 3.0, will also return class properties.
-		
-		Parameter:
-			$var_name	- The name of the data item to return.
-			
-		Return: 
-			The value of the class property or view data.
-	 */
-	public static function get($var_name=null){
-		if (empty($var_name))
-		{
-			return false;
-		}
-		
-		// First, is it a class property? 
-		if (isset(self::$$var_name))
-		{
-			return self::$$var_name;
-		}
-		else if (isset(self::$data[$var_name]))
-		{
-			return self::$data[$var_name];
-		}
-		
-		return false;
-	}
-	
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: parse_views()
-		
-		Set whether or not the views will be passed through CI's parser.
-		
-		Parameter:
-			$parse	- boolean value. Should we parse views?
-			
-		Return:
-			void
-	 */
-	public function parse_views($parse){
-		self::parse_views($parse);
-	}
-	
-	//--------------------------------------------------------------------
-	
-	
-	/*
-		Method: set_message()
-	
-		Sets a status message (for displaying small success/error messages).
-		This function is used in place of the session->flashdata function,
-		because you don't always want to have to refresh the page to get the
-		message to show up. 
-		
-		Parameters:
-			$message	- A string with the message to save.
-			$type		- A string to be included as the CSS class of the containing div.
-			
-		Return:
-			void
-	 */
-	public static function set_message($message='', $type='info'){
-		if (!empty($message))
-		{
-			if (class_exists('CI_Session'))
-			{
-				self::$ci->session->set_flashdata('message', $type.'::'.$message);
-			}
-			
-			self::$message = array('type'=>$type, 'message'=>$message);
-		}
-	}
-	
-	//---------------------------------------------------------------
-	
-	/*
-		Method: message()
-	
-		Displays a status message (small success/error messages).
-		If data exists in 'message' session flashdata, that will 
-		override any other messages. The renders the message based
-		on the template provided in the config file ('OCU_message_template').
-		
-		Return:
-			A string with the results of inserting the message into the message template.
-	 */
-	public static function message(){
-		$message = '';		// The message body.
-		$type	 = '';		// The message type (used for class)
-	
-		// Does session data exist? 
-		if (class_exists('CI_Session'))
-		{
-			$message = self::$ci->session->flashdata('message');
-			
-			if (!empty($message))
-			{
-				// Split out our message parts
-				$temp_message = explode('::', $message);
-				$type = $temp_message[0];
-				$message = $temp_message[1];
-				
-				unset($temp_message);
-			} 
-		}
-		
-		// If message is empty, we need to check our own storage.
-		if (empty($message))
-		{
-			if (empty(self::$message['message']))
-			{
-				return '';
-			}
-			
-			$message = self::$message['message'];
-			$type = self::$message['type'];
-		}
-		
-		// Grab out message template and replace the placeholders
-		$template = str_replace('{type}', $type, self::$ci->config->item('template.message_template'));
-		$template = str_replace('{message}', $message, $template);
-		
-		// Clear our session data so we don't get extra messages. 
-		// (This was a very rare occurence, but clearing should resolve the problem.
-		if (class_exists('CI_Session'))
-		{
-			self::$ci->session->set_flashdata('message', '');
-		}
-		
-		return $template;
-	}
-	
-	//---------------------------------------------------------------
-	
-	/*
-		Method: redirect()
-		
-		Returns a javascript solution for page redirection. This is especially
-		handy when you want to redirect out of an ajax request to a standard
-		http request.
-		
-		Parameter:
-			$url	- The url to redirect to. If not a full url, will wrap it
-						in site_url().
-	*/
-	public function redirect($url=null){
-		$url = strpos($url, 'http') == false ? site_url($url) : $url;
-		
-		echo "<script>window.location='$url'</script>";
-		exit();
-	}
-	
-	//--------------------------------------------------------------------
-	
-	
-	/*
-		Method: load_view()
-	
-		Loads a view based on the current themes.
-		
-		Parameters:
-			$view		- The view to load.
-			$data		- An array of data elements to be made available to the views
-			$override	- The name of a view to check for first (used for controller-based layouts)
-			$is_themed	- Whether it should check in the theme folder first.
-			&$output	- A pointer to the variable to store the output of the loaded view into.
-	 */
-	public static function load_view($view=null, $data=null, $override='', $is_themed=true, &$output) { 
-		if (empty($view))	return '';
-		
-		// If no active theme is present, use the default theme.
-		$theme = empty(self::$active_theme) ? self::$default_theme : self::$active_theme;
-	
-		if ($is_themed)
-		{	
-			// First check for the overriden file...
-			$output = self::find_file($override, $data, $theme);
-			
-			// If we didn't find it, try the standard view
-			if (empty($output))
-			{
-				$output = self::find_file($view, $data, $theme);
-			}
-		} 
-		
-		// Just a normal view (possibly from a module, though.)
-		else 
-		{
-			// First check within our themes...
-			$output = self::find_file($view, $data, $theme);
-			
-			// if $output is empty, no view was overriden, so go for the default
-			if (empty($output))
-			{	
-				self::$ci->load->_ci_view_path = self::$orig_view_path;
-		
-				if (self::$parse_views === true)
-				{
-					$output = self::$ci->parser->parse($view, $data, true);
-				}
-				else 
-				{
-					$output = self::$ci->load->view($view, $data, true);
-				}
-			}
-		}
-		
-		// Put our ci view path back to normal
-		self::$ci->load->_ci_view_path = self::$orig_view_path;
-		unset($theme, $orig_view_path);
-	}
-	
-	//--------------------------------------------------------------------
-	
-	//--------------------------------------------------------------------
-	// !PRIVATE METHODS
-	//--------------------------------------------------------------------
-	
-	/*
-		Method: find_file
-		
-		Searches through the the active theme and the default theme to try to find
-		a view file. If found, it returns the rendered view.
-		
-		Parameters:
-			$view	- The name of the view to find.
-			$data   -  An array of key/value pairs to pass to the views.
-		
-		Return:
-			The content of the file, if found, else empty.
-	 */
-	private function find_file($view=null, $data=null){
-		if (empty($view))
-		{
-			return false;
-		}
-		
-		$output = '';		// Stores the final output
-		$view_path = '';	// Used to store the location of the file.
-		
-		// If there are multiple theme locations, we need to search through all of them.
-		foreach (self::$theme_paths as $path)
-		{
-			/*
-				First, check the active theme
-			*/
-			if (self::$debug) { echo "[Find File] Looking for view in active theme: <b>". self::$site_path . $path .'/'. self::$active_theme . $view .'.php</b><br/>'; }
-			
-			if (!empty(self::$active_theme) && is_file(self::$site_path . $path .'/'. self::$active_theme . $view .'.php'))
-			{
-				if (self::$debug) { echo 'Found <b>'. $view .'</b> in Active Theme.<br/>'; }
-				$view_path = self::$site_path . $path .'/'. self::$active_theme .'/';
-			}
-			
-			/*
-				If not in the active theme, then try the default theme
-			*/
-			if (self::$debug) { echo "[Find File] Looking for view in default theme: <b>". self::$site_path . $path .'/'. self::$default_theme . $view .'.php</b><br/>'; }
-			if (empty($view_path) && is_file(self::$site_path . $path .'/'. self::$default_theme . $view .'.php'))
-			{
-				if (self::$debug) { echo 'Found <b>'. $view .'</b> in Default Theme.<br/>'; }
-				
-				$view_path = self::$site_path . $path .'/'. self::$default_theme;
-			}
-		}
-		
-		// If the view was found, it's path is stored in the $view_path var. So parse or render it
-		// based on user settings.
-		if (!empty($view_path))
-		{
-			// Set CI's view path to point to the right location.
-			self::$ci->load->_ci_view_path = $view_path;
-			
-			if (self::$debug) { echo '[Find File] Rendering file at: '. $view_path . $view .'.php<br/><br/>'; }
-			
-			// Grab the output of the view.
-			if (self::$parse_views === true)
-			{
-				$output = self::$ci->parser->parse($view, $data, true);
-			} else 
-			{
-				$output = self::$ci->load->_ci_load(array('_ci_view' => $view, '_ci_vars' => self::$ci->load->_ci_object_to_array($data), '_ci_return' => true));
-			}
-			
-			// Put CI's view path back to the original
-			self::$ci->load->_ci_view_path = self::$orig_view_path;
-		}
-		
-		return $output;
-	}
-	
-	//--------------------------------------------------------------------
-	
+    /**
+     * Set regions for writing to
+     *
+     * @access  public
+     * @param   array   properly formed regions array
+     * @return  void
+     */
+    function set_regions($regions) {
+        if (count($regions)) {
+            $this->regions = array(
+                '_scripts' => array(),
+                '_styles' => array(),
+                '_meta' => array()
+            );
+            foreach ($regions as $key => $region) {
+                // Regions must be arrays, but we take the burden off the template
+                // developer and insure it here
+                if (!is_array($region)) {
+                    $this->add_region($region);
+                } else {
+                    $this->add_region($key, $region);
+                }
+            }
+        }
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Dynamically add region to the currently set template
+     *
+     * @access  public
+     * @param   string   Name to identify the region
+     * @param   array Optional array with region defaults
+     * @return  void
+     */
+    function add_region($name, $props = array()) {
+        if (!is_array($props)) {
+            $props = array();
+        }
+
+        if (!isset($this->regions[$name])) {
+            $this->regions[$name] = $props;
+        } else {
+            show_error('The "' . $name . '" region has already been defined.');
+        }
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Empty a region's content
+     *
+     * @access  public
+     * @param   string   Name to identify the region
+     * @return  void
+     */
+    function empty_region($name) {
+        if (isset($this->regions[$name]['content'])) {
+            $this->regions[$name]['content'] = array();
+        } else {
+            show_error('The "' . $name . '" region is undefined.');
+        }
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Set parser
+     *
+     * @access  public
+     * @param   string   name of parser class to load and use for parsing methods
+     * @return  void
+     */
+    function set_parser($parser, $method = NULL) {
+        $this->parser = $parser;
+        $this->CI->load->library($parser);
+
+        if ($method) {
+            $this->set_parser_method($method);
+        }
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Set parser method
+     *
+     * @access  public
+     * @param   string   name of parser class member function to call when parsing
+     * @return  void
+     */
+    function set_parser_method($method) {
+        $this->parser_method = $method;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Write contents to a region
+     *
+     * @access    public
+     * @param    string    region to write to
+     * @param    string    what to write
+     * @param    boolean    FALSE to append to region, TRUE to overwrite region
+     * @return    void
+     */
+    function write($region, $content, $overwrite = FALSE) {
+        if (isset($this->regions[$region])) {
+            if ($overwrite === TRUE) { // Should we append the content or overwrite it
+                $this->regions[$region]['content'] = array($content);
+            } else {
+                $this->regions[$region]['content'][] = $content;
+            }
+        }
+
+        // Regions MUST be defined
+        else {
+            show_error("Cannot write to the '{$region}' region. The region is undefined.");
+        }
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Write content from a View to a region. 'Views within views'
+     *
+     * @access    public
+     * @param    string    region to write to
+     * @param    string    view file to use
+     * @param    array    variables to pass into view
+     * @param    boolean    FALSE to append to region, TRUE to overwrite region
+     * @return    void
+     */
+    function write_view($region, $view, $data = NULL, $overwrite = FALSE) {
+        $args = func_get_args();
+
+        // Get rid of non-views
+        unset($args[0], $args[2], $args[3]);
+
+        // Do we have more view suggestions?
+        if (count($args) > 1) {
+            foreach ($args as $suggestion) {
+                if (file_exists(APPPATH . 'views/' . $suggestion . '.php') or file_exists(APPPATH . 'views/' . $suggestion)) {
+                    // Just change the $view arg so the rest of our method works as normal
+                    $view = $suggestion;
+                    break;
+                }
+            }
+        }
+
+        $content = $this->CI->load->view($view, $data, TRUE);
+        $this->write($region, $content, $overwrite);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Parse content from a View to a region with the Parser Class
+     *
+     * @access  public
+     * @param   string   region to write to
+     * @param   string   view file to parse
+     * @param   array variables to pass into view for parsing
+     * @param   boolean  FALSE to append to region, TRUE to overwrite region
+     * @return  void
+     */
+    function parse_view($region, $view, $data = NULL, $overwrite = FALSE) {
+        $this->CI->load->library('parser');
+
+        $args = func_get_args();
+
+        // Get rid of non-views
+        unset($args[0], $args[2], $args[3]);
+
+        // Do we have more view suggestions?
+        if (count($args) > 1) {
+            foreach ($args as $suggestion) {
+                if (file_exists(APPPATH . 'views/' . $suggestion . '.php') or file_exists(APPPATH . 'views/' . $suggestion)) {
+                    // Just change the $view arg so the rest of our method works as normal
+                    $view = $suggestion;
+                    break;
+                }
+            }
+        }
+
+        $content = $this->CI->{$this->parser}->{$this->parser_method}($view, $data, TRUE);
+        $this->write($region, $content, $overwrite);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Dynamically include javascript in the template
+     *
+     * NOTE: This function does NOT check for existence of .js file
+     *
+     * @access  public
+     * @param   string   script to import or embed
+     * @param   string  'import' to load external file or 'embed' to add as-is
+     * @param   boolean  TRUE to use 'defer' attribute, FALSE to exclude it
+     * @return  TRUE on success, FALSE otherwise
+     */
+    function add_js($script, $type = 'import', $defer = FALSE) {
+        $success = TRUE;
+        $js = NULL;
+
+        $this->CI->load->helper('url');
+
+        switch ($type) {
+            case 'import':
+                $filepath = base_url() . $script;
+                $js = '<script type="text/javascript" src="' . $filepath . '"';
+                if ($defer) {
+                    $js .= ' defer="defer"';
+                }
+                $js .= "></script>";
+                break;
+
+            case 'embed':
+                $js = '<script type="text/javascript"';
+                if ($defer) {
+                    $js .= ' defer="defer"';
+                }
+                $js .= ">";
+                $js .= $script;
+                $js .= '</script>';
+                break;
+
+            default:
+                $success = FALSE;
+                break;
+        }
+
+        // Add to js array if it doesn't already exist
+        if ($js != NULL && !in_array($js, $this->js)) {
+            $this->js[] = $js;
+            $this->write('_scripts', $js);
+        }
+
+        return $success;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Dynamically include CSS in the template
+     *
+     * NOTE: This function does NOT check for existence of .css file
+     *
+     * @access  public
+     * @param   string   CSS file to link, import or embed
+     * @param   string  'link', 'import' or 'embed'
+     * @param   string  media attribute to use with 'link' type only, FALSE for none
+     * @return  TRUE on success, FALSE otherwise
+     */
+    function add_css($style, $type = 'link', $media = FALSE) {
+        $success = TRUE;
+        $css = NULL;
+
+        $this->CI->load->helper('url');
+        $filepath = base_url() . $style;
+
+        switch ($type) {
+            case 'link':
+
+                $css = '<link type="text/css" rel="stylesheet" href="' . $filepath . '"';
+                if ($media) {
+                    $css .= ' media="' . $media . '"';
+                }
+                $css .= ' />';
+                break;
+
+            case 'import':
+                $css = '<style type="text/css">@import url(' . $filepath . ');</style>';
+                break;
+
+            case 'embed':
+                $css = '<style type="text/css">';
+                $css .= $style;
+                $css .= '</style>';
+                break;
+
+            default:
+                $success = FALSE;
+                break;
+        }
+
+        // Add to js array if it doesn't already exist
+        if ($css != NULL && !in_array($css, $this->css)) {
+            $this->css[] = $css;
+            $this->write('_styles', $css);
+        }
+
+        return $success;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Dynamically include meta tags in the template
+     *
+     * @param string $key meta name
+     * @param string $value meta content
+     * @return bool
+     */
+    function add_meta($key, $val) {
+        $success = FALSE;
+        $meta = '<meta name="' . $key . '" content="' . $val . '" />';
+
+        if (!in_array($meta, $this->meta)) {
+            $this->meta[] = $meta;
+            $this->write('_meta', $meta);
+            $success = TRUE;
+        }
+
+        return $success;
+    }
+
+    /**
+     * Render the master template or a single region
+     *
+     * @access    public
+     * @param    string    optionally opt to render a specific region
+     * @param    boolean    FALSE to output the rendered template, TRUE to return as a string. Always TRUE when $region is supplied
+     * @return    void or string (result of template build)
+     */
+    function render($region = NULL, $buffer = FALSE, $parse = FALSE) {
+        // Just render $region if supplied
+        if ($region) { // Display a specific regions contents
+            if (isset($this->regions[$region])) {
+                $output = $this->_build_content($this->regions[$region]);
+            } else {
+                show_error("Cannot render the '{$region}' region. The region is undefined.");
+            }
+        }
+
+        // Build the output array
+        else {
+            foreach ($this->regions as $name => $region) {
+                $this->output[$name] = $this->_build_content($region);
+            }
+
+            if ($this->parse_template === TRUE or $parse === TRUE) {
+                // Use provided parser class and method to render the template
+                $output = $this->CI->{$this->parser}->{$this->parser_method}($this->master, $this->output, TRUE);
+
+                // Parsers never handle output, but we need to mimick it in this case
+                if ($buffer === FALSE) {
+                    $this->CI->output->set_output($output);
+                }
+            } else {
+                // Use CI's loader class to render the template with our output array
+                $output = $this->CI->load->view($this->master, $this->output, $buffer);
+            }
+        }
+
+        return $output;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Load the master template or a single region
+     *
+     * DEPRECATED!
+     *
+     * Use render() to compile and display your template and regions
+     */
+    function load($region = NULL, $buffer = FALSE) {
+        $region = NULL;
+        $this->render($region, $buffer);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Build a region from it's contents. Apply wrapper if provided
+     *
+     * @access    private
+     * @param    string    region to build
+     * @param    string    HTML element to wrap regions in; like '<div>'
+     * @param    array    Multidimensional array of HTML elements to apply to $wrapper
+     * @return    string    Output of region contents
+     */
+    function _build_content($region, $wrapper = NULL, $attributes = NULL) {
+        $output = NULL;
+
+        // Can't build an empty region. Exit stage left
+        if (!isset($region['content']) or !count($region['content'])) {
+            return FALSE;
+        }
+
+        // Possibly overwrite wrapper and attributes
+        if ($wrapper) {
+            $region['wrapper'] = $wrapper;
+        }
+        if ($attributes) {
+            $region['attributes'] = $attributes;
+        }
+
+        // Open the wrapper and add attributes
+        if (isset($region['wrapper'])) {
+            // This just trims off the closing angle bracket. Like '<p>' to '<p'
+            $output .= substr($region['wrapper'], 0, strlen($region['wrapper']) - 1);
+
+            // Add HTML attributes
+            if (isset($region['attributes']) && is_array($region['attributes'])) {
+                foreach ($region['attributes'] as $name => $value) {
+                    // We don't validate HTML attributes. Imagine someone using a custom XML template..
+                    $output .= "$name=\"$value\"";
+                }
+            }
+
+            $output .= ">";
+        }
+
+        // Output the content items.
+        foreach ($region['content'] as $content) {
+            $output .= $content;
+        }
+
+        // Close the wrapper tag
+        if (isset($region['wrapper'])) {
+            // This just turns the wrapper into a closing tag. Like '<p>' to '</p>'
+            $output .= str_replace('<', '</', $region['wrapper']) . "n";
+        }
+
+        return $output;
+    }
+
 }
 
-// End of Template Class
+// END Template Class
 
-//--------------------------------------------------------------------
-
-/*
-	Function: theme_view()
-	
-	A shorthand method that allows views (from the current/default themes)
-	to be included in any other view.
-	
-	Parameters:
-		$view	- the name of the view to render.
-		$data	- an array of data to pass to the view.
-*/
-function theme_view($view=null, $data=null){
-	if (empty($view)) return '';
-	
-	$ci =& get_instance();
-	
-	$output ='';
-	Template::load_view($view, $data, null, true, $output);
-	return $output;
-}
-
-//--------------------------------------------------------------------
-
-/*
-	Function: check_class()
-	
-	A simple helper method for checking menu items against the current
-	class that is running.
-	
-	Parameter:
-		$item	- The name of the class to check against.
-		
-	Return:
-		Either <b>class="current"</b> or an empty string.
-*/
-function check_class($item=''){
-	$ci =& get_instance();
-
-	if (strtolower($ci->router->fetch_class()) == strtolower($item))
-	{
-		return 'class="current"';
-	}
-	
-	return '';
-}
-
-//--------------------------------------------------------------------
-
-/*
-	Function: check_method()
-	
-	A simple helper method for checking menu items against the current
-	class' method that is being executed (as far as the Router knows.)
-	
-	Parameter:
-		$item	- The name of the method to check against.
-		
-	Return:
-		Either <b>class="current"</b> or an empty string.
-*/
-function check_method($item=''){
-	$ci =& get_instance();
-
-	if (strtolower($ci->router->fetch_method()) == strtolower($item))
-	{
-		return 'class="current"';
-	}
-	
-	return '';
-}
-
-//--------------------------------------------------------------------
-
-/*
-	Function: breadcrumb()
-
-	Will create a breadcrumb from either the uri->segments or
-	from a key/value paired array passed into it. 	
-*/
-function breadcrumb($my_segments=null){
-	$ci =& get_instance();
-	
-	if (!class_exists('CI_URI'))
-	{
-		$ci->load->library('uri');
-	}
-	
-	if (empty($my_segments) || !is_array($my_segments))
-	{
-		$segments = $ci->uri->segment_array();
-		$total = $ci->uri->total_segments();
-	} else 
-	{
-		$total = count($my_segments);
-	}
-	
-	echo '<a href="/">home</a> ' . $ci->config->item('template.breadcrumb_symbol');
-	
-	$url = '';
-	$count = 0;
-	
-	// URI BASED BREADCRUMB
-	if (is_null($my_segments))
-	{
-		foreach ($segments as $segment)
-		{
-			$url .= '/'. $segment;
-			$count += 1;
-		
-			if ($count == $total)
-			{
-				echo str_replace('_', ' ', $segment);
-			} else 
-			{
-				echo '<a href="'. $url .'">'. str_replace('_', ' ', strtolower($segment)) .'</a>'. $ci->config->item('template.breadcrumb_symbol');
-			}
-		}
-	} else
-	{
-		// USER-SUPPLIED BREADCRUMB
-		foreach ($my_segments as $title => $uri)
-		{
-			$url .= '/'. $uri;
-			$count += 1;
-		
-			if ($count == $total)
-			{
-				echo str_replace('_', ' ', $title);
-			} else 
-			{
-				echo '<a href="'. $url .'">'. str_replace('_', ' ', strtolower($title)) .'</a>'. $ci->config->item('template.breadcrumb_symbol');
-			}
-		}
-	}
-}
-
-//---------------------------------------------------------------
-
-/* End of file template.php */
-/* Location: ./application/libraries/template.php */
+/* End of file Template.php */
+/* Location: ./application/libraries/Template.php */

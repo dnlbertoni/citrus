@@ -1,101 +1,74 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
+/*
+  |--------------------------------------------------------------------------
+  | Active template
+  |--------------------------------------------------------------------------
+  |
+  | The $template['active_template'] setting lets you choose which template
+  | group to make active.  By default there is only one group (the
+  | "default" group).
+  |
+ */
+$template['active_template'] = 'public';
 
 /*
-|--------------------------------------------------------------------
-| SITE PATH
-|--------------------------------------------------------------------
-| The path to the root folder that holds the application. This does
-| not have to be the site root folder, or even the folder defined in
-| FCPATH.
-|
-*/
-$config['template.site_path']	= FCPATH;
+  |--------------------------------------------------------------------------
+  | Explaination of template group variables
+  |--------------------------------------------------------------------------
+  |
+  | ['template'] The filename of your master template file in the Views folder.
+  |   Typically this file will contain a full XHTML skeleton that outputs your
+  |   full template or region per region. Include the file extension if other
+  |   than ".php"
+  | ['regions'] Places within the template where your content may land.
+  |   You may also include default markup, wrappers and attributes here
+  |   (though not recommended). Region keys must be translatable into variables
+  |   (no spaces or dashes, etc)
+  | ['parser'] The parser class/library to use for the parse_view() method
+  |   NOTE: See http://codeigniter.com/forums/viewthread/60050/P0/ for a good
+  |   Smarty Parser that works perfectly with Template
+  | ['parse_template'] FALSE (default) to treat master template as a View. TRUE
+  |   to user parser (see above) on the master template
+  |
+  | Region information can be extended by setting the following variables:
+  | ['content'] Must be an array! Use to set default region content
+  | ['name'] A string to identify the region beyond what it is defined by its key.
+  | ['wrapper'] An HTML element to wrap the region contents in. (We
+  |   recommend doing this in your template file.)
+  | ['attributes'] Multidimensional array defining HTML attributes of the
+  |   wrapper. (We recommend doing this in your template file.)
+  |
+  | Example:
+  | $template['default']['regions'] = array(
+  |    'header' => array(
+  |       'content' => array('<h1>Welcome</h1>','<p>Hello World</p>'),
+  |       'name' => 'Page Header',
+  |       'wrapper' => '<div>',
+  |       'attributes' => array('id' => 'header', 'class' => 'clearfix')
+  |    )
+  | );
+  |
+ */
 
 /*
-|---------------------------------------------------------------------
-| THEME PATHS
-|---------------------------------------------------------------------
-| An array of folders to look in for themes. There must be at least
-| one folder path at all times, to serve as the fall-back for when
-| a theme isn't found. Paths are relative to the FCPATH.
-*/
-$config['template.theme_paths'] = array('themes');
+  |--------------------------------------------------------------------------
+  | Default Template Configuration (adjust this or create your own)
+  |--------------------------------------------------------------------------
+ */
+//public template
+$template['public']['template'] = 'templates/template';
+$template['public']['regions'] = array(
+    'title',
+    'header',
+    'content',
+    'footer'
+);
+$template['public']['parser'] = 'parser';
+$template['public']['parser_method'] = 'parse';
+$template['public']['parse_template'] = TRUE;
 
-/*
-|--------------------------------------------------------------------
-| DEFAULT LAYOUT
-|--------------------------------------------------------------------
-| This is the name of the default layout used if no others are
-| specified.
-|
-| NOTE: do not include an ending ".php" extension.
-|
-*/
-$config['template.default_layout'] = "index";
-
-/*
-|--------------------------------------------------------------------
-| DEFAULT AJAX LAYOUT
-|--------------------------------------------------------------------
-| This is the name of the default layout used when the page is
-| displayed via an AJAX call.
-|
-| NOTE: do not include an ending ".php" extension.
-|
-*/
-$config['template.ajax_layout'] = 'ajax';
-
-/*
-|--------------------------------------------------------------------
-| USE THEMES?
-|--------------------------------------------------------------------
-| When set to TRUE, Ocular will check the user agent during the
-| render process, and check the UA against the template.themes (below),
-| allowing you to create mobile versions of your site, and version
-| targetted specifically at a single type of phone (ie, Blackberry or
-| iPhone).
-|
-| Note, that, when rendering, if the file doesn't exist in the
-| targetted theme, Ocular then checks the default site for the same file.
-|
-*/
-$config['template.use_mobile_themes'] = FALSE;
-
-
-/*
-|--------------------------------------------------------------------
-| DEFAULT THEME
-|--------------------------------------------------------------------
-| This is the folder name that contains the default theme to use
-| when 'template.use_mobile_themes' is set to TRUE.
-|
-*/
-$config['template.default_theme'] = 'sahara/';
-
-/*
-|--------------------------------------------------------------------
-| MESSAGE TEMPLATE
-|--------------------------------------------------------------------
-| This is the template that Ocular will use when displaying messages
-| through the message() function.
-|
-| To set the class for the type of message (error, success, etc),
-| the {type} placeholder will be replaced. The message will replace
-| the {message} placeholder.
-|
-*/
-$config['template.message_template'] =<<<EOD
-	<div class="notification {type}">
-		<div>{message}</div>
-	</div>
-EOD;
-
-/*
-|--------------------------------------------------------------------
-| BREADCRUMB Separator
-|--------------------------------------------------------------------
-| The symbol displayed between elements of the breadcrumb.
-|
-*/
-$config['template.breadcrumb_symbol']	= ' : ';
-$config['site_name']="Base Codeigniter";
+/* End of file template.php */
+/* Location: ./application/config/template.php */

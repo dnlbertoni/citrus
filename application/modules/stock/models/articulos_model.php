@@ -71,5 +71,5 @@ class Articulos_model extends My_Model {
     }
 }
 
-/* End of file articulos_model.php */
-/* Location: ./application/models/articulos_model.php */
+/* End of file AArticulos_model.php */
+/* Location: ./application/models/AArticulos_model.php */
