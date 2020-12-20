@@ -122,7 +122,7 @@ class Billing extends Admin_Controller{
     echo $jsonString;
   }
 
-  function addArticulo ()
+  function addArticulo1 ()
   {
     $this->output->enable_profiler (FALSE);
     $codigobarra    = $this->input->post ('codigobarra');
