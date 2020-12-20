@@ -152,7 +152,7 @@ class Articulos_model extends MY_Model{
   }
   function getDatosBasicos($id){
     $id = intval($id);
-    $this->db->_reset_select();
+    //$this->db->_reset_select();
     $this->db->select("id_articulo AS id, descripcion_articulo AS descripcion, preciovta_articulo AS precio");
     $this->db->select("preciocosto_articulo   AS costo");
     $this->db->from($this->tabla->name);
@@ -221,7 +221,7 @@ class Articulos_model extends MY_Model{
   }
   function datosNormalizacion(){
 	  $todos = $this->db->count_all($this->getTable());
-	  $this->db->_reset_select();
+	  //$this->db->_reset_select();
 	  $this->db->where("detalle IS NULL","", FALSE);
 	  $this->db->from($this->getTable());
 	  $faltan = $this->db->count_all_results();

@@ -1,6 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+<<<<<<< HEAD
+class Stock extends Admin_Controller
+{
+=======
 class Stock extends Admin_Controller {
+>>>>>>> 3.5
 
 	public function __construct(){
 		parent::__construct();

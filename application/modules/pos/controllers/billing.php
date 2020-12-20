@@ -121,6 +121,53 @@ class Billing extends Admin_Controller{
     header ('Content-Type: application/json');
     echo $jsonString;
   }
+
+  function addArticulo1 ()
+  {
+    $this->output->enable_profiler (FALSE);
+    $codigobarra    = $this->input->post ('codigobarra');
+    $tmpfacencab_id = $this->input->post ('tmpfacencab_id');
+    $precio = ($this->input->post ('precio')) ? $this->input->post ('precio') : FALSE;
+    $cantidad       = ($this->input->post ('cantidad')) ? $this->input->post ('cantidad') : 1;
+    $error          = TRUE;
+
+    // busco articulo y traigo datos, precio y estado
+    $articulo = $this->Articulos_model->getDatosPresupuesto ($codigobarra);
+    if (!$articulo) { //verifico que el articulo exista
+      $error     = TRUE;
+      $errorTipo = 'El articulo NO EXISTE en la base de datos';
+    } else {
+      if ($articulo->precio == 0) { //verifico que el articulo tenga precio superior a 0
+        $error     = TRUE;
+        $errorTipo = "El articulo no POSEE PRECIO";
+      } else {
+        if ($articulo->estado === SUSPENDIDO) { //verifico que el articulo no este suspendido
+          $error     = TRUE;
+          $errorTipo = "El articulo esta SUSPENDIDO";
+        } else { // el articulo tiene un precio aceptable
+          $articulo->precio = (!$precio) ? $articulo->precio : $precio;
+          $error            = FALSE;
+          $errorTipo        = '';
+        };
+      };
+    };
+    if (!$error) { // si no existen errores continuo con el proceso
+      $renglon = $this->Tmpmovim_model->agregoAlComprobante ($tmpfacencab_id, $codigobarra, $cantidad, $articulo->precio);//agrego al comprobante
+      //var_dump($renglon);
+      $renglonFinal = $this->Tmpmovim_model->getRenglon ($renglon);
+      $totales      = $this->Tmpmovim_model->getTotales ($tmpfacencab_id);//busco totales
+      $resultado    = $this->Tmpfacencab_model->updateTotales ($tmpfacencab_id, $totales->Total);// actualizo totales
+      $json         = array ( 'id' => $renglon, 'codigoB' => $codigobarra, 'descripcion' => $renglonFinal->nombre, 'cantidad' => sprintf ("%5.2f", $renglonFinal->cantidad), 'precio' => sprintf ("$%10.2f", $renglonFinal->precio), 'importe' => sprintf ("$%10.2f", $renglonFinal->cantidad * $renglonFinal->precio), 'error' => $error, 'errorTipo' => $errorTipo, 'Totales' => sprintf ("$%10.2f", $totales->Total), 'Bultos' => $totales->Bultos, 'Formas' => $resultado );
+
+    } else {
+      $this->Articulos_model->agregoLog ($codigobarra, 'pos/billing/addArticulo', $errorTipo);
+      $detalle = (isset($articulo->nombre)) ? $articulo->nombre : '';
+      $json = array ( 'codigoB' => $codigobarra, 'descripcion' => $detalle, 'error' => $error, 'errorTipo' => $errorTipo, 'precioViejo' => $precio );
+    }
+    $jsonString = json_encode ($json);
+    header ('Content-Type: application/json');
+    echo $jsonString;
+  }
   function delArticulo($id){
     $tmpfacencab_id = $this->Tmpmovim_model->delArticulo($id);
     $totales      = $this->Tmpmovim_model->getTotales ($tmpfacencab_id);//busco totales
