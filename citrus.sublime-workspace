@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"php",
+				"php7"
+			],
+			[
 				"data",
 				"database"
 			],
@@ -72,20 +76,43 @@
 	},
 	"expanded_folders":
 	[
-		"/home/danielbertoni/Documents/Proyectos/citrus"
+		"/home/danielbertoni/Documents/Proyectos/citrus",
+		"/home/danielbertoni/Documents/Proyectos/citrus/bin",
+		"/home/danielbertoni/Documents/Proyectos/citrus/bin/mysql"
 	],
 	"file_history":
 	[
+		"/home/danielbertoni/Documents/Proyectos/citrus/docker-compose.yml",
+		"/home/danielbertoni/Documents/Proyectos/citrus/.env",
+		"/home/danielbertoni/Documents/Proyectos/proxy-afip/docker-compose.yml",
+		"/media/danielbertoni/data1tb/proxy-afip/docker-compose.yml",
+		"/home/danielbertoni/docker/pyafip/Dockerfile",
+		"/home/danielbertoni/docker/docker-compose-lamp/.gitignore",
+		"/media/danielbertoni/data1tb/proxy-afip/todo.md",
+		"/home/danielbertoni/docker/docker-compose-lamp/docker-compose.yml",
+		"/home/danielbertoni/docker/docker-compose-lamp/.env",
+		"/media/danielbertoni/data1tb/proxy-afip/data/aria_log.00000001",
+		"/media/danielbertoni/data1tb/proxy-afip/public/index.php",
+		"/media/danielbertoni/data1tb/afipws/docker-compose.yml",
+		"/home/danielbertoni/docker/lemp/docker-compose.yml",
+		"/home/danielbertoni/docker/light-php-db-dbadmin/docker-compose.yml",
+		"/home/danielbertoni/docker/pyafip/DockerFile",
 		"/home/danielbertoni/docker/db/docker-compose.yml",
+		"/home/danielbertoni/docker/light-php-db-dbadmin/bin/micro/Dockerfile",
+		"/home/danielbertoni/docker/light-php-db-dbadmin/.env",
+		"/home/danielbertoni/Documents/Proyectos/citrus/docker/docker-compose.yml",
+		"/home/danielbertoni/docker/db/bin/php73/Dockerfile",
+		"/home/danielbertoni/docker/db/bin/mysql/Dockerfile",
+		"/home/danielbertoni/docker/db/bin/mysql8/Dockerfile",
+		"/home/danielbertoni/Documents/Proyectos/citrus/index.php",
+		"/home/danielbertoni/Documents/Proyectos/citrus/RELEASE.txt",
+		"/home/danielbertoni/Documents/Proyectos/citrus/.gitignore",
 		"/home/danielbertoni/docker/db/logs/apache2/error.log",
 		"/home/danielbertoni/docker/db/config/vhosts/default.conf",
 		"/home/danielbertoni/docker/db/config/php/php.ini",
-		"/home/danielbertoni/docker/docker-compose-lamp/docker-compose.yml",
-		"/media/danielbertoni/data1tb/afipws/docker-compose.yml",
 		"/home/danielbertoni/docker/lamp/docker-compose.yml",
 		"/home/danielbertoni/docker/lamp/www/index.html",
 		"/home/danielbertoni/docker/Dockerfile",
-		"/home/danielbertoni/docker/docker-compose-lamp/.env",
 		"/home/danielbertoni/docker/db/.env",
 		"/home/danielbertoni/docker/db/docker-compose.ymal",
 		"/home/danielbertoni/docker/db/Dockefile",
