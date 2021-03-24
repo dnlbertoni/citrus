@@ -1,1 +1,4 @@
-/application/logs/*.*
+/app/logs/*.*
+/docker/data/
+/docker/logs/
+/docker/.env
