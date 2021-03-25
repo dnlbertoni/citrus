@@ -1,4 +1,5 @@
 app/logs
 docker/data
+docker/data/mysql
 docker/logs
 docker/.env
