@@ -12,15 +12,14 @@ services:
     links:
       - database
     volumes:
-      - '${DOCUMENT_ROOT-./www}:/var/www/html'
+      - '${DOCUMENT_ROOT-../app}:/var/www/html'
       - '${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini'
       - '${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled'
       - '${LOG_DIR-./logs/apache2}:/var/log/apache2'
     environment:
       PMA_PORT: '${HOST_MACHINE_PMA_PORT}'
   database:
-    build:
-      context: "./bin/${DATABASE}"
+    image: mysql:5.7
     container_name: '${COMPOSE_PROJECT_NAME}-database'
     restart: 'no'
     ports:

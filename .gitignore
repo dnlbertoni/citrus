@@ -1,4 +1,4 @@
-/app/logs/*.*
-/docker/data/
-/docker/logs/
-/docker/.env
+app/logs
+docker/data
+docker/logs
+docker/.env
