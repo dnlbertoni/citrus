@@ -2,4 +2,6 @@ app/logs
 docker/data
 docker/data/mysql
 docker/logs
+docker/logs/apache2
+docker/logs/mysql
 docker/.env
